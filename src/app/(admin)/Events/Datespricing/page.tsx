@@ -56,7 +56,7 @@ const CreateEventDatesPricing = () => {
   const [allowWaitlist, setAllowWaitlist] = useState(true);
   const [requireApproval, setRequireApproval] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  const {userId} = useStore()
   // Get slot_id and event_id from URL parameters
   const slotId = searchParams.get('slot_id');
   const eventId = searchParams.get('event_id');
@@ -70,7 +70,7 @@ const CreateEventDatesPricing = () => {
 
     try {
       console.log('Loading slot data for ID:', slotId);
-      const response = await axiosInstance.get(`/api/v1/slots/get/${slotId}`);
+      const response = await axiosInstance.get(`/slots/get/${slotId}`);
       const slotData = response.data.data;
 
       console.log('Loaded slot data:', slotData);
@@ -204,7 +204,7 @@ const CreateEventDatesPricing = () => {
       return;
     }
 
-    if (!eventId || !user?.id) {
+    if (!eventId || !userId) {
       toast.error("Missing required information (Event ID or User ID)");
       return;
     }
@@ -237,7 +237,7 @@ const CreateEventDatesPricing = () => {
     try {
       // Call the API to update event details
       const formData = new FormData();
-      formData.append('user_id', user?.id || '');
+      formData.append('user_id', userId || '');
       formData.append('start_date', startDate);
       formData.append('end_date', endDate);
       
@@ -248,7 +248,7 @@ const CreateEventDatesPricing = () => {
       formData.append('is_online', isOnlineEvent.toString());
 
       const response = await axiosInstance.patch(
-        `/api/v1/events/${eventId}/update-event-details`,
+        `/events/${eventId}/update-event-details`,
         formData,
         {
           headers: {
@@ -511,10 +511,10 @@ const CreateEventDatesPricing = () => {
       
       try {
         // First try to get existing slot data to determine if we should update or create
-        await axiosInstance.get(`/api/v1/slots/get/${slotId}`);
+        await axiosInstance.get(`/slots/get/${slotId}`);
         
         // If we get here, slots exist, so update them
-        response = await axiosInstance.put(`/api/v1/slots/update/${slotId}`, jsonPayload, {
+        response = await axiosInstance.put(`/slots/update/${slotId}`, jsonPayload, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -523,7 +523,7 @@ const CreateEventDatesPricing = () => {
         console.log('Slots updated successfully');
       } catch (getError) {
         // If getting slots fails, they don't exist yet, so create them
-        response = await axiosInstance.post("/api/v1/slots/create", jsonPayload, {
+        response = await axiosInstance.post("/slots/create", jsonPayload, {
           headers: {
             "Content-Type": "application/json",
           },

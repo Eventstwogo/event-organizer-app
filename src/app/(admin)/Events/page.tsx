@@ -22,50 +22,86 @@ import {
 const CreateEventPage = () => {
   const router = useRouter();
   const { user, isAuthenticated } = useStore();
-  const userId = user?.id;
+  const {userId} = useStore()
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
- 
- 
- 
- 
- 
+
   // Fetch events - memoized to prevent re-creation
-  const fetchEvents = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await axiosInstance.get('/api/v1/events/', {
-        timeout: 10000, // 10 second timeout
-      });
+//   const fetchEvents = useCallback(async () => {
+//     console.log(userId)
+//     try {
+//       setLoading(true);
+//     const response = await axiosInstance.get(`/organizers/analytics/organizer-details/${userId}`, {
+//   timeout: 30000,
+// });
+//       if (response.data.statusCode === 200) {
+//         const eventsData = response.data.data.events || [];
+//         setEvents(eventsData);
+//         toast.success(`Loaded ${eventsData.length} events successfully!`);
+//       } else {
+//         toast.error(response.data.message || "Failed to fetch events");
+//         setEvents([]);
+//       }
+//     } catch (error: any) {
+//       console.error("Error fetching events:", error);
      
-      if (response.data.statusCode === 200) {
-        const eventsData = response.data.data.events || [];
-        setEvents(eventsData);
-        toast.success(`Loaded ${eventsData.length} events successfully!`);
-      } else {
-        toast.error(response.data.message || "Failed to fetch events");
-        setEvents([]);
-      }
-    } catch (error: any) {
-      console.error("Error fetching events:", error);
-     
-      if (error.response?.status === 404) {
-        toast.error("Events endpoint not found. Please check the API.");
-      } else if (error.code === 'ECONNABORTED') {
-        toast.error("Request timeout. Please check your connection.");
-      }  else if (error.response?.status === 500) {
-        toast.error("Server error. Please try again later.");
-      } else {
-        toast.error("Failed to fetch events. Please try again.");
-      }
-      setEvents([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [router]);
+//       if (error.response?.status === 404) {
+//         toast.error("Events endpoint not found. Please check the API.");
+//       } else if (error.code === 'ECONNABORTED') {
+//         toast.error("Request timeout. Please check your connection.");
+//       }  else if (error.response?.status === 500) {
+//         toast.error("Server error. Please try again later.");
+//       } else {
+//         toast.error("Failed to fetch events. Please try again.");
+//       }
+//       setEvents([]);
+//     } finally {
+//       setLoading(false);
+//     }
+//  }, [userId, router]);
+;
  
+
+const fetchEvents = useCallback(async () => {
+  if (!userId) {
+    console.warn("User ID not available yet. Skipping fetch.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+    const response = await axiosInstance.get(`/organizers/analytics/organizer-details/${userId}`, {
+      timeout: 10000,
+    });
+
+    if (response.data.statusCode === 200) {
+      const eventsData = response.data.data.events || [];
+      setEvents(eventsData);
+      toast.success(`Loaded ${eventsData.length} events successfully!`);
+    } else {
+      toast.error(response.data.message || "Failed to fetch events");
+      setEvents([]);
+    }
+  } catch (error: any) {
+    console.error("Error fetching events:", error);
+
+    if (error.response?.status === 404) {
+      toast.error("Events endpoint not found. Please check the API.");
+    } else if (error.code === 'ECONNABORTED') {
+      toast.error("Request timeout. Please check your connection.");
+    } else if (error.response?.status === 500) {
+      toast.error("Server error. Please try again later.");
+    } else {
+      toast.error("Failed to fetch events. Please try again.");
+    }
+    setEvents([]);
+  } finally {
+    setLoading(false);
+  }
+}, [userId]);
+
   // Delete event - memoized to prevent re-creation
   const handleDeleteEvent = useCallback(async (eventId: string) => {
     if (!confirm("Are you sure you want to delete this event?")) return;

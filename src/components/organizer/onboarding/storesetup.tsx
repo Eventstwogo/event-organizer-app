@@ -1,12 +1,14 @@
 "use client";
 import Image from "next/image";
 import type React from "react";
-
+import { useState, useEffect} from 'react';
 import { Calendar, MapPin } from "lucide-react";
-
+import axiosInstance from "@/lib/axiosinstance";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+ 
+import { CheckCircle, XCircle, Loader2, Store } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -14,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import slugify from "slugify";
 
 interface Step1Props {
   storeDetails: {
@@ -52,7 +55,45 @@ export default function Step1StoreSetup({
     }
   };
 
+    const [storeNameStatus, setStoreNameStatus] = useState<
+    "available" | "unavailable" | "checking" | null
+  >(null);
 
+useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (storeDetails.storeName.trim()) {
+        checkStoreNameAvailability(storeDetails.storeName.trim());
+      } else {
+        setStoreNameStatus(null);
+      }
+    }, 500); // Debounce by 500ms
+ 
+    return () => clearTimeout(delayDebounce);
+  }, [storeDetails.storeName]);
+ 
+  const checkStoreNameAvailability = async (name: string) => {
+    try {
+      setStoreNameStatus("checking");
+      const response = await axiosInstance.get(
+        `/organizers/store-name-availability?name=${name}`,
+       
+      );
+ console.log(response);
+      if (response.status === 200) {
+        setStoreNameStatus("available");
+        const slug = slugify(name);
+        setStoreDetails((prev) => ({
+          ...prev,
+          storeUrl: slug,
+        }));
+      } else {
+        setStoreNameStatus("unavailable");
+      }
+    } catch (error) {
+      setStoreNameStatus("unavailable");
+    }
+  };
+ 
 
 
   return (
@@ -100,9 +141,26 @@ export default function Step1StoreSetup({
                   storeName: e.target.value,
                 })
               }
-              className="h-12 border-2 border-gray-200 focus:border-purple-500 transition-colors duration-200"
+             className={`h-12 border-2 pr-10 ${
+                storeNameStatus === "available"
+                  ? "border-green-500 focus:border-green-500"
+                  : storeNameStatus === "unavailable"
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-gray-200 focus:border-blue-500"
+              } transition-colors duration-200`}
               required
             />
+                        {storeNameStatus === "checking" && (
+              <Loader2 className="absolute right-3 top-3 w-5 h-5 text-blue-500 animate-spin" />
+            )}
+ 
+            {storeNameStatus === "available" && (
+              <CheckCircle className="absolute right-3 top-3 w-5 h-5 text-green-500" />
+            )}
+ 
+            {storeNameStatus === "unavailable" && (
+              <XCircle className="absolute right-3 top-3 w-5 h-5 text-red-500" />
+            )}
           </div>
 
           <div className="space-y-2 w-full">

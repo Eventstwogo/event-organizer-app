@@ -80,7 +80,7 @@ const useStore = create<AuthState>((set, get) => ({
 
     try {
       const decoded = jwt.decode(access_token) as DecodedToken | null;
-
+console.log(decoded)
       if (decoded?.uid && decoded?.rid) {
         const tabId = getTabId();
 

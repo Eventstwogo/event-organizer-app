@@ -134,7 +134,7 @@ export default function VendorOnboarding() {
   };
 
   return (
-    <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 overflow-hidden">
+    <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 ">
       <div className="absolute top-10 left-10 w-16 h-16 bg-blue-200 rounded-full opacity-5 animate-pulse"></div>
       <div className="absolute bottom-10 right-10 w-12 h-12 bg-purple-200 rounded-full opacity-5 animate-pulse delay-1000"></div>
       <div className="absolute top-1/2 right-1/4 w-8 h-8 bg-emerald-200 rounded-full opacity-5 animate-pulse delay-500"></div>

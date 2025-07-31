@@ -42,7 +42,7 @@ export default function AppHeader({ toggleSidebar }: Readonly<AppHeaderProps>) {
   const [error, setError] = useState<string | null>(null);
 
   // Replace destructuring with selector
-  const userId = useStore(state => state.user?.id);
+const {userId}=useStore()
   const router = useRouter();
 
   // Replace static import with dynamic import
@@ -52,8 +52,8 @@ export default function AppHeader({ toggleSidebar }: Readonly<AppHeaderProps>) {
   // Fetch user details with proper typing and error handling
   const fetchUserDetails = async (userId: string) => {
     try {
-      const response = await axiosInstance.get(`/api/v1/admin/users/${userId}`);
-      setUser(response.data.data);
+      const response = await axiosInstance.get(`/organizers/${userId}`);
+      setUser(response.data.organizer_login);
       setLoading(false);
     } catch (error) {
       setLoading(false);

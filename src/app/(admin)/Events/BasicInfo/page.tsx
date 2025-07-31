@@ -104,8 +104,8 @@ interface GalleryImage {
 const BasicInfoPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user } = useStore();
-  const userId = user?.id;
+  const { userId } = useStore();
+ 
 
   // URL parameters
   const eventId = searchParams.get('event_id');
@@ -209,7 +209,7 @@ const BasicInfoPage = () => {
   const fetchCategories = useCallback(async () => {
     setIsLoadingCategories(true);
     try {
-      const response = await axiosInstance.get("/api/v1/categories/list");
+      const response = await axiosInstance.get("/categories/list");
       setCategories(response.data.data || []);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -224,7 +224,7 @@ const BasicInfoPage = () => {
 
     setIsLoadingEventData(true);
     try {
-      const response = await axiosInstance.get(`/api/v1/events/${eventId}`);
+      const response = await axiosInstance.get(`/events/${eventId}`);
       const eventData = response.data.data;
 
       // Set form values
@@ -416,7 +416,7 @@ const BasicInfoPage = () => {
       
       if (isEditMode && eventId) {
         // Update existing event
-        response = await axiosInstance.patch(`/api/v1/events/${eventId}/update-with-images`, formData, {
+        response = await axiosInstance.patch(`/events/${eventId}/update-with-images`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -425,13 +425,13 @@ const BasicInfoPage = () => {
         if (response.status === 200) {
           toast.success("Event updated successfully! Proceeding to dates and pricing.");
           const newSlotId = response.data.data.slot_id;
-          router.push(`/Events/DatesPricing?slot_id=${newSlotId}&event_id=${eventId}`);
+          router.push(`/Events/Datespricing?slot_id=${newSlotId}&event_id=${eventId}`);
         } else {
           toast.error(response.data.message || "Failed to update event");
         }
       } else {
         // Create new event
-        response = await axiosInstance.post('/api/v1/events/create-with-images', formData, {
+        response = await axiosInstance.post('/events/create-with-images', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -442,7 +442,7 @@ const BasicInfoPage = () => {
           const newSlotId = response.data.data.slot_id;
           
           toast.success("Event created successfully! Proceeding to dates and pricing.");
-          router.push(`/Events/DatesPricing?slot_id=${newSlotId}&event_id=${newEventId}`);
+          router.push(`/Events/Datespricing?slot_id=${newSlotId}&event_id=${newEventId}`);
         } else {
           toast.error(response.data.message || "Failed to create event");
         }

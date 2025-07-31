@@ -218,7 +218,7 @@ export default function ProfilePage() {
       formData.append('current_password', currentPassword);
       formData.append('new_password', newPassword);
 
-      const response = await axiosInstance.post('/api/v1/admin/change-password', formData, {
+      const response = await axiosInstance.post('/admin/change-password', formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         }
