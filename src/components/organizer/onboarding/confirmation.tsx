@@ -22,7 +22,7 @@ export default function Step4VerificationConfirmation({
     router.push("/");
   };
   return (
-    <div className="w-full h-full lg:grid lg:grid-cols-2">
+    <div className="w-full h-screen lg:grid lg:grid-cols-2">
       {/* Image Side */}
       <div className="hidden lg:flex items-center justify-center p-12 bg-gradient-to-br from-purple-50 to-indigo-50 h-full">
         <div className="text-center space-y-6 max-w-md">
@@ -95,14 +95,14 @@ export default function Step4VerificationConfirmation({
             </ul>
           </div>
 
-          <div className="flex justify-center pt-2">
+          {/* <div className="flex justify-center pt-2">
             <Button
               onClick={onGoHome}
               className="h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
             >
               Go to Dashboard
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -27,65 +27,89 @@ export default function EventOrganizerLogin() {
   //   setEmailValid(emailRegex.test(email));
   // };
 
- const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-  if (!username || !password) {
-    toast.error("Username and password are required.");
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const data = new URLSearchParams();
-    data.append("grant_type", "password");
-    data.append("username", username);
-    data.append("password", password);
-    data.append("scope", "");
-    data.append("client_id", "");
-    data.append("client_secret", "");
-
-    const response = await axiosInstance.post("/admin/login", data.toString(), {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
-
-    if (response.status === 200) {
-      const { access_token, user } = response.data;
-
-      if (!access_token) {
-        throw new Error("Invalid response: Missing access token");
-      }
-
-      login(access_token, user || null);
-
-      toast.success("Login successful.");
-
-      if (!user) {
-        router.push("/onboarding");
-      } else if (user.is_approved === 0) {
-        router.push("/verification");
-      } else {
-        router.push("/dashboard");
-      }
-    }
-  } catch (error: any) {
-    const detail = error.response?.data?.detail;
-    let errorMessage = "Something went wrong. Please try again.";
-
-    if (Array.isArray(detail)) {
-      errorMessage = detail.map((d) => d.msg).join(" | ");
-    } else if (typeof detail === "string") {
-      errorMessage = detail;
+    if (!username || !password) {
+      toast.error("Username and password are required.");
+      return;
     }
 
-    toast.error(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+    try {
+      const data = new URLSearchParams();
+      data.append("grant_type", "password");
+      data.append("username", username);
+      data.append("password", password);
+      data.append("scope", "");
+      data.append("client_id", "");
+      data.append("client_secret", "");
 
+      const response = await axiosInstance.post(
+        "/admin/login",
+        data.toString(),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const { access_token, organizer_info } = response.data;
+
+        if (!access_token) {
+          throw new Error("Invalid response: Missing access token");
+        }
+
+        // Call the login function with access_token and organizer_info
+        login(
+          access_token,
+          organizer_info || {
+            is_approved: -1,
+            ref_number: "",
+            onboarding_status: "unknown",
+          }
+        );
+
+        toast.success("Login successful.");
+
+        // Redirect based on onboarding_status
+        const status = organizer_info?.onboarding_status || "unknown";
+        switch (status) {
+          case "approved":
+            router.push("/dashboard");
+            break;
+          case "under_review":
+            router.push("/verification");
+            break;
+         case "rejected":
+            router.push(
+              `/rejected?ref=${encodeURIComponent(organizer_info?.ref_number || "N/A")}`
+            );
+            break;
+          case "not_started":
+          case "unknown":
+          default:
+            router.push("/onboarding");
+            break;
+        }
+      }
+    } catch (error: any) {
+      const detail = error.response?.data?.detail;
+      let errorMessage = "Something went wrong. Please try again.";
+
+      if (Array.isArray(detail)) {
+        errorMessage = detail.map((d) => d.msg).join(" | ");
+      } else if (typeof detail === "string") {
+        errorMessage = detail;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2 bg-gradient-to-br from-purple-50 via-white to-indigo-50">

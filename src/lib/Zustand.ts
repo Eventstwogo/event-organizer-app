@@ -13,8 +13,6 @@ interface UserData {
 interface DecodedToken {
   uid: string;
   rid: string;
-  sid: number;
-  exp: number;
   [key: string]: any;
 }
 
