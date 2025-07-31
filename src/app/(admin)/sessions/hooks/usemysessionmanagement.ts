@@ -34,7 +34,7 @@ export const useMySessionManagement = () => {
         limit: limit.toString()
       });
 
-      const response = await axiosInstance.get(`/api/v1/admin/me/sessions/?${params}`);
+      const response = await axiosInstance.get(`/admin/me/sessions/?${params}`);
       
       if (response.data.statusCode === 200) {
         const sessionsData = response.data.data?.sessions || [];
@@ -59,7 +59,7 @@ export const useMySessionManagement = () => {
         return false;
       }
 
-      const response = await axiosInstance.delete(`/api/v1/admin/me/sessions/${sessionId}`);
+      const response = await axiosInstance.delete(`/admin/me/sessions/${sessionId}`);
       
       if (response.data.statusCode === 200) {
         toast.success("Session terminated successfully");
@@ -80,7 +80,7 @@ export const useMySessionManagement = () => {
         keep_current: keepCurrent.toString()
       });
 
-      const response = await axiosInstance.delete(`/api/v1/admin/me/sessions/?${params}`);
+      const response = await axiosInstance.delete(`/admin/me/sessions/?${params}`);
       
       if (response.data.statusCode === 200) {
         const terminatedCount = response.data.data?.terminated_count || 0;

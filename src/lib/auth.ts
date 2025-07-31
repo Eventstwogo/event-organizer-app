@@ -1,27 +1,49 @@
+// import useStore from '@/lib/Zustand';
+// import axiosInstance from '@/lib/axiosinstance';
+
+// export const logoutUser = async (): Promise<void> => {
+//   try {
+//     // Attempt to logout from server
+//         const { logout } = useStore()
+//         logout();
+
+//     await axiosInstance.post('/admin/logout');
+
+//     localStorage.removeItem('id');
+    
+//     // Redirect to home page
+//     window.location.href = '/';
+//   } catch (error) {
+//     // If server logout fails, still clear local state
+//     const { logout } = useStore.getState();
+//     logout();
+//     localStorage.removeItem('id');
+    
+//     // Re-throw error so calling component can handle it
+//     throw error;
+//   }
+// };
+
 import useStore from '@/lib/Zustand';
 import axiosInstance from '@/lib/axiosinstance';
 
 export const logoutUser = async (): Promise<void> => {
+  const { logout } = useStore.getState(); // ✅ safe outside React
+
   try {
-    // Attempt to logout from server
-    await axiosInstance.post('/api/v1/auth/logout');
-    
-    // Clear Zustand store
-    const { logout } = useStore.getState();
+    await axiosInstance.post('/admin/logout');
+
+    // Clear local state
     logout();
-    
-    // Clear localStorage
     localStorage.removeItem('id');
-    
+
     // Redirect to home page
     window.location.href = '/';
   } catch (error) {
-    // If server logout fails, still clear local state
-    const { logout } = useStore.getState();
+    // Even if API fails, logout locally
     logout();
     localStorage.removeItem('id');
-    
-    // Re-throw error so calling component can handle it
+
     throw error;
   }
 };

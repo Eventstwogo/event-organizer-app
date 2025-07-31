@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { useRouter } from "next/navigation";
+import useStore from "@/lib/Zustand";
 import {
   LayoutGrid,
   Users,
@@ -26,6 +27,7 @@ import {
 } from "lucide-react";
 import { useDashboardStats, useThemeAnimations } from "@/hooks/use-dashboard-stats";
 
+
 // Mock user info (replace with real user data if available)
 const user = {
   name: "Admin User",
@@ -42,6 +44,17 @@ const recentActivity = [
 
 // Dashboard skeleton component
 const DashboardSkeleton = () => {
+
+  const {userId}=useStore()
+  const router=useRouter();
+
+  useEffect(() => {
+  if(!userId){
+    router.push('/');
+  }
+  // Fetch dashboard stats here
+},[userId]
+)
   return (
   
     <main className="container mx-auto px-4 py-8 space-y-8">

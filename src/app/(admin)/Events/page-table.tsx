@@ -102,7 +102,7 @@ const CreateEventPage = () => {
   const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get('/api/v1/events/', {
+      const response = await axiosInstance.get('/events/', {
         timeout: 10000, // 10 second timeout
       });
       
@@ -156,7 +156,7 @@ const CreateEventPage = () => {
     if (!confirm("Are you sure you want to delete this event?")) return;
     
     try {
-      await axiosInstance.delete(`/api/v1/events/${eventId}`);
+      await axiosInstance.delete(`/events/${eventId}`);
       toast.success("Event deleted successfully");
       fetchEvents(); // Refresh the list
     } catch (error) {

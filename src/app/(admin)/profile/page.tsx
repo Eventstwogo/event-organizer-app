@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import useStore from "@/lib/Zustand";
 import axiosInstance from "@/lib/axiosinstance";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { 
   Camera, 
   User, 
@@ -55,15 +56,16 @@ export default function ProfilePage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
-  const userId = useStore(state => state.user?.id);
+  const router=useRouter();
+const {userId} = useStore();
 
   const fetchUserDetails = async (userId: string) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axiosInstance.get(`/api/v1/admin/users/${userId}`);
-      setUser(response.data.data);
+      const response = await axiosInstance.get(`/organizers/${userId}`);
+      setUser(response.data.organizer_login
+);
     } catch (error: any) {
       const errorMessage = error?.response?.data?.message || 'Failed to fetch user data';
       setError(errorMessage);
@@ -74,9 +76,11 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
+    console.log(userId)
     if (!userId) {
       setError("User ID not found");
       setLoading(false);
+      router.push("/");
       return;
     }
 
@@ -125,7 +129,7 @@ export default function ProfilePage() {
     formData.append("profile_picture", selectedFile);
 
     try {
-      const response = await axiosInstance.patch(`/api/v1/admin/profile/picture`, formData, {
+      const response = await axiosInstance.patch(`/admin/profile/picture`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
 
@@ -280,7 +284,7 @@ export default function ProfilePage() {
       fetchUserDetails(userId);
     }
   };
-
+console.log(user)
   // Enhanced Loading skeleton
   if (loading) {
     return (
@@ -513,19 +517,12 @@ export default function ProfilePage() {
               </Label>
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20">
-                  {user?.role_name || "Not assigned"}
+                  {user?.role || "Not assigned"}
                 </span>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-muted-foreground">
-                User ID
-              </Label>
-              <p className="text-sm font-mono text-muted-foreground bg-muted/30 px-3 py-2 rounded-md border">
-                {user?.id || "Not available"}
-              </p>
-            </div>
+            
           </div>
         </CardContent>
       </Card>

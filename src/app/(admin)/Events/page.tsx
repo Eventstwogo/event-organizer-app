@@ -107,7 +107,7 @@ const fetchEvents = useCallback(async () => {
     if (!confirm("Are you sure you want to delete this event?")) return;
    
     try {
-      await axiosInstance.delete(`/api/v1/events/${eventId}`);
+      await axiosInstance.delete(`/events/${eventId}`);
       toast.success("Event deleted successfully");
       fetchEvents(); // Refresh the list
     } catch (error) {

@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import jwt from "jsonwebtoken";
+import { useRouter } from "next/navigation";
 
 interface UserData {
   is_approved: number;
@@ -64,7 +65,7 @@ const removeActiveAccount = (tabId: string) => {
   delete accounts[tabId];
   localStorage.setItem("activeAccounts", JSON.stringify(accounts));
 };
-
+ 
 const useStore = create<AuthState>((set, get) => ({
   userId: null,
   bprofileId: null,
@@ -143,6 +144,7 @@ console.log(decoded)
   },
 
   logout: () => {
+   
     const tabId = getTabId();
     set({
       userId: null,
@@ -151,6 +153,7 @@ console.log(decoded)
       user: null,
       isAuthenticated: false,
     });
+     console.log("Logging out");
 
     localStorage.removeItem(`auth_${tabId}`);
     sessionStorage.removeItem("currentAuth");
