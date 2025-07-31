@@ -1,103 +1,218 @@
-import Image from "next/image";
+"use client";
+import Link from "next/link";
+import { FormEvent, useState } from "react";
+import { Eye, EyeOff, Calendar } from "lucide-react";
 
-export default function Home() {
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import VendorLoginComponent from "@/components/organizer/auth/login";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import axiosInstance from "@/lib/axiosinstance";
+import useStore from "@/lib/Zustand";
+
+export default function EventOrganizerLogin() {
+  const { login } = useStore();
+  const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  // const [emailValid, setEmailValid] = useState<boolean>(false);
+  const router = useRouter();
+
+  // const validateEmail = (email: string) => {
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   setEmailValid(emailRegex.test(email));
+  // };
+
+ const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+
+  if (!username || !password) {
+    toast.error("Username and password are required.");
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const data = new URLSearchParams();
+    data.append("grant_type", "password");
+    data.append("username", username);
+    data.append("password", password);
+    data.append("scope", "");
+    data.append("client_id", "");
+    data.append("client_secret", "");
+
+    const response = await axiosInstance.post("/admin/login", data.toString(), {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    if (response.status === 200) {
+      const { access_token, user } = response.data;
+
+      if (!access_token) {
+        throw new Error("Invalid response: Missing access token");
+      }
+
+      login(access_token, user || null);
+
+      toast.success("Login successful.");
+
+      if (!user) {
+        router.push("/onboarding");
+      } else if (user.is_approved === 0) {
+        router.push("/verification");
+      } else {
+        router.push("/dashboard");
+      }
+    }
+  } catch (error: any) {
+    const detail = error.response?.data?.detail;
+    let errorMessage = "Something went wrong. Please try again.";
+
+    if (Array.isArray(detail)) {
+      errorMessage = detail.map((d) => d.msg).join(" | ");
+    } else if (typeof detail === "string") {
+      errorMessage = detail;
+    }
+
+    toast.error(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen w-full lg:grid lg:grid-cols-2 bg-gradient-to-br from-purple-50 via-white to-indigo-50">
+      <VendorLoginComponent />
+      <div className="flex items-center justify-center p-6 lg:p-8 relative">
+        {/* Floating elements for visual interest */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-full opacity-10 animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-16 h-16 bg-gradient-to-r from-violet-400 to-purple-400 rounded-full opacity-10 animate-pulse delay-1000"></div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        <div className="mx-auto w-full max-w-md space-y-8 relative z-10">
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl mb-4 shadow-lg">
+              <Calendar className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              Welcome Back!
+            </h1>
+            <p className="text-lg text-gray-600">
+              Ready to create amazing events? Sign in to your event organizer
+              dashboard.
+            </p>
+          </div>
+          <form onSubmit={handleSubmit}>
+            <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-8 space-y-6">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-semibold text-gray-800">
+                    Event Organizer Sign In
+                  </h2>
+                  <p className="text-gray-500 mt-1">
+                    Access your event management dashboard
+                  </p>
+                </div>
+
+                <div className="space-y-5">
+                  <Label
+                    htmlFor="username"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Username
+                  </Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="yourusername"
+                    className="h-12 border-2 border-gray-200 focus:border-purple-500 transition-colors duration-200"
+                    required
+                  />
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label
+                        htmlFor="password"
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        Password
+                      </Label>
+                      <Link
+                        href="/organizer/forgot-password"
+                        className="text-sm text-purple-600 hover:text-purple-800 font-medium transition-colors"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setPassword(val);
+                        }}
+                        placeholder="Enter your password"
+                        className="h-12 border-2 border-gray-200 focus:border-purple-500 transition-colors duration-200 pr-12"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? "Signing In..." : "Sign In"}
+                  </Button>
+                </div>
+
+                <div className="text-center pt-4">
+                  <p className="text-gray-600">
+                    New event organizer?{" "}
+                    <Link
+                      href="/signup"
+                      className="text-purple-600 hover:text-purple-800 font-semibold transition-colors"
+                    >
+                      Start Creating Events
+                    </Link>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </form>
+
+          <div className="text-center">
+            <Link
+              href="/customer"
+              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              Looking for events? Browse events →
+            </Link>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
   );
 }

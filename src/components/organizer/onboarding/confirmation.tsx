@@ -1,0 +1,110 @@
+"use client";
+import Image from "next/image";
+import { CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
+interface Step4Props {
+  referenceNumber: string;
+  onGoHome: () => void;
+}
+
+export default function Step4VerificationConfirmation({
+  referenceNumber,
+  onGoHome,
+}: Step4Props) {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    console.log("User logged out!");
+
+    router.push("/");
+  };
+  return (
+    <div className="w-full h-full lg:grid lg:grid-cols-2">
+      {/* Image Side */}
+      <div className="hidden lg:flex items-center justify-center p-12 bg-gradient-to-br from-purple-50 to-indigo-50 h-full">
+        <div className="text-center space-y-6 max-w-md">
+          <Image
+            src="/images/verificationpage.jpg"
+            alt="Event organizer welcome illustration"
+            width={400}
+            height={400}
+            className="mx-auto rounded-lg shadow-lg"
+          />
+          <h2 className="text-3xl font-bold text-gray-800">
+            Welcome to E2GO Events!
+          </h2>
+          <p className="text-gray-600 text-lg">
+            Your event organizer profile is being reviewed. Get ready to create
+            amazing experiences for your audience!
+          </p>
+        </div>
+      </div>
+      {/* Confirmation Side */}
+      <div className="flex items-center justify-center p-6 lg:p-12 relative h-full">
+        <Button
+          onClick={handleLogout}
+          className="absolute top-4 right-4 text-sm bg-purple-700 hover:bg-purple-800 text-white font-medium px-3 py-1.5 rounded-full shadow transition-all duration-200"
+        >
+          Logout
+        </Button>
+        <div className="w-full max-w-md bg-white/80 p-8 space-y-6">
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full mb-4 shadow-lg mx-auto">
+              <CheckCircle className="w-10 h-10 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              Application Submitted!
+            </h1>
+            <p className="text-lg text-gray-600">
+              Thank you for joining E2GO Events. Your event organizer
+              application is now under review.
+            </p>
+            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 space-y-3">
+              <p className="text-sm text-gray-500">Your Reference Number:</p>
+              <p className="text-3xl font-extrabold text-gray-800 tracking-wide">
+                {referenceNumber || "N/A"}{" "}
+                {/* Fallback for empty referenceNumber */}
+              </p>
+            </div>
+          </div>
+
+          <div className="text-left space-y-3">
+            <h3 className="text-xl font-semibold text-gray-800">
+              What's Next?
+            </h3>
+            <ul className="list-disc list-inside text-gray-600 space-y-2">
+              <li>
+                Our team is reviewing your event organizer credentials and
+                business verification.
+              </li>
+              <li>
+                You will receive an email notification within 1-2 business days
+                regarding your application status.
+              </li>
+              <li>
+                Once approved, you'll access your event dashboard to create and
+                manage events!
+              </li>
+              <li>
+                Start planning your first event - we'll notify you as soon as
+                you're approved!
+              </li>
+            </ul>
+          </div>
+
+          <div className="flex justify-center pt-2">
+            <Button
+              onClick={onGoHome}
+              className="h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+            >
+              Go to Dashboard
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
