@@ -8,25 +8,33 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import useStore from "@/lib/Zustand";
 import axiosInstance from "@/lib/axiosinstance";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { 
-  Camera, 
-  User, 
-  Mail, 
-  Shield, 
-  Upload, 
-  X, 
+import {
+  Camera,
+  User,
+  Mail,
+  Shield,
+  Upload,
+  X,
   Check,
   AlertCircle,
   Loader2,
   Lock,
   Eye,
   EyeOff,
-  Settings
+  Settings,
 } from "lucide-react";
 
 type User = {
@@ -46,7 +54,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Change Password States
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -56,18 +64,18 @@ export default function ProfilePage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const router=useRouter();
-const {userId} = useStore();
+  const router = useRouter();
+  const { userId } = useStore();
 
   const fetchUserDetails = async (userId: string) => {
     try {
       setLoading(true);
       setError(null);
       const response = await axiosInstance.get(`/organizers/${userId}`);
-      setUser(response.data.organizer_login
-);
+      setUser(response.data.organizer_login);
     } catch (error: any) {
-      const errorMessage = error?.response?.data?.message || 'Failed to fetch user data';
+      const errorMessage =
+        error?.response?.data?.message || "Failed to fetch user data";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -76,7 +84,7 @@ const {userId} = useStore();
   };
 
   useEffect(() => {
-    console.log(userId)
+    console.log(userId);
     if (!userId) {
       setError("User ID not found");
       setLoading(false);
@@ -125,33 +133,41 @@ const {userId} = useStore();
 
     setUploadLoading(true);
     const formData = new FormData();
-    formData.append('user_id', userId);
+    formData.append("user_id", userId);
     formData.append("profile_picture", selectedFile);
 
     try {
-      const response = await axiosInstance.patch(`/admin/profile/picture`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
+      const response = await axiosInstance.patch(
+        `/admin/profile/picture`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
       if (response.data.statusCode === 200) {
         toast.success("Profile image updated successfully");
         setShowActions(false);
         setSelectedFile(null);
-        
+
         // Update user state with new profile picture
         if (user) {
           setUser({
             ...user,
-            profile_picture: response.data.data?.profile_picture || avatarPreview || user.profile_picture
+            profile_picture:
+              response.data.data?.profile_picture ||
+              avatarPreview ||
+              user.profile_picture,
           });
         }
-        
+
         setAvatarPreview(null);
       } else {
         toast.error("Failed to update image.");
       }
     } catch (error: any) {
-      const errorMessage = error?.response?.data?.message || "Error uploading image.";
+      const errorMessage =
+        error?.response?.data?.message || "Error uploading image.";
       toast.error(errorMessage);
     } finally {
       setUploadLoading(false);
@@ -169,7 +185,7 @@ const {userId} = useStore();
       special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
     };
 
-    Object.values(checks).forEach(check => {
+    Object.values(checks).forEach((check) => {
       if (check) score++;
     });
 
@@ -177,7 +193,7 @@ const {userId} = useStore();
   };
 
   const passwordStrength = getPasswordStrength(newPassword);
-  
+
   const getStrengthLabel = (score: number) => {
     if (score === 0) return { label: "", color: "" };
     if (score <= 2) return { label: "Weak", color: "text-destructive" };
@@ -219,14 +235,18 @@ const {userId} = useStore();
 
     try {
       const formData = new URLSearchParams();
-      formData.append('current_password', currentPassword);
-      formData.append('new_password', newPassword);
+      formData.append("current_password", currentPassword);
+      formData.append("new_password", newPassword);
 
-      const response = await axiosInstance.post('/admin/change-password', formData, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+      const response = await axiosInstance.post(
+        "/admin/change-password",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         }
-      });
+      );
 
       if (response.data.statusCode === 200) {
         toast.success("Password changed successfully");
@@ -238,7 +258,8 @@ const {userId} = useStore();
         toast.error(response.data.message || "Failed to change password");
       }
     } catch (error: any) {
-      const errorMessage = error?.response?.data?.message || "Error changing password";
+      const errorMessage =
+        error?.response?.data?.message || "Error changing password";
       toast.error(errorMessage);
     } finally {
       setPasswordLoading(false);
@@ -284,7 +305,7 @@ const {userId} = useStore();
       fetchUserDetails(userId);
     }
   };
-console.log(user)
+  console.log(user);
   // Enhanced Loading skeleton
   if (loading) {
     return (
@@ -294,7 +315,7 @@ console.log(user)
           <Skeleton className="h-9 w-24 bg-muted/50" />
           <Skeleton className="h-5 w-80 bg-muted/30" />
         </div>
-        
+
         {/* Profile Picture Card Skeleton */}
         <Card className="border-border bg-card">
           <CardHeader>
@@ -366,9 +387,9 @@ console.log(user)
               <p className="font-medium">Error loading profile</p>
             </div>
             <p className="text-sm text-muted-foreground mt-2">{error}</p>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="mt-4"
               onClick={() => userId && fetchUserDetails(userId)}
             >
@@ -382,9 +403,9 @@ console.log(user)
 
   const getUserInitials = (name: string) => {
     return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
+      .split(" ")
+      .map((word) => word.charAt(0))
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -393,7 +414,9 @@ console.log(user)
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Profile</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          Profile
+        </h1>
         <p className="text-muted-foreground">
           Manage your personal information and account settings
         </p>
@@ -411,8 +434,8 @@ console.log(user)
           <div className="flex flex-col items-center space-y-6">
             <div className="relative group">
               <Avatar className="w-32 h-32 border-4 border-border shadow-lg">
-                <AvatarImage 
-                  src={avatarPreview || user?.profile_picture} 
+                <AvatarImage
+                  src={avatarPreview || user?.profile_picture}
                   alt={user?.username || "Profile"}
                   className="object-cover"
                 />
@@ -420,18 +443,20 @@ console.log(user)
                   {user?.username ? getUserInitials(user.username) : "U"}
                 </AvatarFallback>
               </Avatar>
-              
+
               {/* Overlay for hover effect */}
-              <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center cursor-pointer"
-                   onClick={triggerFileInput}>
+              <div
+                className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center cursor-pointer"
+                onClick={triggerFileInput}
+              >
                 <Upload className="h-6 w-6 text-white" />
               </div>
             </div>
 
             <div className="text-center space-y-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={triggerFileInput}
                 className="gap-2 hover:bg-accent hover:text-accent-foreground"
                 disabled={uploadLoading}
@@ -454,8 +479,8 @@ console.log(user)
 
             {showActions && (
               <div className="flex gap-3 animate-in slide-in-from-top-2 duration-200">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   onClick={handleSave}
                   disabled={uploadLoading}
                   className="gap-2"
@@ -467,9 +492,9 @@ console.log(user)
                   )}
                   {uploadLoading ? "Saving..." : "Save"}
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={handleCancel}
                   disabled={uploadLoading}
                   className="gap-2"
@@ -486,7 +511,9 @@ console.log(user)
       {/* Profile Information */}
       <Card className="border-border bg-card">
         <CardHeader>
-          <CardTitle className="text-card-foreground">Personal Information</CardTitle>
+          <CardTitle className="text-card-foreground">
+            Personal Information
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -521,8 +548,6 @@ console.log(user)
                 </span>
               </div>
             </div>
-
-            
           </div>
         </CardContent>
       </Card>
@@ -543,11 +568,14 @@ console.log(user)
               </p>
             </div>
             <div className="flex gap-2">
-              <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+              <Dialog
+                open={isPasswordDialogOpen}
+                onOpenChange={setIsPasswordDialogOpen}
+              >
                 <DialogTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     className="gap-2"
                     onClick={handlePasswordDialogOpen}
                   >
@@ -562,14 +590,18 @@ console.log(user)
                       Change Password
                     </DialogTitle>
                     <DialogDescription>
-                      Enter your current password and choose a new secure password.
+                      Enter your current password and choose a new secure
+                      password.
                     </DialogDescription>
                   </DialogHeader>
-                  
+
                   <div className="space-y-4 py-4">
                     {/* Current Password */}
                     <div className="space-y-2">
-                      <Label htmlFor="current-password" className="text-sm font-medium">
+                      <Label
+                        htmlFor="current-password"
+                        className="text-sm font-medium"
+                      >
                         Current Password
                       </Label>
                       <div className="relative">
@@ -601,7 +633,10 @@ console.log(user)
 
                     {/* New Password */}
                     <div className="space-y-2">
-                      <Label htmlFor="new-password" className="text-sm font-medium">
+                      <Label
+                        htmlFor="new-password"
+                        className="text-sm font-medium"
+                      >
                         New Password
                       </Label>
                       <div className="relative">
@@ -629,17 +664,21 @@ console.log(user)
                           )}
                         </Button>
                       </div>
-                      
+
                       {/* Password Strength Indicator */}
                       {newPassword && (
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground">Password strength:</span>
-                            <span className={`text-xs font-medium ${strengthInfo.color}`}>
+                            <span className="text-xs text-muted-foreground">
+                              Password strength:
+                            </span>
+                            <span
+                              className={`text-xs font-medium ${strengthInfo.color}`}
+                            >
                               {strengthInfo.label}
                             </span>
                           </div>
-                          
+
                           {/* Strength Bar */}
                           <div className="flex space-x-1">
                             {[1, 2, 3, 4, 5].map((level) => (
@@ -659,13 +698,17 @@ console.log(user)
                               />
                             ))}
                           </div>
-                          
+
                           {/* Password Requirements */}
                           <div className="space-y-1">
                             <div className="grid grid-cols-1 gap-1 text-xs">
-                              <div className={`flex items-center gap-1 transition-colors ${
-                                passwordStrength.checks.length ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
-                              }`}>
+                              <div
+                                className={`flex items-center gap-1 transition-colors ${
+                                  passwordStrength.checks.length
+                                    ? "text-green-600 dark:text-green-400"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
                                 {passwordStrength.checks.length ? (
                                   <Check className="h-3 w-3" />
                                 ) : (
@@ -673,9 +716,13 @@ console.log(user)
                                 )}
                                 At least 8 characters
                               </div>
-                              <div className={`flex items-center gap-1 transition-colors ${
-                                passwordStrength.checks.lowercase ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
-                              }`}>
+                              <div
+                                className={`flex items-center gap-1 transition-colors ${
+                                  passwordStrength.checks.lowercase
+                                    ? "text-green-600 dark:text-green-400"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
                                 {passwordStrength.checks.lowercase ? (
                                   <Check className="h-3 w-3" />
                                 ) : (
@@ -683,9 +730,13 @@ console.log(user)
                                 )}
                                 One lowercase letter
                               </div>
-                              <div className={`flex items-center gap-1 transition-colors ${
-                                passwordStrength.checks.uppercase ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
-                              }`}>
+                              <div
+                                className={`flex items-center gap-1 transition-colors ${
+                                  passwordStrength.checks.uppercase
+                                    ? "text-green-600 dark:text-green-400"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
                                 {passwordStrength.checks.uppercase ? (
                                   <Check className="h-3 w-3" />
                                 ) : (
@@ -693,9 +744,13 @@ console.log(user)
                                 )}
                                 One uppercase letter
                               </div>
-                              <div className={`flex items-center gap-1 transition-colors ${
-                                passwordStrength.checks.number ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
-                              }`}>
+                              <div
+                                className={`flex items-center gap-1 transition-colors ${
+                                  passwordStrength.checks.number
+                                    ? "text-green-600 dark:text-green-400"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
                                 {passwordStrength.checks.number ? (
                                   <Check className="h-3 w-3" />
                                 ) : (
@@ -703,9 +758,13 @@ console.log(user)
                                 )}
                                 One number
                               </div>
-                              <div className={`flex items-center gap-1 transition-colors ${
-                                passwordStrength.checks.special ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
-                              }`}>
+                              <div
+                                className={`flex items-center gap-1 transition-colors ${
+                                  passwordStrength.checks.special
+                                    ? "text-green-600 dark:text-green-400"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
                                 {passwordStrength.checks.special ? (
                                   <Check className="h-3 w-3" />
                                 ) : (
@@ -714,7 +773,7 @@ console.log(user)
                                 One special character (!@#$%^&*)
                               </div>
                             </div>
-                            
+
                             {/* Success message when all requirements are met */}
                             {passwordStrength.score >= 4 && (
                               <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400 mt-2 p-2 bg-green-50 dark:bg-green-900/20 rounded-md">
@@ -729,7 +788,10 @@ console.log(user)
 
                     {/* Confirm Password */}
                     <div className="space-y-2">
-                      <Label htmlFor="confirm-password" className="text-sm font-medium">
+                      <Label
+                        htmlFor="confirm-password"
+                        className="text-sm font-medium"
+                      >
                         Confirm New Password
                       </Label>
                       <div className="relative">
@@ -757,18 +819,22 @@ console.log(user)
                           )}
                         </Button>
                       </div>
-                      {newPassword && confirmPassword && newPassword !== confirmPassword && (
-                        <p className="text-xs text-destructive flex items-center gap-1">
-                          <AlertCircle className="h-3 w-3" />
-                          Passwords do not match
-                        </p>
-                      )}
-                      {currentPassword && newPassword && currentPassword === newPassword && (
-                        <p className="text-xs text-destructive flex items-center gap-1">
-                          <AlertCircle className="h-3 w-3" />
-                          New password must be different from current password
-                        </p>
-                      )}
+                      {newPassword &&
+                        confirmPassword &&
+                        newPassword !== confirmPassword && (
+                          <p className="text-xs text-destructive flex items-center gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            Passwords do not match
+                          </p>
+                        )}
+                      {currentPassword &&
+                        newPassword &&
+                        currentPassword === newPassword && (
+                          <p className="text-xs text-destructive flex items-center gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            New password must be different from current password
+                          </p>
+                        )}
                     </div>
                   </div>
 
@@ -803,7 +869,7 @@ console.log(user)
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-              
+
               <Button variant="outline" size="sm" disabled>
                 Privacy Settings
               </Button>

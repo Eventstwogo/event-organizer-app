@@ -9,7 +9,6 @@ export default function VerificationRejected() {
   const searchParams = useSearchParams();
   const referenceNumber = searchParams.get("ref") || "N/A";
 
-  
   return (
     <div className="w-full h-screen lg:grid lg:grid-cols-2">
       {/* Image Side */}

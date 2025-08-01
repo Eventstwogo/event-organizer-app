@@ -6,8 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import axiosInstance from "@/lib/axiosinstance";
 import useStore from "@/lib/Zustand";
 import { toast } from "sonner";
@@ -102,14 +115,14 @@ const CreateEventPage = () => {
   const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get('/events/', {
+      const response = await axiosInstance.get("/events/", {
         timeout: 10000, // 10 second timeout
       });
-      
+
       console.log("📡 Full API Response:", response);
       console.log("📊 Response Data:", response.data);
       console.log("📈 Response Status:", response.status);
-      
+
       if (response.data.statusCode === 200) {
         const eventsData = response.data.data.events || [];
         console.log("✅ Events loaded successfully:", eventsData.length);
@@ -128,14 +141,14 @@ const CreateEventPage = () => {
         status: error.response?.status,
         statusText: error.response?.statusText,
         data: error.response?.data,
-        code: error.code
+        code: error.code,
       });
-      
+
       if (error.response?.status === 404) {
         console.log("🔍 Endpoint not found, showing empty state");
         toast.error("Events endpoint not found. Please check the API.");
         setEvents([]);
-      } else if (error.code === 'ECONNABORTED') {
+      } else if (error.code === "ECONNABORTED") {
         toast.error("Request timeout. Please check your connection.");
       } else if (error.response?.status === 401) {
         toast.error("Authentication required. Please log in again.");
@@ -152,45 +165,58 @@ const CreateEventPage = () => {
   }, [router]);
 
   // Delete event - memoized to prevent re-creation
-  const handleDeleteEvent = useCallback(async (eventId: string) => {
-    if (!confirm("Are you sure you want to delete this event?")) return;
-    
-    try {
-      await axiosInstance.delete(`/events/${eventId}`);
-      toast.success("Event deleted successfully");
-      fetchEvents(); // Refresh the list
-    } catch (error) {
-      console.error("Error deleting event:", error);
-      toast.error("Failed to delete event");
-    }
-  }, [fetchEvents]);
+  const handleDeleteEvent = useCallback(
+    async (eventId: string) => {
+      if (!confirm("Are you sure you want to delete this event?")) return;
+
+      try {
+        await axiosInstance.delete(`/events/${eventId}`);
+        toast.success("Event deleted successfully");
+        fetchEvents(); // Refresh the list
+      } catch (error) {
+        console.error("Error deleting event:", error);
+        toast.error("Failed to delete event");
+      }
+    },
+    [fetchEvents]
+  );
 
   // Get unique categories - memoized for performance
   const uniqueCategories = useMemo(() => {
     const categories = events
-      .map(event => event.category)
-      .filter(category => category != null); // Filter out null categories
-    return categories.filter((category, index, self) => 
-      index === self.findIndex(c => c.category_id === category.category_id)
+      .map((event) => event.category)
+      .filter((category) => category != null); // Filter out null categories
+    return categories.filter(
+      (category, index, self) =>
+        index === self.findIndex((c) => c.category_id === category.category_id)
     );
   }, [events]);
 
   // Filter events - memoized for performance
   const filteredEvents = useMemo(() => {
-    return events.filter(event => {
+    return events.filter((event) => {
       // Search filter using debounced term
-      const matchesSearch = debouncedSearchTerm === "" || 
-        event.event_title?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        event.extra_data?.description?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        event.organizer?.username?.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
+      const matchesSearch =
+        debouncedSearchTerm === "" ||
+        event.event_title
+          ?.toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()) ||
+        event.extra_data?.description
+          ?.toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()) ||
+        event.organizer?.username
+          ?.toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase());
 
       // Status filter
-      const matchesStatus = statusFilter === "all" || 
+      const matchesStatus =
+        statusFilter === "all" ||
         (statusFilter === "true" && event.event_status) ||
         (statusFilter === "false" && !event.event_status);
 
       // Category filter
-      const matchesCategory = categoryFilter === "all" || 
+      const matchesCategory =
+        categoryFilter === "all" ||
         event.category?.category_slug === categoryFilter;
 
       return matchesSearch && matchesStatus && matchesCategory;
@@ -200,37 +226,39 @@ const CreateEventPage = () => {
   useEffect(() => {
     // Temporarily bypass auth check for debugging
     console.log("🔍 Auth check:", { isAuthenticated, userId: user?.id });
-    
+
     if (!isAuthenticated || !user?.id) {
       console.log("❌ Not authenticated, but continuing for debug...");
       // toast.error("Please log in to view events");
       // router.push('/');
       // return;
     }
-    
+
     // Always try to fetch events for debugging
     fetchEvents();
   }, [user?.id, isAuthenticated, router, fetchEvents]);
 
- console.log(filteredEvents)
+  console.log(filteredEvents);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="container mx-auto px-4 py-8">
-      
-
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Events Management</h1>
-            <p className="text-gray-600">Create, manage, and track your events</p>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+              Events Management
+            </h1>
+            <p className="text-gray-600">
+              Create, manage, and track your events
+            </p>
             {!loading && (
               <p className="text-sm text-gray-500 mt-1">
                 {filteredEvents.length} of {events.length} events
               </p>
             )}
           </div>
-          
+
           <div className="flex gap-2">
             <Button
               onClick={fetchEvents}
@@ -241,7 +269,7 @@ const CreateEventPage = () => {
               {loading ? "Loading..." : "Refresh"}
             </Button>
             <Button
-              onClick={() => router.push('/Events/BasicInfo')}
+              onClick={() => router.push("/Events/BasicInfo")}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 h-12 shadow-lg hover:shadow-xl transition-all duration-200"
             >
               <Plus className="h-5 w-5 mr-2" />
@@ -264,7 +292,7 @@ const CreateEventPage = () => {
                   className="pl-10"
                 />
               </div>
-              
+
               {/* Status Filter */}
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-full md:w-48">
@@ -276,7 +304,7 @@ const CreateEventPage = () => {
                   <SelectItem value="true">Inactive</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               {/* Category Filter */}
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger className="w-full md:w-48">
@@ -285,7 +313,10 @@ const CreateEventPage = () => {
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
                   {uniqueCategories.map((category) => (
-                    <SelectItem key={category.category_id} value={category.category_slug}>
+                    <SelectItem
+                      key={category.category_id}
+                      value={category.category_slug}
+                    >
                       {category.category_name}
                     </SelectItem>
                   ))}
@@ -318,17 +349,20 @@ const CreateEventPage = () => {
           <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
             <CardContent className="p-12 text-center">
               <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No Events Found</h3>
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                No Events Found
+              </h3>
               <p className="text-gray-500 mb-6">
-                {searchTerm || statusFilter !== 'all' || categoryFilter !== 'all'
+                {searchTerm ||
+                statusFilter !== "all" ||
+                categoryFilter !== "all"
                   ? "No events match your current filters. Try adjusting your search criteria."
-                  : events.length === 0 
-                    ? "You haven't created any events yet. Create your first event to get started!"
-                    : "No events match your current filters. Try adjusting your search criteria."
-                }
+                  : events.length === 0
+                  ? "You haven't created any events yet. Create your first event to get started!"
+                  : "No events match your current filters. Try adjusting your search criteria."}
               </p>
               <Button
-                onClick={() => router.push('/Events/BasicInfo')}
+                onClick={() => router.push("/Events/BasicInfo")}
                 className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -353,7 +387,10 @@ const CreateEventPage = () => {
                 </TableHeader>
                 <TableBody>
                   {filteredEvents.map((event) => (
-                    <TableRow key={event.event_id} className="hover:bg-gray-50/50 transition-colors">
+                    <TableRow
+                      key={event.event_id}
+                      className="hover:bg-gray-50/50 transition-colors"
+                    >
                       {/* Event Image */}
                       <TableCell className="p-4">
                         <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-gray-200">
@@ -384,7 +421,9 @@ const CreateEventPage = () => {
                             {event.extra_data?.address && (
                               <>
                                 <MapPin className="h-3 w-3 mr-1" />
-                                <span className="line-clamp-1">{event.extra_data.address}</span>
+                                <span className="line-clamp-1">
+                                  {event.extra_data.address}
+                                </span>
                               </>
                             )}
                           </div>
@@ -397,11 +436,17 @@ const CreateEventPage = () => {
                           {/* Hashtags */}
                           {event.hash_tags && event.hash_tags.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-2">
-                              {event.hash_tags.slice(0, 2).map((tag: string, index: number) => (
-                                <Badge key={index} variant="secondary" className="text-xs">
-                                  {tag}
-                                </Badge>
-                              ))}
+                              {event.hash_tags
+                                .slice(0, 2)
+                                .map((tag: string, index: number) => (
+                                  <Badge
+                                    key={index}
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
+                                    {tag}
+                                  </Badge>
+                                ))}
                               {event.hash_tags.length > 2 && (
                                 <Badge variant="secondary" className="text-xs">
                                   +{event.hash_tags.length - 2}
@@ -442,7 +487,9 @@ const CreateEventPage = () => {
 
                       {/* Status */}
                       <TableCell className="p-4">
-                        <Badge variant={event.event_status ? "default" : "secondary"}>
+                        <Badge
+                          variant={event.event_status ? "default" : "secondary"}
+                        >
                           {event.event_status ? "Active" : "Inactive"}
                         </Badge>
                       </TableCell>
@@ -458,20 +505,34 @@ const CreateEventPage = () => {
                       <TableCell className="p-4">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0"
+                            >
                               <MoreVertical className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => router.push(`/events/${event.event_slug}`)}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                router.push(`/events/${event.event_slug}`)
+                              }
+                            >
                               <Eye className="h-4 w-4 mr-2" />
                               View
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => router.push(`/Events/BasicInfo?edit=${event.event_id}`)}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                router.push(
+                                  `/Events/BasicInfo?edit=${event.event_id}`
+                                )
+                              }
+                            >
                               <Edit className="h-4 w-4 mr-2" />
                               Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => handleDeleteEvent(event.event_id)}
                               className="text-red-600"
                             >

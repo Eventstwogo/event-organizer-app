@@ -57,7 +57,9 @@ export default function VendorOnboarding() {
         `/organizers/onboarding/?abn_id=${abnDetails.abn}`,
         payload
       );
-      const refNumber = response.data.reference_number || `ONB-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+      const refNumber =
+        response.data.reference_number ||
+        `ONB-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
       setReferenceNumber(refNumber); // Update referenceNumber state
       return {
         success: true,

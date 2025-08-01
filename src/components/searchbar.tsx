@@ -1,12 +1,12 @@
 // components/ui/search-bar.tsx
-'use client';
+"use client";
 
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
-import { useRef } from 'react';
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+import { useRef } from "react";
 
 export function SearchBarWithIcon({
-  placeholder = 'Search...',
+  placeholder = "Search...",
   onChange,
   value,
 }: {

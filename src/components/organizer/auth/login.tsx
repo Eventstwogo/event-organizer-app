@@ -62,7 +62,8 @@ export default function VendorLoginComponent() {
           {/* Testimonial */}
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mt-8">
             <p className="text-purple-100 italic mb-3">
-              "E2GO Events helped me organize my first music festival with over 5,000 attendees. The platform made everything seamless!"
+              "E2GO Events helped me organize my first music festival with over
+              5,000 attendees. The platform made everything seamless!"
             </p>
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">

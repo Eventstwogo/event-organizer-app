@@ -5,10 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { 
-  ArrowLeft, 
-  Upload, 
-  X, 
+import {
+  ArrowLeft,
+  Upload,
+  X,
   Save,
   Image as ImageIcon,
   AlertCircle,
@@ -19,21 +19,32 @@ import {
   ArrowRight,
   Loader2,
   Info,
-  Badge
+  Badge,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import axiosInstance from "@/lib/axiosinstance";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import Image from 'next/image';
+import Image from "next/image";
 import slugify from "slugify";
 import useStore from "@/lib/Zustand";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Constants
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -50,33 +61,17 @@ const basicInfoSchema = z.object({
     .string()
     .min(5, "Address must be at least 5 characters")
     .max(200, "Address must not exceed 200 characters"),
-  category: z
-    .string()
-    .min(1, "Please select a category"),
-  subcategory: z
-    .string()
-    .optional(),
-  description: z
-    .string()
-    .min(10, "Description must be at least 10 characters"),
+  category: z.string().min(1, "Please select a category"),
+  subcategory: z.string().optional(),
+  description: z.string().min(10, "Description must be at least 10 characters"),
   organizer: z
     .string()
     .min(3, "Event organizer details must be at least 3 characters"),
-  duration: z
-    .string()
-    .optional(),
-  language: z
-    .string()
-    .optional(),
-  ageRestriction: z
-    .string()
-    .optional(),
-  tags: z
-    .string()
-    .optional(),
-  additionalInfo: z
-    .string()
-    .optional(),
+  duration: z.string().optional(),
+  language: z.string().optional(),
+  ageRestriction: z.string().optional(),
+  tags: z.string().optional(),
+  additionalInfo: z.string().optional(),
 });
 
 type BasicInfoFormData = z.infer<typeof basicInfoSchema>;
@@ -105,24 +100,23 @@ const BasicInfoPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { userId } = useStore();
- 
 
   // URL parameters
-  const eventId = searchParams.get('event_id');
+  const eventId = searchParams.get("event_id");
   const isEditMode = Boolean(eventId);
 
   // Loading states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingEventData, setIsLoadingEventData] = useState(false);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
-  
+
   // Image states
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [mainImagePreview, setMainImagePreview] = useState<string>("");
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [bannerImagePreview, setBannerImagePreview] = useState<string>("");
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
-  
+
   // Categories state
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -157,20 +151,20 @@ const BasicInfoPage = () => {
   // Format tags for preview
   const formattedTags = React.useMemo(() => {
     if (!watchedTags || watchedTags.trim() === "") return [];
-    
+
     return watchedTags
-      .split(',')
-      .map(tag => tag.trim())
-      .filter(tag => tag.length > 0)
-      .map(tag => tag.startsWith('#') ? tag : `#${tag}`);
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0)
+      .map((tag) => (tag.startsWith("#") ? tag : `#${tag}`));
   }, [watchedTags]);
 
   // Utility Functions
   const generateEventSlug = (title: string): string => {
-    return slugify(title, { 
-      lower: true, 
+    return slugify(title, {
+      lower: true,
       strict: true,
-      remove: /[*+~.()'"!:@]/g 
+      remove: /[*+~.()'"!:@]/g,
     });
   };
 
@@ -182,19 +176,19 @@ const BasicInfoPage = () => {
       duration: data.duration || "",
       language: data.language || "",
       ageRestriction: data.ageRestriction || "",
-      additionalInfo: data.additionalInfo || ""
+      additionalInfo: data.additionalInfo || "",
     });
   };
 
   const prepareHashtags = (tags: string) => {
     if (!tags || tags.trim() === "") return JSON.stringify([]);
-    
+
     const tagArray = tags
-      .split(',')
-      .map(tag => tag.trim())
-      .filter(tag => tag.length > 0)
-      .map(tag => tag.startsWith('#') ? tag : `#${tag}`);
-    
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0)
+      .map((tag) => (tag.startsWith("#") ? tag : `#${tag}`));
+
     return JSON.stringify(tagArray);
   };
 
@@ -228,20 +222,20 @@ const BasicInfoPage = () => {
       const eventData = response.data.data;
 
       // Set form values
-      setValue('title', eventData.event_title || '');
-      setValue('address', eventData.extra_data?.address || '');
-      setValue('category', eventData.category?.category_id || '');
-      setValue('description', eventData.extra_data?.description || '');
-      setValue('organizer', eventData.extra_data?.organizer || ''); // Fixed typo
-      setValue('duration', eventData.extra_data?.duration || '');
-      setValue('language', eventData.extra_data?.language || '');
-      setValue('ageRestriction', eventData.extra_data?.ageRestriction || '');
-      setValue('additionalInfo', eventData.extra_data?.additionalInfo || '');
-      setValue('subcategory', eventData.subcategory?.subcategory_id || '');
+      setValue("title", eventData.event_title || "");
+      setValue("address", eventData.extra_data?.address || "");
+      setValue("category", eventData.category?.category_id || "");
+      setValue("description", eventData.extra_data?.description || "");
+      setValue("organizer", eventData.extra_data?.organizer || ""); // Fixed typo
+      setValue("duration", eventData.extra_data?.duration || "");
+      setValue("language", eventData.extra_data?.language || "");
+      setValue("ageRestriction", eventData.extra_data?.ageRestriction || "");
+      setValue("additionalInfo", eventData.extra_data?.additionalInfo || "");
+      setValue("subcategory", eventData.subcategory?.subcategory_id || "");
 
       // Handle tags
       if (eventData.hash_tags && Array.isArray(eventData.hash_tags)) {
-        setValue('tags', eventData.hash_tags.join(', '));
+        setValue("tags", eventData.hash_tags.join(", "));
       }
 
       // Set image previews if available
@@ -251,13 +245,18 @@ const BasicInfoPage = () => {
       if (eventData.banner_image) {
         setBannerImagePreview(eventData.banner_image);
       }
-      if (eventData.event_extra_images && Array.isArray(eventData.event_extra_images)) {
-        const galleryPreviews = eventData.event_extra_images.map((img: string, index: number) => ({
-          id: `existing-${Date.now()}-${index}`,
-          file: null,
-          preview: img,
-          isExisting: true
-        }));
+      if (
+        eventData.event_extra_images &&
+        Array.isArray(eventData.event_extra_images)
+      ) {
+        const galleryPreviews = eventData.event_extra_images.map(
+          (img: string, index: number) => ({
+            id: `existing-${Date.now()}-${index}`,
+            file: null,
+            preview: img,
+            isExisting: true,
+          })
+        );
         setGalleryImages(galleryPreviews);
       }
 
@@ -271,53 +270,62 @@ const BasicInfoPage = () => {
   }, [isEditMode, eventId, setValue]);
 
   // Image Handling Functions
-  const handleMainImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && validateImageFile(file)) {
-      setMainImage(file);
-      const reader = new FileReader();
-      reader.onload = () => setMainImagePreview(reader.result as string);
-      reader.readAsDataURL(file);
-    }
-  }, []);
+  const handleMainImageChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file && validateImageFile(file)) {
+        setMainImage(file);
+        const reader = new FileReader();
+        reader.onload = () => setMainImagePreview(reader.result as string);
+        reader.readAsDataURL(file);
+      }
+    },
+    []
+  );
 
-  const handleBannerImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && validateImageFile(file)) {
-      setBannerImage(file);
-      const reader = new FileReader();
-      reader.onload = () => setBannerImagePreview(reader.result as string);
-      reader.readAsDataURL(file);
-    }
-  }, []);
+  const handleBannerImageChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file && validateImageFile(file)) {
+        setBannerImage(file);
+        const reader = new FileReader();
+        reader.onload = () => setBannerImagePreview(reader.result as string);
+        reader.readAsDataURL(file);
+      }
+    },
+    []
+  );
 
-  const handleGalleryImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    
-    if (galleryImages.length + files.length > MAX_GALLERY_IMAGES) {
-      toast.error(`Maximum ${MAX_GALLERY_IMAGES} gallery images allowed`);
-      return;
-    }
+  const handleGalleryImageChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(e.target.files || []);
 
-    files.forEach(file => {
-      if (!validateImageFile(file)) return;
+      if (galleryImages.length + files.length > MAX_GALLERY_IMAGES) {
+        toast.error(`Maximum ${MAX_GALLERY_IMAGES} gallery images allowed`);
+        return;
+      }
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newImage: GalleryImage = {
-          id: `new-${Date.now()}-${Math.random()}`,
-          file,
-          preview: reader.result as string,
-          isExisting: false
+      files.forEach((file) => {
+        if (!validateImageFile(file)) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          const newImage: GalleryImage = {
+            id: `new-${Date.now()}-${Math.random()}`,
+            file,
+            preview: reader.result as string,
+            isExisting: false,
+          };
+          setGalleryImages((prev) => [...prev, newImage]);
         };
-        setGalleryImages(prev => [...prev, newImage]);
-      };
-      reader.readAsDataURL(file);
-    });
-  }, [galleryImages.length]);
+        reader.readAsDataURL(file);
+      });
+    },
+    [galleryImages.length]
+  );
 
   const removeGalleryImage = useCallback((id: string) => {
-    setGalleryImages(prev => prev.filter(img => img.id !== id));
+    setGalleryImages((prev) => prev.filter((img) => img.id !== id));
   }, []);
 
   const removeMainImage = useCallback(() => {
@@ -334,12 +342,12 @@ const BasicInfoPage = () => {
   useEffect(() => {
     if (!userId) {
       toast.error("Please log in to create events");
-      router.push('/');
+      router.push("/");
       return;
     }
 
     fetchCategories();
-    
+
     if (isEditMode) {
       loadEventData();
     }
@@ -348,7 +356,9 @@ const BasicInfoPage = () => {
   // Update subcategories when category changes
   useEffect(() => {
     if (selectedCategory) {
-      const category = categories.find(cat => cat.category_id === selectedCategory);
+      const category = categories.find(
+        (cat) => cat.category_id === selectedCategory
+      );
       setSubcategories(category?.subcategories || []);
       setValue("subcategory", ""); // Reset subcategory when category changes
     } else {
@@ -379,86 +389,106 @@ const BasicInfoPage = () => {
 
     try {
       const formData = new FormData();
-      
+
       // Required fields
-      formData.append('user_id', userId.toString());
-      formData.append('event_title', data.title);
-      formData.append('event_slug', generateEventSlug(data.title));
-      formData.append('category_id', data.category);
-      
+      formData.append("user_id", userId.toString());
+      formData.append("event_title", data.title);
+      formData.append("event_slug", generateEventSlug(data.title));
+      formData.append("category_id", data.category);
+
       // Optional subcategory
-      formData.append('subcategory_id', data.subcategory?.trim() || '');
-      
+      formData.append("subcategory_id", data.subcategory?.trim() || "");
+
       // Extra data as JSON string
-      formData.append('extra_data', prepareExtraData(data));
-      
+      formData.append("extra_data", prepareExtraData(data));
+
       // Hashtags as JSON string
-      formData.append('hash_tags', prepareHashtags(data.tags || ""));
-      
+      formData.append("hash_tags", prepareHashtags(data.tags || ""));
+
       // Images - only append if new files are selected
       if (mainImage) {
-        formData.append('card_image', mainImage);
+        formData.append("card_image", mainImage);
       }
-      
+
       if (bannerImage) {
-        formData.append('banner_image', bannerImage);
+        formData.append("banner_image", bannerImage);
       }
-      
+
       // Extra images (gallery images) - only append new files
-      const newGalleryImages = galleryImages.filter(img => img.file !== null);
+      const newGalleryImages = galleryImages.filter((img) => img.file !== null);
       newGalleryImages.forEach((galleryImage) => {
         if (galleryImage.file) {
-          formData.append('extra_images', galleryImage.file);
+          formData.append("extra_images", galleryImage.file);
         }
       });
 
       let response;
-      
+
       if (isEditMode && eventId) {
         // Update existing event
-        response = await axiosInstance.patch(`/events/${eventId}/update-with-images`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        
+        response = await axiosInstance.patch(
+          `/events/${eventId}/update-with-images`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
         if (response.status === 200) {
-          toast.success("Event updated successfully! Proceeding to dates and pricing.");
+          toast.success(
+            "Event updated successfully! Proceeding to dates and pricing."
+          );
           const newSlotId = response.data.data.slot_id;
-          router.push(`/Events/Datespricing?slot_id=${newSlotId}&event_id=${eventId}`);
+          router.push(
+            `/Events/Datespricing?slot_id=${newSlotId}&event_id=${eventId}`
+          );
         } else {
           toast.error(response.data.message || "Failed to update event");
         }
       } else {
         // Create new event
-        response = await axiosInstance.post('/events/create-with-images', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        
+        response = await axiosInstance.post(
+          "/events/create-with-images",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
         if (response.status === 201) {
           const newEventId = response.data.data.event_id;
           const newSlotId = response.data.data.slot_id;
-          
-          toast.success("Event created successfully! Proceeding to dates and pricing.");
-          router.push(`/Events/Datespricing?slot_id=${newSlotId}&event_id=${newEventId}`);
+
+          toast.success(
+            "Event created successfully! Proceeding to dates and pricing."
+          );
+          router.push(
+            `/Events/Datespricing?slot_id=${newSlotId}&event_id=${newEventId}`
+          );
         } else {
           toast.error(response.data.message || "Failed to create event");
         }
       }
     } catch (error: any) {
       console.error("Error processing event:", error);
-      
+
       if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else if (error.response?.data?.errors) {
         const errors = error.response.data.errors;
-        Object.keys(errors).forEach(key => {
+        Object.keys(errors).forEach((key) => {
           toast.error(`${key}: ${errors[key][0]}`);
         });
       } else {
-        toast.error(`Failed to ${isEditMode ? 'update' : 'create'} event. Please try again.`);
+        toast.error(
+          `Failed to ${
+            isEditMode ? "update" : "create"
+          } event. Please try again.`
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -492,17 +522,22 @@ const BasicInfoPage = () => {
             </div>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 px-4">
-            {isEditMode ? 'Edit Event: Basic Information' : 'Step 1: Basic Event Information'}
+            {isEditMode
+              ? "Edit Event: Basic Information"
+              : "Step 1: Basic Event Information"}
           </h1>
           <p className="text-gray-600 text-sm sm:text-base px-4 max-w-2xl mx-auto">
-            {isEditMode 
-              ? 'Update your event details - modify the information that helps people discover and understand your event'
-              : 'Tell us about your event - the details that will help people discover and understand what you\'re offering'
-            }
+            {isEditMode
+              ? "Update your event details - modify the information that helps people discover and understand your event"
+              : "Tell us about your event - the details that will help people discover and understand what you're offering"}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" noValidate>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-8"
+          noValidate
+        >
           {/* Form Validation Summary */}
           {Object.keys(errors).length > 0 && (
             <div className="max-w-7xl mx-auto">
@@ -517,7 +552,10 @@ const BasicInfoPage = () => {
                       {Object.entries(errors).map(([field, error]) => (
                         <li key={field} className="flex items-center">
                           <span className="w-2 h-2 bg-red-400 rounded-full mr-2 flex-shrink-0"></span>
-                          <span className="capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</span>: {error?.message}
+                          <span className="capitalize">
+                            {field.replace(/([A-Z])/g, " $1").trim()}
+                          </span>
+                          : {error?.message}
                         </li>
                       ))}
                     </ul>
@@ -542,7 +580,10 @@ const BasicInfoPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {/* Event Title - spans 2 columns on xl screens */}
                   <div className="xl:col-span-2 space-y-2">
-                    <Label htmlFor="title" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="title"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Event Title *
                     </Label>
                     <Input
@@ -551,8 +592,8 @@ const BasicInfoPage = () => {
                       {...register("title")}
                       className={cn(
                         "h-12 border-2 transition-all duration-200",
-                        errors.title 
-                          ? "border-red-300 focus:border-red-500" 
+                        errors.title
+                          ? "border-red-300 focus:border-red-500"
                           : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       )}
                     />
@@ -566,23 +607,33 @@ const BasicInfoPage = () => {
 
                   {/* Category */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700">Category *</Label>
+                    <Label className="text-sm font-medium text-gray-700">
+                      Category *
+                    </Label>
                     <Controller
                       name="category"
                       control={control}
                       render={({ field }) => (
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className={cn(
-                            "h-12 border-2 transition-all duration-200",
-                            errors.category 
-                              ? "border-red-300 focus:border-red-500" 
-                              : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                          )}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger
+                            className={cn(
+                              "h-12 border-2 transition-all duration-200",
+                              errors.category
+                                ? "border-red-300 focus:border-red-500"
+                                : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
+                            )}
+                          >
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                           <SelectContent>
                             {categories.map((category) => (
-                              <SelectItem key={category.category_id} value={category.category_id}>
+                              <SelectItem
+                                key={category.category_id}
+                                value={category.category_id}
+                              >
                                 {category.category_name}
                               </SelectItem>
                             ))}
@@ -600,7 +651,10 @@ const BasicInfoPage = () => {
 
                   {/* Venue Address - spans 2 columns */}
                   <div className="md:col-span-2 space-y-2">
-                    <Label htmlFor="address" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="address"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Venue Address *
                     </Label>
                     <Input
@@ -609,8 +663,8 @@ const BasicInfoPage = () => {
                       {...register("address")}
                       className={cn(
                         "h-12 border-2 transition-all duration-200",
-                        errors.address 
-                          ? "border-red-300 focus:border-red-500" 
+                        errors.address
+                          ? "border-red-300 focus:border-red-500"
                           : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       )}
                     />
@@ -624,26 +678,33 @@ const BasicInfoPage = () => {
 
                   {/* Subcategory */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700">Subcategory</Label>
+                    <Label className="text-sm font-medium text-gray-700">
+                      Subcategory
+                    </Label>
                     <Controller
                       name="subcategory"
                       control={control}
                       render={({ field }) => (
-                        <Select 
-                          onValueChange={field.onChange} 
+                        <Select
+                          onValueChange={field.onChange}
                           value={field.value}
                           disabled={subcategories.length === 0}
                         >
                           <SelectTrigger className="h-12 border-2 border-gray-200 focus:border-blue-500 hover:border-gray-300 transition-all duration-200">
-                            <SelectValue placeholder={
-                              subcategories.length === 0 
-                                ? "Select category first" 
-                                : "Select subcategory (optional)"
-                            } />
+                            <SelectValue
+                              placeholder={
+                                subcategories.length === 0
+                                  ? "Select category first"
+                                  : "Select subcategory (optional)"
+                              }
+                            />
                           </SelectTrigger>
                           <SelectContent>
                             {subcategories.map((subcategory) => (
-                              <SelectItem key={subcategory.subcategory_id} value={subcategory.subcategory_id}>
+                              <SelectItem
+                                key={subcategory.subcategory_id}
+                                value={subcategory.subcategory_id}
+                              >
                                 {subcategory.subcategory_name}
                               </SelectItem>
                             ))}
@@ -670,7 +731,10 @@ const BasicInfoPage = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Event Description - spans full width */}
                   <div className="lg:col-span-2 space-y-2">
-                    <Label htmlFor="description" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="description"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Event Description *
                     </Label>
                     <Textarea
@@ -680,8 +744,8 @@ const BasicInfoPage = () => {
                       {...register("description")}
                       className={cn(
                         "border-2 transition-all duration-200 resize-none",
-                        errors.description 
-                          ? "border-red-300 focus:border-red-500" 
+                        errors.description
+                          ? "border-red-300 focus:border-red-500"
                           : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       )}
                     />
@@ -695,7 +759,10 @@ const BasicInfoPage = () => {
 
                   {/* Organizer Information */}
                   <div className="space-y-2">
-                    <Label htmlFor="organizer" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="organizer"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Event Organizer Details *
                     </Label>
                     <Textarea
@@ -705,8 +772,8 @@ const BasicInfoPage = () => {
                       {...register("organizer")}
                       className={cn(
                         "border-2 transition-all duration-200 resize-none",
-                        errors.organizer 
-                          ? "border-red-300 focus:border-red-500" 
+                        errors.organizer
+                          ? "border-red-300 focus:border-red-500"
                           : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       )}
                     />
@@ -717,13 +784,17 @@ const BasicInfoPage = () => {
                       </p>
                     )}
                     <p className="text-xs text-gray-500">
-                      Include organization name, contact details, and any relevant information about the organizer
+                      Include organization name, contact details, and any
+                      relevant information about the organizer
                     </p>
                   </div>
 
                   {/* Additional Information */}
                   <div className="space-y-2">
-                    <Label htmlFor="additionalInfo" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="additionalInfo"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Additional Information
                     </Label>
                     <Textarea
@@ -741,11 +812,14 @@ const BasicInfoPage = () => {
                       <TagIcon className="h-5 w-5 text-emerald-600" />
                       Event Specifications
                     </h3>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                       {/* Duration */}
                       <div className="space-y-2">
-                        <Label htmlFor="duration" className="text-sm font-medium text-gray-700">
+                        <Label
+                          htmlFor="duration"
+                          className="text-sm font-medium text-gray-700"
+                        >
                           Duration / Runtime
                         </Label>
                         <Input
@@ -754,12 +828,17 @@ const BasicInfoPage = () => {
                           {...register("duration")}
                           className="h-12 border-2 border-gray-200 focus:border-blue-500 hover:border-gray-300 transition-all duration-200"
                         />
-                        <p className="text-xs text-gray-500">How long does the event last?</p>
+                        <p className="text-xs text-gray-500">
+                          How long does the event last?
+                        </p>
                       </div>
 
                       {/* Language */}
                       <div className="space-y-2">
-                        <Label htmlFor="language" className="text-sm font-medium text-gray-700">
+                        <Label
+                          htmlFor="language"
+                          className="text-sm font-medium text-gray-700"
+                        >
                           Language
                         </Label>
                         <Input
@@ -768,12 +847,17 @@ const BasicInfoPage = () => {
                           {...register("language")}
                           className="h-12 border-2 border-gray-200 focus:border-blue-500 hover:border-gray-300 transition-all duration-200"
                         />
-                        <p className="text-xs text-gray-500">Primary language(s)</p>
+                        <p className="text-xs text-gray-500">
+                          Primary language(s)
+                        </p>
                       </div>
 
                       {/* Age Restriction */}
                       <div className="space-y-2">
-                        <Label htmlFor="ageRestriction" className="text-sm font-medium text-gray-700">
+                        <Label
+                          htmlFor="ageRestriction"
+                          className="text-sm font-medium text-gray-700"
+                        >
                           Age Restriction
                         </Label>
                         <Input
@@ -788,7 +872,10 @@ const BasicInfoPage = () => {
                       {/* Tags */}
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <Label htmlFor="tags" className="text-sm font-medium text-gray-700">
+                          <Label
+                            htmlFor="tags"
+                            className="text-sm font-medium text-gray-700"
+                          >
                             Tags / Keywords
                           </Label>
                           <TooltipProvider>
@@ -797,7 +884,10 @@ const BasicInfoPage = () => {
                                 <Info className="h-4 w-4 text-gray-400" />
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Separate tags with commas. Example: music, festival, outdoor</p>
+                                <p>
+                                  Separate tags with commas. Example: music,
+                                  festival, outdoor
+                                </p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
@@ -808,7 +898,10 @@ const BasicInfoPage = () => {
                           {...register("tags")}
                           className="h-12 border-2 border-gray-200 focus:border-blue-500 hover:border-gray-300 transition-all duration-200"
                         />
-                        <p className="text-xs text-gray-500">Comma-separated keywords to help people find your event</p>
+                        <p className="text-xs text-gray-500">
+                          Comma-separated keywords to help people find your
+                          event
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -832,13 +925,15 @@ const BasicInfoPage = () => {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <Label className="text-sm font-medium text-gray-700">
-                        Card Image {!isEditMode ? '*' : ''}
+                        Card Image {!isEditMode ? "*" : ""}
                       </Label>
                       <span className="text-xs text-gray-500">
-                        {isEditMode ? 'Optional • Max 5MB' : 'Required • Max 5MB'}
+                        {isEditMode
+                          ? "Optional • Max 5MB"
+                          : "Required • Max 5MB"}
                       </span>
                     </div>
-                    
+
                     {mainImagePreview ? (
                       <div className="relative group">
                         <div className="relative h-48 w-full rounded-lg overflow-hidden border-2 border-gray-200">
@@ -881,12 +976,18 @@ const BasicInfoPage = () => {
                           id="main-image-upload"
                           aria-describedby="main-image-help"
                         />
-                        <label htmlFor="main-image-upload" className="cursor-pointer block">
+                        <label
+                          htmlFor="main-image-upload"
+                          className="cursor-pointer block"
+                        >
                           <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4 group-hover:text-gray-500 transition-colors" />
                           <p className="text-sm text-gray-600 mb-2 group-hover:text-gray-700 transition-colors">
                             Upload card image
                           </p>
-                          <p id="main-image-help" className="text-xs text-gray-500">
+                          <p
+                            id="main-image-help"
+                            className="text-xs text-gray-500"
+                          >
                             Square/Portrait format • Recommended: 400x600px
                           </p>
                         </label>
@@ -895,8 +996,13 @@ const BasicInfoPage = () => {
 
                     {/* Card Image Tip */}
                     <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center">
-                      <p className="text-xs text-gray-500 mb-1">Card Image Tip:</p>
-                      <p className="text-xs text-gray-400">This image appears on event cards and listings. Use portrait or square format for best results.</p>
+                      <p className="text-xs text-gray-500 mb-1">
+                        Card Image Tip:
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        This image appears on event cards and listings. Use
+                        portrait or square format for best results.
+                      </p>
                     </div>
                   </div>
 
@@ -904,13 +1010,15 @@ const BasicInfoPage = () => {
                   <div className="xl:col-span-2 space-y-4">
                     <div className="flex items-center justify-between">
                       <Label className="text-sm font-medium text-gray-700">
-                        Banner Image {!isEditMode ? '*' : ''}
+                        Banner Image {!isEditMode ? "*" : ""}
                       </Label>
                       <span className="text-xs text-gray-500">
-                        {isEditMode ? 'Optional • Max 5MB' : 'Required • Max 5MB'}
+                        {isEditMode
+                          ? "Optional • Max 5MB"
+                          : "Required • Max 5MB"}
                       </span>
                     </div>
-                    
+
                     {bannerImagePreview ? (
                       <div className="relative group">
                         <div className="relative h-40 w-full rounded-lg overflow-hidden border-2 border-gray-200">
@@ -953,12 +1061,18 @@ const BasicInfoPage = () => {
                           id="banner-image-upload"
                           aria-describedby="banner-image-help"
                         />
-                        <label htmlFor="banner-image-upload" className="cursor-pointer block">
+                        <label
+                          htmlFor="banner-image-upload"
+                          className="cursor-pointer block"
+                        >
                           <ImageIcon className="h-16 w-16 text-gray-400 mx-auto mb-4 group-hover:text-gray-500 transition-colors" />
                           <p className="text-lg text-gray-600 mb-2 group-hover:text-gray-700 transition-colors">
                             Click to upload banner image
                           </p>
-                          <p id="banner-image-help" className="text-sm text-gray-500">
+                          <p
+                            id="banner-image-help"
+                            className="text-sm text-gray-500"
+                          >
                             Wide format • Recommended: 1920x540px or 1200x400px
                           </p>
                         </label>
@@ -967,8 +1081,13 @@ const BasicInfoPage = () => {
 
                     {/* Banner Image Tip */}
                     <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center">
-                      <p className="text-xs text-gray-500 mb-1">Banner Image Tip:</p>
-                      <p className="text-xs text-gray-400">This wide image appears at the top of your event page. Use landscape format with 16:9 or 3:1 aspect ratio.</p>
+                      <p className="text-xs text-gray-500 mb-1">
+                        Banner Image Tip:
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        This wide image appears at the top of your event page.
+                        Use landscape format with 16:9 or 3:1 aspect ratio.
+                      </p>
                     </div>
                   </div>
 
@@ -976,9 +1095,12 @@ const BasicInfoPage = () => {
                   <div className="xl:col-span-3 space-y-6">
                     <div className="flex items-center justify-between">
                       <Label className="text-lg font-medium text-gray-700">
-                        Gallery Images ({galleryImages.length}/{MAX_GALLERY_IMAGES})
+                        Gallery Images ({galleryImages.length}/
+                        {MAX_GALLERY_IMAGES})
                       </Label>
-                      <span className="text-sm text-gray-500">Optional • Max 5MB each</span>
+                      <span className="text-sm text-gray-500">
+                        Optional • Max 5MB each
+                      </span>
                     </div>
 
                     {/* Gallery Grid */}
@@ -988,7 +1110,9 @@ const BasicInfoPage = () => {
                           <div className="relative h-24 w-full rounded-lg overflow-hidden border-2 border-gray-200">
                             <Image
                               src={image.preview}
-                              alt={`Gallery image ${image.isExisting ? '(existing)' : '(new)'}`}
+                              alt={`Gallery image ${
+                                image.isExisting ? "(existing)" : "(new)"
+                              }`}
                               fill
                               className="object-cover"
                             />
@@ -1009,7 +1133,9 @@ const BasicInfoPage = () => {
                             size="icon"
                             className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => removeGalleryImage(image.id)}
-                            aria-label={`Remove ${image.isExisting ? 'existing' : 'new'} gallery image`}
+                            aria-label={`Remove ${
+                              image.isExisting ? "existing" : "new"
+                            } gallery image`}
                           >
                             <X className="h-3 w-3" />
                           </Button>
@@ -1028,11 +1154,20 @@ const BasicInfoPage = () => {
                             id="gallery-images-upload"
                             aria-describedby="gallery-help"
                           />
-                          <label htmlFor="gallery-images-upload" className="cursor-pointer block">
+                          <label
+                            htmlFor="gallery-images-upload"
+                            className="cursor-pointer block"
+                          >
                             <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2 group-hover:text-gray-500 transition-colors" />
-                            <p className="text-xs text-gray-600 group-hover:text-gray-700 transition-colors">Add Images</p>
-                            <p id="gallery-help" className="text-xs text-gray-500">
-                              {MAX_GALLERY_IMAGES - galleryImages.length} more • Multiple files OK
+                            <p className="text-xs text-gray-600 group-hover:text-gray-700 transition-colors">
+                              Add Images
+                            </p>
+                            <p
+                              id="gallery-help"
+                              className="text-xs text-gray-500"
+                            >
+                              {MAX_GALLERY_IMAGES - galleryImages.length} more •
+                              Multiple files OK
                             </p>
                           </label>
                         </div>
@@ -1043,8 +1178,12 @@ const BasicInfoPage = () => {
                     {galleryImages.length === 0 && (
                       <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
                         <ImageIcon className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                        <p className="text-lg text-gray-600 mb-2">No gallery images uploaded yet</p>
-                        <p className="text-sm text-gray-500 mb-4">Upload images to showcase your event (optional)</p>
+                        <p className="text-lg text-gray-600 mb-2">
+                          No gallery images uploaded yet
+                        </p>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Upload images to showcase your event (optional)
+                        </p>
                         <input
                           type="file"
                           accept={ACCEPTED_IMAGE_TYPES}
@@ -1055,13 +1194,21 @@ const BasicInfoPage = () => {
                           aria-describedby="gallery-empty-help"
                         />
                         <label htmlFor="gallery-images-upload-empty">
-                          <Button type="button" variant="outline" className="cursor-pointer hover:bg-gray-50">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="cursor-pointer hover:bg-gray-50"
+                          >
                             <Upload className="h-4 w-4 mr-2" />
                             Upload Gallery Images
                           </Button>
                         </label>
-                        <p id="gallery-empty-help" className="text-xs text-gray-400 mt-2">
-                          You can upload up to {MAX_GALLERY_IMAGES} images • JPEG, PNG, WebP • Max 5MB each
+                        <p
+                          id="gallery-empty-help"
+                          className="text-xs text-gray-400 mt-2"
+                        >
+                          You can upload up to {MAX_GALLERY_IMAGES} images •
+                          JPEG, PNG, WebP • Max 5MB each
                         </p>
                       </div>
                     )}
@@ -1076,7 +1223,7 @@ const BasicInfoPage = () => {
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push('/Dashboard')}
+              onClick={() => router.push("/Dashboard")}
               disabled={isSubmitting}
               className="px-8 py-3 h-12 border-2 hover:scale-105 transition-transform disabled:hover:scale-100 disabled:opacity-50"
               aria-label="Cancel and return to dashboard"
@@ -1084,7 +1231,7 @@ const BasicInfoPage = () => {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Cancel
             </Button>
-            
+
             {isLoadingEventData ? (
               <Button
                 disabled
@@ -1098,17 +1245,21 @@ const BasicInfoPage = () => {
                 type="submit"
                 disabled={isSubmitting || isLoadingCategories}
                 className="px-8 py-3 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 hover:scale-105 transition-transform disabled:hover:scale-100 disabled:opacity-50"
-                aria-label={isEditMode ? "Update event and continue to dates and pricing" : "Create event and continue to dates and pricing"}
+                aria-label={
+                  isEditMode
+                    ? "Update event and continue to dates and pricing"
+                    : "Create event and continue to dates and pricing"
+                }
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    {isEditMode ? 'Updating...' : 'Creating...'}
+                    {isEditMode ? "Updating..." : "Creating..."}
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Save className="h-4 w-4" />
-                    {isEditMode ? 'Update & Continue' : 'Save & Continue'}
+                    {isEditMode ? "Update & Continue" : "Save & Continue"}
                     <ArrowRight className="h-4 w-4" />
                   </div>
                 )}
@@ -1120,7 +1271,9 @@ const BasicInfoPage = () => {
           {isSubmitting && (
             <div className="mt-4 text-center">
               <p className="text-sm text-gray-600">
-                {isEditMode ? 'Updating your event...' : 'Creating your event...'}
+                {isEditMode
+                  ? "Updating your event..."
+                  : "Creating your event..."}
               </p>
               <p className="text-xs text-gray-500 mt-1">
                 Please don't close this page while we process your request.

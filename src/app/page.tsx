@@ -83,9 +83,11 @@ export default function EventOrganizerLogin() {
           case "under_review":
             router.push("/verification");
             break;
-         case "rejected":
+          case "rejected":
             router.push(
-              `/rejected?ref=${encodeURIComponent(organizer_info?.ref_number || "N/A")}`
+              `/rejected?ref=${encodeURIComponent(
+                organizer_info?.ref_number || "N/A"
+              )}`
             );
             break;
           case "not_started":

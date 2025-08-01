@@ -2,10 +2,10 @@
 import Image from "next/image";
 import type React from "react";
 import { Target } from "lucide-react";
- 
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
- 
+
 interface Step2Props {
   generalQuestions: {
     mainGoals: string[];
@@ -18,7 +18,7 @@ interface Step2Props {
   onNext: () => void;
   onBack: () => void;
 }
- 
+
 export default function Step2Goals({
   generalQuestions,
   setGeneralQuestions,
@@ -35,7 +35,7 @@ export default function Step2Goals({
     "Corporate Event Planning",
     "Entertainment Events",
   ];
- 
+
   const handleGoalToggle = (goal: string) => {
     setGeneralQuestions((prev) => {
       const newGoals = prev.mainGoals.includes(goal)
@@ -44,7 +44,7 @@ export default function Step2Goals({
       return { ...prev, mainGoals: newGoals };
     });
   };
- 
+
   const handleSubmit = () => {
     if (generalQuestions.mainGoals.length > 0) {
       onNext();
@@ -52,7 +52,7 @@ export default function Step2Goals({
       alert("Please select at least one goal.");
     }
   };
- 
+
   return (
     <div className="w-full min-h-screen lg:h-full lg:grid lg:grid-cols-2">
       {/* Image Side */}
@@ -69,11 +69,12 @@ export default function Step2Goals({
             Define Your Event Goals
           </h2>
           <p className="text-gray-600 text-base xl:text-lg">
-            Tell us about your event objectives so we can customize the perfect tools and features for your success.
+            Tell us about your event objectives so we can customize the perfect
+            tools and features for your success.
           </p>
         </div>
       </div>
-     
+
       {/* Form Side */}
       <div className="flex items-center justify-center p-4 sm:p-6 lg:p-8 min-h-screen lg:h-full">
         <div className="w-full max-w-sm sm:max-w-md space-y-4 sm:space-y-6">
@@ -89,7 +90,7 @@ export default function Step2Goals({
               Select all that apply to your event organizing needs:
             </p>
           </div>
-         
+
           {/* Goals Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 overflow-y-auto max-h-[50vh] sm:max-h-[60vh] lg:max-h-[calc(100vh-280px)]">
             {goals.map((goal) => (
@@ -112,7 +113,7 @@ export default function Step2Goals({
               </Button>
             ))}
           </div>
-         
+
           {/* Navigation Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 sm:justify-between pt-4">
             <Button

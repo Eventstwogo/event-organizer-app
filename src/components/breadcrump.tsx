@@ -31,9 +31,13 @@ const DynamicBreadcrumb: React.FC = () => {
                 <BreadcrumbSeparator /> {/* Ensure it's outside <li> */}
                 <BreadcrumbItem>
                   {isLast ? (
-                    <BreadcrumbPage>{segment.replace(/-/g, " ")}</BreadcrumbPage> // Display the current page
+                    <BreadcrumbPage>
+                      {segment.replace(/-/g, " ")}
+                    </BreadcrumbPage> // Display the current page
                   ) : (
-                    <BreadcrumbLink href={`/${pathSegments.slice(0, index + 1).join("/")}`}>
+                    <BreadcrumbLink
+                      href={`/${pathSegments.slice(0, index + 1).join("/")}`}
+                    >
                       {segment.replace(/-/g, " ")}
                     </BreadcrumbLink>
                   )}

@@ -9,7 +9,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import axiosInstance from "@/lib/axiosinstance";
 import EmailConfirmationInfo from "@/components/organizer/auth/email-confirmation-info";
 
-
 export default function EmailConfirmation() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<
@@ -18,43 +17,42 @@ export default function EmailConfirmation() {
   const [message, setMessage] = useState("");
   const [tokenExpired, setTokenExpired] = useState(false);
 
- useEffect(() => {
-  const token = searchParams.get("token");
-  const email = searchParams.get("email");
+  useEffect(() => {
+    const token = searchParams.get("token");
+    const email = searchParams.get("email");
 
-  if (token && email) {
-    setStatus("verifying");
+    if (token && email) {
+      setStatus("verifying");
 
-    axiosInstance
-      .post("/organizers/email/verify", {
-        email: email,
-        token: token,
-      })
-      .then((res) => {
-        const data = res.data;
-        setMessage(data.message);
-        setStatus(data.statusCode === 200 ? "success" : "error");
-      })
-      .catch((error) => {
-        const errorDetail = error?.response?.data?.detail;
-        const errorMsg =
-          errorDetail?.message ||
-          "An error occurred while verifying your email.";
+      axiosInstance
+        .post("/organizers/email/verify", {
+          email: email,
+          token: token,
+        })
+        .then((res) => {
+          const data = res.data;
+          setMessage(data.message);
+          setStatus(data.statusCode === 200 ? "success" : "error");
+        })
+        .catch((error) => {
+          const errorDetail = error?.response?.data?.detail;
+          const errorMsg =
+            errorDetail?.message ||
+            "An error occurred while verifying your email.";
 
-        setMessage(errorMsg);
+          setMessage(errorMsg);
 
-        if (
-          errorDetail?.message ===
-          "Verification token has expired. Please request a new verification email."
-        ) {
-          setTokenExpired(true);
-        }
+          if (
+            errorDetail?.message ===
+            "Verification token has expired. Please request a new verification email."
+          ) {
+            setTokenExpired(true);
+          }
 
-        setStatus("error");
-      });
-  }
-}, [searchParams]);
-
+          setStatus("error");
+        });
+    }
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
@@ -143,8 +141,6 @@ export default function EmailConfirmation() {
               </div>
             </CardContent>
           </Card>
-
-       
         </div>
       </div>
     </div>

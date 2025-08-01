@@ -65,7 +65,7 @@ const removeActiveAccount = (tabId: string) => {
   delete accounts[tabId];
   localStorage.setItem("activeAccounts", JSON.stringify(accounts));
 };
- 
+
 const useStore = create<AuthState>((set, get) => ({
   userId: null,
   bprofileId: null,
@@ -81,7 +81,7 @@ const useStore = create<AuthState>((set, get) => ({
 
     try {
       const decoded = jwt.decode(access_token) as DecodedToken | null;
-console.log(decoded)
+      console.log(decoded)
       if (decoded?.uid && decoded?.rid) {
         const tabId = getTabId();
 
@@ -144,7 +144,7 @@ console.log(decoded)
   },
 
   logout: () => {
-   
+
     const tabId = getTabId();
     set({
       userId: null,
@@ -153,7 +153,7 @@ console.log(decoded)
       user: null,
       isAuthenticated: false,
     });
-     console.log("Logging out");
+    console.log("Logging out");
 
     localStorage.removeItem(`auth_${tabId}`);
     sessionStorage.removeItem("currentAuth");

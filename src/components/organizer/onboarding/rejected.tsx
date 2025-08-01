@@ -30,7 +30,8 @@ export default function VerificationRejected({
             Application Review Required
           </h2>
           <p className="text-gray-600 text-lg">
-            Your event organizer application needs additional review. Please check your details and resubmit.
+            Your event organizer application needs additional review. Please
+            check your details and resubmit.
           </p>
         </div>
       </div>
@@ -45,7 +46,8 @@ export default function VerificationRejected({
               Application Under Review
             </h1>
             <p className="text-lg text-gray-600">
-              Your event organizer application requires additional information. Please review and resubmit.
+              Your event organizer application requires additional information.
+              Please review and resubmit.
             </p>
             <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 space-y-3">
               <p className="text-sm text-gray-500">Your Reference Number:</p>
@@ -58,9 +60,15 @@ export default function VerificationRejected({
           <div className="text-left space-y-3">
             <h3 className="text-xl font-semibold text-gray-800">Next Steps</h3>
             <ul className="list-disc list-inside text-gray-600 space-y-2">
-              <li>Review your submitted ABN and event organizer details for accuracy.</li>
+              <li>
+                Review your submitted ABN and event organizer details for
+                accuracy.
+              </li>
               <li>Ensure all business verification documents are complete.</li>
-              <li>Contact our support team if you need assistance with your application.</li>
+              <li>
+                Contact our support team if you need assistance with your
+                application.
+              </li>
               <li>Resubmit your event organizer application for review.</li>
             </ul>
           </div>
