@@ -229,6 +229,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
   { label: 'Events', icon: CalendarDays, href: '/Events' },
+    { label: 'Queries', icon: CalendarDays, href: '/queries' },
   // { label: 'Users', icon: Users, href: '/Users' },
  
   // { label: 'Revenue', icon: LineChart, href: '/Revenue' },

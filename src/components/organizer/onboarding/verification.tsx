@@ -2,12 +2,14 @@
 import Image from "next/image";
 import type React from "react";
 
-import { Building, Loader2, CheckCircle, XCircle } from "lucide-react";
+import { Building, Loader2, CheckCircle, XCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import axiosInstance from "@/lib/axiosinstance";
+import useStore from "@/lib/Zustand";
+import { useRouter } from "next/navigation";
 
 interface Step3Props {
   abnDetails: {
@@ -40,8 +42,18 @@ export default function Step3AbnVerification({
   onNext,
   onBack,
 }: Step3Props) {
+  const { logout } = useStore();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
+
   const handleVerification = async () => {
-    if (!abnDetails.abn) {
+    const trimmedAbn = abnDetails.abn.trim().replace(/\s+/g, '');
+    
+    if (!trimmedAbn) {
       setAbnDetails((prev) => ({
         ...prev,
         verificationStatus: "error",
@@ -58,7 +70,7 @@ export default function Step3AbnVerification({
 
     try {
       const response = await axiosInstance.get(
-        `/organizers/abn/{abn_id}?id=${abnDetails.abn}`
+        `/organizers/abn/{abn_id}?id=${trimmedAbn}`
       );
       const data = response.data.data;
 
@@ -101,6 +113,17 @@ if (data.entity_name && data.status && data.location && data.type) {
 
   return (
     <div className="w-full h-screen lg:grid lg:grid-cols-2">
+      {/* Logout Button */}
+      <Button
+        onClick={handleLogout}
+        variant="outline"
+        size="sm"
+        className="absolute top-4 right-4 z-10 flex items-center gap-2 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
+      >
+        <LogOut className="w-4 h-4" />
+        Logout
+      </Button>
+      
       {/* Image Side */}
       <div className="hidden lg:flex items-center justify-center p-8 bg-gradient-to-br from-purple-50 to-indigo-50 h-full">
         <div className="text-center space-y-6 max-w-md">

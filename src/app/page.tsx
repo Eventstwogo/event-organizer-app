@@ -75,19 +75,28 @@ export default function EventOrganizerLogin() {
         toast.success("Login successful.");
 
         // Redirect based on onboarding_status
-        const status = organizer_info?.onboarding_status || "unknown";
+        console.log(organizer_info)
+        const status = organizer_info?.is_approved || "unknown";
+        console.log(status)
+    
         switch (status) {
-          case "approved":
+          case 2:
             router.push("/dashboard");
             break;
-          case "under_review":
+          case 0:
             router.push("/verification");
             break;
-         case "rejected":
+          case 1:
+            router.push(`/hold?ref=${encodeURIComponent(organizer_info?.ref_number || "N/A")}`)
+            break;
+            case -1:
             router.push(
-              `/rejected?ref=${encodeURIComponent(organizer_info?.ref_number || "N/A")}`
+              `/rejected?ref=${encodeURIComponent(
+                organizer_info?.ref_number || "N/A"
+              )}&comment=${encodeURIComponent(organizer_info?.reviewer_comment || "")}`
             );
             break;
+        
           case "not_started":
           case "unknown":
           default:
@@ -96,8 +105,9 @@ export default function EventOrganizerLogin() {
         }
       }
     } catch (error: any) {
-      const detail = error.response?.data?.detail;
-      let errorMessage = "Something went wrong. Please try again.";
+      const detail = error.response?.data.message
+      console.log(detail)
+      let errorMessage =error.response?.data.message|| "Something went wrong. Please try again.";
 
       if (Array.isArray(detail)) {
         errorMessage = detail.map((d) => d.msg).join(" | ");
@@ -149,14 +159,14 @@ export default function EventOrganizerLogin() {
                     htmlFor="username"
                     className="text-sm font-medium text-gray-700"
                   >
-                    Username
+                Email
                   </Label>
                   <Input
                     id="username"
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="yourusername"
+                    placeholder="Enter email"
                     className="h-12 border-2 border-gray-200 focus:border-purple-500 transition-colors duration-200"
                     required
                   />
@@ -170,7 +180,7 @@ export default function EventOrganizerLogin() {
                         Password
                       </Label>
                       <Link
-                        href="/organizer/forgot-password"
+                        href="/forgot-password"
                         className="text-sm text-purple-600 hover:text-purple-800 font-medium transition-colors"
                       >
                         Forgot password?

@@ -1,7 +1,9 @@
 "use client";
 import Image from "next/image";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import useStore from "@/lib/Zustand";
+import { useRouter } from "next/navigation";
 
 interface VerificationRejectedProps {
   referenceNumber: string;
@@ -14,6 +16,14 @@ export default function VerificationRejected({
   onGoHome,
   onRetry,
 }: VerificationRejectedProps) {
+  const { logout } = useStore();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
+
   return (
     <div className="w-full h-full lg:grid lg:grid-cols-2">
       {/* Image Side */}

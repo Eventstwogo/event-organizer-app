@@ -2,11 +2,13 @@
 import Image from "next/image";
 import type React from "react";
 import { useState, useEffect} from 'react';
-import { Calendar, MapPin } from "lucide-react";
+import { Calendar, MapPin, LogOut } from "lucide-react";
 import axiosInstance from "@/lib/axiosinstance";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import useStore from "@/lib/Zustand";
+import { useRouter } from "next/navigation";
  
 import { CheckCircle, XCircle, Loader2, Store } from "lucide-react";
 import {
@@ -17,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import slugify from "slugify";
+import { toast } from "sonner";
 
 interface Step1Props {
   storeDetails: {
@@ -42,6 +45,14 @@ export default function Step1StoreSetup({
   setStoreDetails,
   onNext,
 }: Step1Props) {
+  const { logout } = useStore();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
+
   const handleSubmit = () => {
     if (
       storeDetails.storeName &&
@@ -51,7 +62,7 @@ export default function Step1StoreSetup({
     ) {
       onNext();
     } else {
-      alert("Please fill in all event organizer details.");
+      toast.error("Please fill in all event organizer details.");
     }
   };
 
@@ -98,6 +109,17 @@ useEffect(() => {
 
   return (
     <div className="w-full h-full lg:grid lg:grid-cols-2">
+      {/* Logout Button */}
+      <Button
+        onClick={handleLogout}
+        variant="outline"
+        size="sm"
+        className="absolute top-4 right-4 z-10 flex items-center gap-2 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
+      >
+        <LogOut className="w-4 h-4" />
+        Logout
+      </Button>
+      
       {/* Image Side */}
       <div className="hidden lg:flex items-center justify-center p-8 bg-gradient-to-br from-purple-50 to-indigo-50 h-full">
         <div className="text-center space-y-6 max-w-md">

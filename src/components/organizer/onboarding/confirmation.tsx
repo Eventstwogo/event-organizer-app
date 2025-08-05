@@ -1,8 +1,9 @@
 "use client";
 import Image from "next/image";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import useStore from "@/lib/Zustand";
 
 interface Step4Props {
   referenceNumber: string;
@@ -13,12 +14,11 @@ export default function Step4VerificationConfirmation({
   referenceNumber,
   onGoHome,
 }: Step4Props) {
+  const { logout } = useStore();
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.clear();
-    console.log("User logged out!");
-
+    logout();
     router.push("/");
   };
   return (
@@ -46,8 +46,11 @@ export default function Step4VerificationConfirmation({
       <div className="flex items-center justify-center p-6 lg:p-12 relative h-full">
         <Button
           onClick={handleLogout}
-          className="absolute top-4 right-4 text-sm bg-purple-700 hover:bg-purple-800 text-white font-medium px-3 py-1.5 rounded-full shadow transition-all duration-200"
+          variant="outline"
+          size="sm"
+          className="absolute top-4 right-4 z-10 flex items-center gap-2 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
         >
+          <LogOut className="w-4 h-4" />
           Logout
         </Button>
         <div className="w-full max-w-md bg-white/80 p-8 space-y-6">

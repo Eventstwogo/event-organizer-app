@@ -1,10 +1,13 @@
 "use client";
 import Image from "next/image";
 import type React from "react";
-import { Target } from "lucide-react";
+import { Target, LogOut } from "lucide-react";
+import useStore from "@/lib/Zustand";
+import { useRouter } from "next/navigation";
  
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
  
 interface Step2Props {
   generalQuestions: {
@@ -25,6 +28,14 @@ export default function Step2Goals({
   onNext,
   onBack,
 }: Step2Props) {
+  const { logout } = useStore();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
+
   const goals = [
     "Sell Event Tickets",
     "Build Event Community",
@@ -49,12 +60,23 @@ export default function Step2Goals({
     if (generalQuestions.mainGoals.length > 0) {
       onNext();
     } else {
-      alert("Please select at least one goal.");
+      toast.error("Please select at least one goal.");
     }
   };
  
   return (
     <div className="w-full min-h-screen lg:h-full lg:grid lg:grid-cols-2">
+      {/* Logout Button */}
+      <Button
+        onClick={handleLogout}
+        variant="outline"
+        size="sm"
+        className="absolute top-4 right-4 z-10 flex items-center gap-2 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
+      >
+        <LogOut className="w-4 h-4" />
+        Logout
+      </Button>
+      
       {/* Image Side */}
       <div className="hidden lg:flex items-center justify-center p-4 xl:p-8 bg-gradient-to-br from-purple-50 to-indigo-50 h-full">
         <div className="text-center space-y-4 xl:space-y-6 max-w-md">

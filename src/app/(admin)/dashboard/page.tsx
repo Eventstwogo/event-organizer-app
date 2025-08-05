@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import useStore from "@/lib/Zustand";
-import {
+import {MessageSquare,
   LayoutGrid,
   Users,
   ShoppingCart,
@@ -25,22 +25,17 @@ import {
   Bell,
   User as UserIcon,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useDashboardStats, useThemeAnimations } from "@/hooks/use-dashboard-stats";
+import { useDashboardActivity } from "@/hooks/use-dashboard-activity";
 
 
 // Mock user info (replace with real user data if available)
 const user = {
-  name: "Admin User",
+  name: "Event Organizer",
   avatar: null,
-  role: "Administrator",
+  role: "Organizer",
 };
-
-// Mock recent activity (replace with real data if available)
-const recentActivity = [
-  { id: 1, type: "event", message: "Created new event: Summer Fest 2024", time: "2 hours ago" },
-  { id: 2, type: "user", message: "New user registered: John Doe", time: "4 hours ago" },
-  { id: 3, type: "ticket", message: "Sold 50 tickets for Music Night", time: "Yesterday" },
-];
 
 // Dashboard skeleton component
 const DashboardSkeleton = () => {
@@ -48,13 +43,8 @@ const DashboardSkeleton = () => {
   const {userId}=useStore()
   const router=useRouter();
 
-  useEffect(() => {
-  if(!userId){
-    router.push('/');
-  }
-  // Fetch dashboard stats here
-},[userId]
-)
+
+
   return (
   
     <main className="container mx-auto px-4 py-8 space-y-8">
@@ -138,7 +128,9 @@ const DashboardSkeleton = () => {
 
 const DashboardPage = () => {
   const { formattedStats, isLoading, error, refetch } = useDashboardStats();
+  const { activity, isLoading: activityLoading, markNotificationAsRead } = useDashboardActivity();
   const { mounted, getCardHoverClass, getIconAnimationClass, getButtonAnimationClass } = useThemeAnimations();
+  const { user: currentUser } = useStore();
 
   const getTrendIcon = (direction: 'up' | 'down' | 'neutral') => {
     switch (direction) {
@@ -153,74 +145,49 @@ const DashboardPage = () => {
 
   const statsConfig = [
     {
-      title: "Categories",
-      icon: <LayoutGrid className="w-6 h-6" />,
-      description: "Manage all ticket categories",
-      href: "/Categories",
+      title: "Events",
+      icon: <CalendarCheck className="w-6 h-6" />,
+      description: "Manage your events and schedules",
+      href: "/Events",
       gradient: "from-blue-500 to-indigo-600",
       bgGradient: "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20",
       iconBg: "bg-blue-100 dark:bg-blue-900/30",
       iconColor: "text-blue-600 dark:text-blue-400",
     },
     {
-      title: "Users",
-      icon: <Users className="w-6 h-6" />,
-      description: "View and manage all users",
-      href: "/Users",
+      title: "Queries",
+      icon: <MessageSquare className="w-6 h-6" />,
+      description: "Handle customer support queries",
+      href: "/queries",
       gradient: "from-green-500 to-emerald-600",
       bgGradient: "from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20",
       iconBg: "bg-green-100 dark:bg-green-900/30",
       iconColor: "text-green-600 dark:text-green-400",
     },
-    {
-      title: "Revenue",
-      icon: <ShoppingCart className="w-6 h-6" />,
-      description: "Track ticket sales and earnings",
-      href: "/Revenue",
-      gradient: "from-yellow-500 to-orange-600",
-      bgGradient: "from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20",
-      iconBg: "bg-yellow-100 dark:bg-yellow-900/30",
-      iconColor: "text-yellow-600 dark:text-yellow-400",
-    },
-    {
-      title: "Settings",
-      icon: <Settings className="w-6 h-6" />,
-      description: "System configuration and preferences",
-      href: "/Settings",
-      gradient: "from-purple-500 to-violet-600",
-      bgGradient: "from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20",
-      iconBg: "bg-purple-100 dark:bg-purple-900/30",
-      iconColor: "text-purple-600 dark:text-purple-400",
-    },
+
   ];
 
   const quickActions = [
     {
-      title: "Events",
+      title: "Create Event",
       icon: <CalendarCheck className="w-5 h-5" />,
-      description: "Manage events",
-      href: "/Events",
+      description: "Add new event",
+      href: "/Events/BasicInfo",
       color: "text-rose-600 dark:text-rose-400",
     },
     {
-      title: "Tickets",
-      icon: <Ticket className="w-5 h-5" />,
-      description: "View tickets",
-      href: "/Tickets",
+      title: "New Query",
+      icon: <MessageSquare className="w-5 h-5" />,
+      description: "Create support query",
+      href: "/queries/new",
       color: "text-cyan-600 dark:text-cyan-400",
     },
+ 
     {
-      title: "Analytics",
-      icon: <BarChart3 className="w-5 h-5" />,
-      description: "View reports",
-      href: "/Analytics",
-      color: "text-amber-600 dark:text-amber-400",
-    },
-    {
-      title: "Activity",
-      icon: <Activity className="w-5 h-5" />,
-      description: "Recent activity",
-      href: "/Activity",
+      title: "Profile",
+      icon: <UserIcon className="w-5 h-5" />,
+      description: "Update profile",
+      href: "/profile",
       color: "text-teal-600 dark:text-teal-400",
     },
   ];
@@ -267,7 +234,7 @@ const DashboardPage = () => {
               Dashboard
             </h1>
             <p className="text-muted-foreground">
-              Welcome back, <span className="font-semibold text-foreground">{user.name}</span>! Here&apos;s an overview of your ticket booking system.
+              Welcome back, <span className="font-semibold text-foreground">{currentUser?.username || user.name}</span>! Here&apos;s an overview of your event organizer dashboard.
             </p>
           </div>
         </div>
@@ -360,25 +327,102 @@ const DashboardPage = () => {
           <CardHeader className="flex flex-row items-center gap-2 pb-2">
             <Bell className="w-5 h-5 text-yellow-500" />
             <CardTitle className="text-base font-semibold text-foreground">Notifications</CardTitle>
+            {activity?.notifications && activity.notifications.filter(n => !n.read).length > 0 && (
+              <Badge variant="outline" className="ml-auto bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400">
+                {activity.notifications.filter(n => !n.read).length} new
+              </Badge>
+            )}
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="text-sm text-muted-foreground">No new notifications. All systems operational!</div>
+          <CardContent className="space-y-3">
+            {activityLoading ? (
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
+              </div>
+            ) : activity?.notifications && activity.notifications.length > 0 ? (
+              activity.notifications.slice(0, 3).map((notification) => (
+                <div 
+                  key={notification.id} 
+                  className={`p-3 rounded-lg border ${
+                    notification.read 
+                      ? 'bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-800' 
+                      : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                  }`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-sm font-medium text-foreground">{notification.title}</h4>
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs ${
+                            notification.type === 'error' ? 'text-red-600 border-red-300' :
+                            notification.type === 'warning' ? 'text-yellow-600 border-yellow-300' :
+                            notification.type === 'success' ? 'text-green-600 border-green-300' :
+                            'text-blue-600 border-blue-300'
+                          }`}
+                        >
+                          {notification.type}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">{notification.message}</p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {new Date(notification.timestamp).toLocaleString()}
+                      </p>
+                    </div>
+                    {!notification.read && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => markNotificationAsRead(notification.id)}
+                        className="text-xs h-6 px-2"
+                      >
+                        Mark read
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-sm text-muted-foreground">No new notifications. All systems operational!</div>
+            )}
           </CardContent>
         </Card>
+        
         {/* Recent Activity Section */}
         <Card className="bg-white dark:bg-zinc-900 border border-border/50 shadow-sm">
           <CardHeader className="flex flex-row items-center gap-2 pb-2">
             <Activity className="w-5 h-5 text-blue-500" />
             <CardTitle className="text-base font-semibold text-foreground">Recent Activity</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            {recentActivity.map((item) => (
-              <div key={item.id} className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span className="w-2 h-2 rounded-full bg-blue-400 dark:bg-blue-600" />
-                <span>{item.message}</span>
-                <span className="ml-auto text-xs text-gray-400 dark:text-gray-500">{item.time}</span>
+          <CardContent className="space-y-3">
+            {activityLoading ? (
+              <div className="space-y-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-gray-200 rounded-full animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 rounded animate-pulse flex-1"></div>
+                    <div className="h-3 bg-gray-200 rounded animate-pulse w-16"></div>
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : activity?.recentActivity && activity.recentActivity.length > 0 ? (
+              activity.recentActivity.map((item) => (
+                <div key={item.id} className="flex items-center gap-3 text-sm">
+                  <span className={`w-2 h-2 rounded-full ${
+                    item.type === 'event' ? 'bg-blue-400 dark:bg-blue-600' :
+                    item.type === 'query' ? 'bg-green-400 dark:bg-green-600' :
+                    item.type === 'user' ? 'bg-purple-400 dark:bg-purple-600' :
+                    item.type === 'ticket' ? 'bg-yellow-400 dark:bg-yellow-600' :
+                    'bg-gray-400 dark:bg-gray-600'
+                  }`} />
+                  <span className="flex-1 text-muted-foreground">{item.message}</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">{item.time}</span>
+                </div>
+              ))
+            ) : (
+              <div className="text-sm text-muted-foreground">No recent activity to display.</div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -420,12 +464,25 @@ const DashboardPage = () => {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
             <p className="text-sm text-muted-foreground">
-              Last updated: {formattedDate}
+              Last updated: {activity?.systemHealth?.lastUpdate || formattedDate}
             </p>
+            {activity?.systemHealth?.uptime && (
+              <p className="text-xs text-muted-foreground mt-1">
+                System uptime: {activity.systemHealth.uptime}
+              </p>
+            )}
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-sm text-muted-foreground">System Status: Online</span>
+            <div className={`w-2 h-2 rounded-full animate-pulse ${
+              activity?.systemHealth?.status === 'online' ? 'bg-green-500' :
+              activity?.systemHealth?.status === 'maintenance' ? 'bg-yellow-500' :
+              'bg-red-500'
+            }`} />
+            <span className="text-sm text-muted-foreground">
+              System Status: {activity?.systemHealth?.status === 'online' ? 'Online' :
+                             activity?.systemHealth?.status === 'maintenance' ? 'Maintenance' :
+                             activity?.systemHealth?.status === 'offline' ? 'Offline' : 'Unknown'}
+            </span>
           </div>
         </div>
       </div>

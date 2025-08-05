@@ -6,6 +6,7 @@ import Step3AbnVerification from "../../components/organizer/onboarding/verifica
 import Step4VerificationConfirmation from "../../components/organizer/onboarding/confirmation";
 import axiosInstance from "../../lib/axiosinstance";
 import useStore from "../../lib/Zustand";
+import { toast } from "sonner";
 
 export default function VendorOnboarding() {
   const { userId } = useStore();
@@ -43,10 +44,12 @@ export default function VendorOnboarding() {
   // Function to submit onboarding data to the backend
   const submitOnboarding = async () => {
     try {
+      const trimmedAbn = abnDetails.abn.trim().replace(/\s+/g, '');
+      
       const payload = {
         user_id: userId,
         purpose: generalQuestions.mainGoals,
-        abn_id: abnDetails.abn,
+        abn_id: trimmedAbn,
         store_name: storeDetails.storeName,
         store_url: `https://events2go.com/${storeDetails.storeUrl}`,
         industry_id: storeDetails.industry_id,
@@ -54,7 +57,7 @@ export default function VendorOnboarding() {
       };
 
       const response = await axiosInstance.post(
-        `/organizers/onboarding/?abn_id=${abnDetails.abn}`,
+        `/organizers/onboarding/?abn_id=${trimmedAbn}`,
         payload
       );
       const refNumber = response.data.reference_number || `ONB-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
@@ -112,7 +115,7 @@ export default function VendorOnboarding() {
               if (result.success) {
                 setCurrentStep(4); // Move to confirmation step after successful submission
               } else {
-                alert(result.message); // Show error to user
+                toast.error(result.message); // Show error to user
               }
             }}
             onBack={() => setCurrentStep(2)}

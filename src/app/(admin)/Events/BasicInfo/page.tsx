@@ -110,6 +110,9 @@ const BasicInfoPage = () => {
   // URL parameters
   const eventId = searchParams.get('event_id');
   const isEditMode = Boolean(eventId);
+  
+  // Debug URL parameters
+  console.log('BasicInfo URL parameters - eventId:', eventId, 'isEditMode:', isEditMode);
 
   // Loading states
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -220,12 +223,18 @@ const BasicInfoPage = () => {
   }, []);
 
   const loadEventData = useCallback(async () => {
-    if (!isEditMode || !eventId) return;
+    if (!isEditMode || !eventId) {
+      console.log('Skipping data load - isEditMode:', isEditMode, 'eventId:', eventId);
+      return;
+    }
 
+    console.log('Loading event data for eventId:', eventId);
     setIsLoadingEventData(true);
     try {
       const response = await axiosInstance.get(`/events/${eventId}`);
       const eventData = response.data.data;
+      
+      console.log('Loaded event data:', eventData);
 
       // Set form values
       setValue('title', eventData.event_title || '');
@@ -262,6 +271,7 @@ const BasicInfoPage = () => {
       }
 
       toast.success("Event data loaded successfully");
+      console.log('Event data loaded and form populated successfully');
     } catch (error) {
       console.error("Error loading event data:", error);
       toast.error("Failed to load event data");
@@ -332,6 +342,8 @@ const BasicInfoPage = () => {
 
   // Effects
   useEffect(() => {
+    console.log('BasicInfo useEffect triggered - userId:', userId, 'isEditMode:', isEditMode, 'eventId:', eventId);
+    
     if (!userId) {
       toast.error("Please log in to create events");
       router.push('/');
@@ -341,7 +353,10 @@ const BasicInfoPage = () => {
     fetchCategories();
     
     if (isEditMode) {
+      console.log('Edit mode detected, loading event data...');
       loadEventData();
+    } else {
+      console.log('Create mode - no data to load');
     }
   }, [userId, router, isEditMode, loadEventData, fetchCategories]);
 
@@ -472,6 +487,18 @@ const BasicInfoPage = () => {
         <div className="text-center">
           <div className="h-8 w-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading if event data is being loaded
+  if (isLoadingEventData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-8 w-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading event data...</p>
         </div>
       </div>
     );
@@ -1076,7 +1103,7 @@ const BasicInfoPage = () => {
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push('/Dashboard')}
+              onClick={() => router.push('/dashboard')}
               disabled={isSubmitting}
               className="px-8 py-3 h-12 border-2 hover:scale-105 transition-transform disabled:hover:scale-100 disabled:opacity-50"
               aria-label="Cancel and return to dashboard"

@@ -38,7 +38,7 @@ import {
   formatIpAddress, 
   getSessionStatusColor, 
   getSessionStatusLabel 
-} from '../utils.js';
+} from '../utils';
 import { LoadingSkeleton } from './loadingskeliton';
 
 interface SessionTableProps {

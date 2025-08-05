@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState,useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { 
   ArrowLeft, 
@@ -125,6 +125,15 @@ const CreateEventDatesPricing = () => {
     // Load existing slot data if available
     loadSlotData();
   }, [slotId, eventId, router, loadSlotData]);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
   
   // Date range selection
   const [startDate, setStartDate] = useState("");
@@ -141,6 +150,58 @@ const CreateEventDatesPricing = () => {
   const [bulkPrice, setBulkPrice] = useState("");
   const [bulkTickets, setBulkTickets] = useState("");
   const [selectedDatesForBulk, setSelectedDatesForBulk] = useState<string[]>([]);
+
+  // Debounce timer ref for API calls
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Helper function to update event details via API
+  const updateEventDetailsAPI = async (startDate?: string, endDate?: string) => {
+    if (!eventId || !userId) {
+      console.warn("Missing eventId or userId for API call");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('user_id', userId);
+      
+      if (startDate) formData.append('start_date', startDate);
+      if (endDate) formData.append('end_date', endDate);
+      
+      // Add is_online boolean
+      formData.append('is_online', isOnlineEvent.toString());
+
+      const response = await axiosInstance.patch(
+        `/events/${eventId}/update-event-details`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      );
+
+      if (response.data.statusCode === 200) {
+        toast.success("Event details updated successfully!");
+        return { success: true };
+      } else {
+        toast.error(response.data.message || "Failed to update event details");
+        return { success: false };
+      }
+    } catch (error: any) {
+      console.error("Error updating event details:", error);
+      if (error.response?.status === 404) {
+        toast.error("Event not found");
+      } else if (error.response?.status === 401) {
+        toast.error("Authentication required");
+      } else if (error.response?.status === 403) {
+        toast.error("You don't have permission to update this event");
+      } else {
+        toast.error("Failed to update event details. Please try again.");
+      }
+      return { success: false };
+    }
+  };
 
   // Parse duration string to minutes
   const parseDurationToMinutes = (durationStr: string): number => {
@@ -196,6 +257,7 @@ const CreateEventDatesPricing = () => {
   const generateDateRange = async () => {
     if (!startDate || !endDate) {
       toast.error("Please select both start and end dates");
+      
       return;
     }
 
@@ -281,13 +343,18 @@ const CreateEventDatesPricing = () => {
   };
 
   // Add single date
-  const addSingleDate = () => {
+  const addSingleDate = async () => {
     const newDate: EventDate = {
       id: Date.now().toString(),
       date: "",
       timeSlots: []
     };
+    
+    // Add the date to local state first
     setEventDates(prev => [...prev, newDate]);
+    
+    // Call API to update event details (without specific dates since this is just adding an empty date slot)
+    await updateEventDetailsAPI();
   };
 
   // Remove date
@@ -296,11 +363,35 @@ const CreateEventDatesPricing = () => {
     setSelectedDatesForBulk(prev => prev.filter(id => id !== dateId));
   };
 
-  // Update date
+  // Update date with debouncing
   const updateEventDate = (dateId: string, newDate: string) => {
+    // Update local state first
     setEventDates(prev => prev.map(date => 
       date.id === dateId ? { ...date, date: newDate } : date
     ));
+
+    // Debounce the API call to avoid too many requests
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(async () => {
+      // If we have a valid date, call the API to update event details
+      if (newDate) {
+        // Find the updated dates to determine start and end dates
+        const updatedDates = eventDates.map(date => 
+          date.id === dateId ? { ...date, date: newDate } : date
+        ).filter(date => date.date); // Only include dates that have values
+
+        if (updatedDates.length > 0) {
+          const sortedDates = updatedDates.map(d => d.date).sort();
+          const startDate = sortedDates[0];
+          const endDate = sortedDates[sortedDates.length - 1];
+
+          await updateEventDetailsAPI(startDate, endDate);
+        }
+      }
+    }, 1000); // Wait 1 second after user stops typing
   };
 
   // Add time slot to a date
@@ -552,7 +643,13 @@ const CreateEventDatesPricing = () => {
   };
 
   const goBackToBasicInfo = () => {
-    router.push('/Events/BasicInfo');
+    // Pass the event_id parameter so BasicInfo page can load existing data
+    console.log(eventId)
+    if (eventId) {
+      router.push(`/Events/BasicInfo?event_id=${eventId}`);
+    } else {
+      router.push('/Events/BasicInfo');
+    }
   };
 
   // Preview the API data structure (for debugging)
