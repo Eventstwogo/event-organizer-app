@@ -57,7 +57,7 @@ export default function VendorOnboarding() {
       };
 
       const response = await axiosInstance.post(
-        `/organizers/onboarding/?abn_id=${trimmedAbn}`,
+        `/organizers/onboarding?abn_id=${trimmedAbn}`,
         payload
       );
       const refNumber =

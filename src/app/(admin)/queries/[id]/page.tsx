@@ -104,11 +104,12 @@ const QueryDetailsPage = () => {
       
       const payload = {
         user_id: userId,
-        message: newMessage
+        message: newMessage,
+        message_type: "followup"
       };
 
       // Send message to the query thread
-      await axiosInstance.post(`/organizers/queries/${params.id}/reply`, payload);
+      await axiosInstance.post(`/organizers/queries/${params.id}/messages`, payload);
       
       // Refresh the query to get updated thread
       await fetchQuery();
