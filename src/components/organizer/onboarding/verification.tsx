@@ -74,28 +74,27 @@ export default function Step3AbnVerification({
       );
       const data = response.data.data;
 
-if (data.entity_name && data.status && data.location && data.type) {
-  setAbnDetails((prev) => ({
-    ...prev,
-    verifiedBusinessName: data.entity_name,
-    verifiedAddress: data.location,
-    verifiedStatus: data.status,
-    verifiedType: data.type,
-    verificationStatus: "success",
-    verificationMessage: "ABN verified successfully!",
-  }));
-} else {
-  setAbnDetails((prev) => ({
-    ...prev,
-    verifiedBusinessName: "",
-    verifiedAddress: "",
-    verifiedStatus: "",
-    verifiedType: "",
-    verificationStatus: "error",
-    verificationMessage: response.data.message || "Verification failed.",
-  }));
-}
-
+      if (data.entity_name && data.status && data.location && data.type) {
+        setAbnDetails((prev) => ({
+          ...prev,
+          verifiedBusinessName: data.entity_name,
+          verifiedAddress: data.location,
+          verifiedStatus: data.status,
+          verifiedType: data.type,
+          verificationStatus: "success",
+          verificationMessage: "ABN verified successfully!",
+        }));
+      } else {
+        setAbnDetails((prev) => ({
+          ...prev,
+          verifiedBusinessName: "",
+          verifiedAddress: "",
+          verifiedStatus: "",
+          verifiedType: "",
+          verificationStatus: "error",
+          verificationMessage: response.data.message || "Verification failed.",
+        }));
+      }
     } catch (error: any) {
       setAbnDetails((prev) => ({
         ...prev,
@@ -138,7 +137,8 @@ if (data.entity_name && data.status && data.location && data.type) {
             Verify Your Organization
           </h2>
           <p className="text-gray-600 text-lg">
-            Verify your business credentials to build trust with event attendees and ensure secure transactions.
+            Verify your business credentials to build trust with event attendees
+            and ensure secure transactions.
           </p>
         </div>
       </div>

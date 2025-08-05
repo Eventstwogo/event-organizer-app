@@ -10,7 +10,7 @@
 //     await axiosInstance.post('/admin/logout');
 
 //     localStorage.removeItem('id');
-    
+
 //     // Redirect to home page
 //     window.location.href = '/';
 //   } catch (error) {
@@ -18,7 +18,7 @@
 //     const { logout } = useStore.getState();
 //     logout();
 //     localStorage.removeItem('id');
-    
+
 //     // Re-throw error so calling component can handle it
 //     throw error;
 //   }

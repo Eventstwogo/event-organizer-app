@@ -1,13 +1,23 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Calendar, Clock, Eye, Edit, MapPin, MoreHorizontal, Trash2, Users } from "lucide-react"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { ColumnDef } from "@tanstack/react-table";
+import {
+  ArrowUpDown,
+  Calendar,
+  Clock,
+  Eye,
+  Edit,
+  MapPin,
+  MoreHorizontal,
+  Trash2,
+  Users,
+} from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +25,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 // Event interfaces
 interface Category {
@@ -67,14 +77,14 @@ export interface Event {
 }
 
 // Actions cell component
-const ActionsCell = ({ 
-  event, 
-  onDelete 
-}: { 
-  event: Event; 
+const ActionsCell = ({
+  event,
+  onDelete,
+}: {
+  event: Event;
   onDelete: (id: string) => void;
 }) => {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <DropdownMenu>
@@ -92,11 +102,17 @@ const ActionsCell = ({
           Copy event ID
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push(`/Events/view/${event.event_id}`)}>
+        <DropdownMenuItem
+          onClick={() => router.push(`/Events/view/${event.event_id}`)}
+        >
           <Eye className="mr-2 h-4 w-4" />
           View Details
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push(`/Events/BasicInfo?event_id=${event.event_id}`)}>
+        <DropdownMenuItem
+          onClick={() =>
+            router.push(`/Events/BasicInfo?event_id=${event.event_id}`)
+          }
+        >
           <Edit className="mr-2 h-4 w-4" />
           Edit event
         </DropdownMenuItem>
@@ -110,8 +126,8 @@ const ActionsCell = ({
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
-}
+  );
+};
 
 export const createColumns = (
   onDelete: (id: string) => void
@@ -142,7 +158,7 @@ export const createColumns = (
     accessorKey: "card_image",
     header: "Image",
     cell: ({ row }) => {
-      const event = row.original
+      const event = row.original;
       return (
         <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-gray-200">
           {event.card_image ? (
@@ -160,7 +176,7 @@ export const createColumns = (
             </div>
           )}
         </div>
-      )
+      );
     },
     enableSorting: false,
   },
@@ -175,10 +191,10 @@ export const createColumns = (
           Event Details
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
     cell: ({ row }) => {
-      const event = row.original
+      const event = row.original;
       return (
         <div className="space-y-1 min-w-[200px]">
           <h3 className="font-semibold text-gray-800 line-clamp-1">
@@ -211,7 +227,7 @@ export const createColumns = (
             </div>
           )}
         </div>
-      )
+      );
     },
   },
   {
@@ -225,10 +241,10 @@ export const createColumns = (
           Category
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
     cell: ({ row }) => {
-      const event = row.original
+      const event = row.original;
       return event.category ? (
         <div className="space-y-1">
           <Badge variant="outline" className="text-xs">
@@ -242,12 +258,12 @@ export const createColumns = (
         </div>
       ) : (
         <span className="text-gray-400">No category</span>
-      )
+      );
     },
     sortingFn: (rowA, rowB) => {
-      const categoryA = rowA.original.category?.category_name || ""
-      const categoryB = rowB.original.category?.category_name || ""
-      return categoryA.localeCompare(categoryB)
+      const categoryA = rowA.original.category?.category_name || "";
+      const categoryB = rowB.original.category?.category_name || "";
+      return categoryA.localeCompare(categoryB);
     },
   },
   {
@@ -261,10 +277,10 @@ export const createColumns = (
           Organizer
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
     cell: ({ row }) => {
-      const event = row.original
+      const event = row.original;
       return event.organizer ? (
         <div className="flex items-center space-x-2">
           <Users className="h-4 w-4 text-gray-400 flex-shrink-0" />
@@ -274,12 +290,12 @@ export const createColumns = (
         </div>
       ) : (
         <span className="text-gray-400">No organizer</span>
-      )
+      );
     },
     sortingFn: (rowA, rowB) => {
-      const organizerA = rowA.original.organizer?.username || ""
-      const organizerB = rowB.original.organizer?.username || ""
-      return organizerA.localeCompare(organizerB)
+      const organizerA = rowA.original.organizer?.username || "";
+      const organizerB = rowB.original.organizer?.username || "";
+      return organizerA.localeCompare(organizerB);
     },
   },
   {
@@ -293,15 +309,15 @@ export const createColumns = (
           Status
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
     cell: ({ row }) => {
-      const event = row.original
+      const event = row.original;
       return (
         <Badge variant={event.event_status ? "default" : "secondary"}>
           {event.event_status ? "Inactive" : "Active"}
         </Badge>
-      )
+      );
     },
   },
   {
@@ -315,23 +331,23 @@ export const createColumns = (
           Created
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
     cell: ({ row }) => {
-      const event = row.original
+      const event = row.original;
       return (
         <div className="text-sm text-gray-600">
           {new Date(event.created_at).toLocaleDateString()}
         </div>
-      )
+      );
     },
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const event = row.original
-      return <ActionsCell event={event} onDelete={onDelete} />
+      const event = row.original;
+      return <ActionsCell event={event} onDelete={onDelete} />;
     },
   },
-]
+];

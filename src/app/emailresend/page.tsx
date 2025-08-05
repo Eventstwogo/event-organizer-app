@@ -22,9 +22,12 @@ export default function ResendConfirmation() {
 
     setLoading(true);
     try {
-      const response = await axiosInstance.post("/organizers/email/resend-token", {
-        email,
-      });
+      const response = await axiosInstance.post(
+        "/organizers/email/resend-token",
+        {
+          email,
+        }
+      );
 
       if (response.status === 200) {
         setEmailSent(true);

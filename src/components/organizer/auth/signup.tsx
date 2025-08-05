@@ -3,7 +3,6 @@
 import { Store, Users, Trophy, CheckCircle } from "lucide-react";
 
 export default function VendorSignupComponent() {
-    
   return (
     <div className="hidden lg:flex bg-gradient-to-br from-purple-500 via-indigo-600 to-violet-700 relative overflow-hidden">
       {/* Enhanced Image Side */}

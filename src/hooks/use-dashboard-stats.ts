@@ -1,5 +1,5 @@
 "use client";
- 
+
 import { useState, useEffect } from "react";
 import axiosInstance from "@/lib/axiosinstance";
 import useStore from "@/lib/Zustand";
@@ -11,7 +11,7 @@ export interface DashboardStat {
   trendDirection: 'up' | 'down' | 'neutral';
   percentage?: string;
 }
- 
+
 export interface DashboardStats {
   events: DashboardStat;
   queries: DashboardStat;
@@ -56,7 +56,7 @@ interface DashboardApiResponse {
   users: UserStats;
   revenue: RevenueStats;
 }
- 
+
 // Hook for dashboard statistics
 export const useDashboardStats = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -179,7 +179,7 @@ export const useDashboardStats = () => {
       setIsLoading(false);
     }
   };
- 
+
   useEffect(() => {
     fetchStats();
   }, [userId]);
@@ -187,7 +187,7 @@ export const useDashboardStats = () => {
   const refetch = () => {
     fetchStats();
   };
- 
+
   // Format stats for display
   const formattedStats = stats ? [
     stats.events,
@@ -195,7 +195,7 @@ export const useDashboardStats = () => {
     stats.users,
     stats.revenue
   ] : [];
- 
+
   return {
     stats,
     formattedStats,
@@ -204,27 +204,27 @@ export const useDashboardStats = () => {
     refetch
   };
 };
- 
+
 // Hook for theme animations
 export const useThemeAnimations = () => {
   const [mounted, setMounted] = useState(false);
- 
+
   useEffect(() => {
     setMounted(true);
   }, []);
- 
+
   const getCardHoverClass = (bgGradient: string) => {
     return "hover:scale-[1.02] transition-all duration-300 ease-out";
   };
- 
+
   const getIconAnimationClass = () => {
     return "group-hover:scale-110 transition-transform duration-300 ease-out";
   };
- 
+
   const getButtonAnimationClass = () => {
     return "group-hover/btn:translate-x-1 transition-transform duration-200 ease-out";
   };
- 
+
   return {
     mounted,
     getCardHoverClass,

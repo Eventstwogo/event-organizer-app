@@ -26,7 +26,7 @@ interface Step1Props {
     storeName: string;
     storeUrl: string;
     location: string;
-    industry_id: string; 
+    industry_id: string;
   };
   setStoreDetails: React.Dispatch<
     React.SetStateAction<{
@@ -38,7 +38,6 @@ interface Step1Props {
   >;
   onNext: () => void;
 }
-
 
 export default function Step1StoreSetup({
   storeDetails,
@@ -66,11 +65,11 @@ export default function Step1StoreSetup({
     }
   };
 
-    const [storeNameStatus, setStoreNameStatus] = useState<
+  const [storeNameStatus, setStoreNameStatus] = useState<
     "available" | "unavailable" | "checking" | null
   >(null);
 
-useEffect(() => {
+  useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (storeDetails.storeName.trim()) {
         checkStoreNameAvailability(storeDetails.storeName.trim());
@@ -78,18 +77,17 @@ useEffect(() => {
         setStoreNameStatus(null);
       }
     }, 500); // Debounce by 500ms
- 
+
     return () => clearTimeout(delayDebounce);
   }, [storeDetails.storeName]);
- 
+
   const checkStoreNameAvailability = async (name: string) => {
     try {
       setStoreNameStatus("checking");
       const response = await axiosInstance.get(
-        `/organizers/store-name-availability?name=${name}`,
-       
+        `/organizers/store-name-availability?name=${name}`
       );
- console.log(response);
+      console.log(response);
       if (response.status === 200) {
         setStoreNameStatus("available");
         const slug = slugify(name);
@@ -104,8 +102,6 @@ useEffect(() => {
       setStoreNameStatus("unavailable");
     }
   };
- 
-
 
   return (
     <div className="w-full h-full lg:grid lg:grid-cols-2">
@@ -134,7 +130,8 @@ useEffect(() => {
             Create Amazing Events
           </h2>
           <p className="text-gray-600 text-lg">
-            Join thousands of event organizers who trust our platform to bring their events to life and connect with audiences.
+            Join thousands of event organizers who trust our platform to bring
+            their events to life and connect with audiences.
           </p>
         </div>
       </div>
@@ -148,7 +145,9 @@ useEffect(() => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
               Welcome Event Organizer!
             </h1>
-            <p className="text-lg text-gray-600">Let's set up your event organizer profile.</p>
+            <p className="text-lg text-gray-600">
+              Let's set up your event organizer profile.
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -163,7 +162,7 @@ useEffect(() => {
                   storeName: e.target.value,
                 })
               }
-             className={`h-12 border-2 pr-10 ${
+              className={`h-12 border-2 pr-10 ${
                 storeNameStatus === "available"
                   ? "border-green-500 focus:border-green-500"
                   : storeNameStatus === "unavailable"
@@ -172,14 +171,14 @@ useEffect(() => {
               } transition-colors duration-200`}
               required
             />
-                        {storeNameStatus === "checking" && (
+            {storeNameStatus === "checking" && (
               <Loader2 className="absolute right-3 top-3 w-5 h-5 text-blue-500 animate-spin" />
             )}
- 
+
             {storeNameStatus === "available" && (
               <CheckCircle className="absolute right-3 top-3 w-5 h-5 text-green-500" />
             )}
- 
+
             {storeNameStatus === "unavailable" && (
               <XCircle className="absolute right-3 top-3 w-5 h-5 text-red-500" />
             )}
@@ -216,7 +215,7 @@ useEffect(() => {
                 setStoreDetails({ ...storeDetails, location: value })
               }
             >
-               <SelectTrigger className="h-12 w-full border-2 border-gray-200 focus:border-purple-500 transition-colors duration-200">
+              <SelectTrigger className="h-12 w-full border-2 border-gray-200 focus:border-purple-500 transition-colors duration-200">
                 <SelectValue placeholder="Select your primary city" />
               </SelectTrigger>
               <SelectContent>

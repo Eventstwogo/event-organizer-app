@@ -39,14 +39,12 @@ const user = {
 
 // Dashboard skeleton component
 const DashboardSkeleton = () => {
-
-  const {userId}=useStore()
-  const router=useRouter();
+  const { userId } = useStore();
+  const router = useRouter();
 
 
 
   return (
-  
     <main className="container mx-auto px-4 py-8 space-y-8">
       {/* Header skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -66,7 +64,10 @@ const DashboardSkeleton = () => {
       {/* Stats cards skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {Array.from({ length: 4 }).map((_, index) => (
-          <Card key={index} className="relative overflow-hidden border-0 bg-gradient-to-br from-muted/50 to-muted/30">
+          <Card
+            key={index}
+            className="relative overflow-hidden border-0 bg-gradient-to-br from-muted/50 to-muted/30"
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent dark:from-white/5 dark:to-transparent" />
             <CardHeader className="relative flex flex-row items-center justify-between pb-3">
               <div className="space-y-2">
@@ -98,7 +99,10 @@ const DashboardSkeleton = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, index) => (
-            <Card key={index} className="p-4 hover:shadow-md transition-shadow duration-200">
+            <Card
+              key={index}
+              className="p-4 hover:shadow-md transition-shadow duration-200"
+            >
               <div className="flex items-center space-x-3">
                 <Skeleton className="h-8 w-8 rounded-lg" />
                 <div className="flex-1 space-y-1">
@@ -132,11 +136,11 @@ const DashboardPage = () => {
   const { mounted, getCardHoverClass, getIconAnimationClass, getButtonAnimationClass } = useThemeAnimations();
   const { user: currentUser } = useStore();
 
-  const getTrendIcon = (direction: 'up' | 'down' | 'neutral') => {
+  const getTrendIcon = (direction: "up" | "down" | "neutral") => {
     switch (direction) {
-      case 'up':
+      case "up":
         return <TrendingUp className="w-4 h-4 text-green-500" />;
-      case 'down':
+      case "down":
         return <TrendingDown className="w-4 h-4 text-red-500" />;
       default:
         return <Minus className="w-4 h-4 text-gray-500" />;
@@ -150,7 +154,8 @@ const DashboardPage = () => {
       description: "Manage your events and schedules",
       href: "/Events",
       gradient: "from-blue-500 to-indigo-600",
-      bgGradient: "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20",
+      bgGradient:
+        "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20",
       iconBg: "bg-blue-100 dark:bg-blue-900/30",
       iconColor: "text-blue-600 dark:text-blue-400",
     },
@@ -160,7 +165,8 @@ const DashboardPage = () => {
       description: "Handle customer support queries",
       href: "/queries",
       gradient: "from-green-500 to-emerald-600",
-      bgGradient: "from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20",
+      bgGradient:
+        "from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20",
       iconBg: "bg-green-100 dark:bg-green-900/30",
       iconColor: "text-green-600 dark:text-green-400",
     },
@@ -192,13 +198,13 @@ const DashboardPage = () => {
     },
   ];
 
-  const formattedDate = new Date().toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+  const formattedDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 
   if (isLoading) {
@@ -210,7 +216,9 @@ const DashboardPage = () => {
       <main className="container mx-auto px-4 py-8">
         <Card className="p-8 text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Error Loading Dashboard</h2>
+          <h2 className="text-xl font-semibold mb-2">
+            Error Loading Dashboard
+          </h2>
           <p className="text-muted-foreground mb-4">{error}</p>
           <Button onClick={refetch} variant="outline">
             <RefreshCw className="w-4 h-4 mr-2" />
@@ -246,13 +254,17 @@ const DashboardPage = () => {
           </Link>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-100 dark:bg-green-900/30">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-green-700 dark:text-green-400">Live</span>
+            <span className="text-sm font-medium text-green-700 dark:text-green-400">
+              Live
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
               <UserIcon className="w-5 h-5 text-muted-foreground" />
             </div>
-            <span className="text-sm text-foreground font-medium">{user.role}</span>
+            <span className="text-sm text-foreground font-medium">
+              {user.role}
+            </span>
           </div>
         </div>
       </div>
@@ -265,7 +277,11 @@ const DashboardPage = () => {
           return (
             <Card
               key={config.title}
-              className={`relative overflow-hidden border-0 bg-gradient-to-br ${config.bgGradient} ${getCardHoverClass(config.bgGradient)} group transition-shadow duration-200 hover:shadow-lg dark:hover:shadow-black/30`}
+              className={`relative overflow-hidden border-0 bg-gradient-to-br ${
+                config.bgGradient
+              } ${getCardHoverClass(
+                config.bgGradient
+              )} group transition-shadow duration-200 hover:shadow-lg dark:hover:shadow-black/30`}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent dark:from-white/5 dark:to-transparent" />
               <CardHeader className="relative flex flex-row items-center justify-between pb-3">
@@ -284,22 +300,26 @@ const DashboardPage = () => {
                       {statData.trend}
                     </p>
                     {statData.percentage && (
-                      <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${
-                        statData.trendDirection === 'up' 
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                          : statData.trendDirection === 'down'
-                          ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                          : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
-                      }`}>
+                      <span
+                        className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${
+                          statData.trendDirection === "up"
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : statData.trendDirection === "down"
+                            ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                            : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
+                        }`}
+                      >
                         {statData.percentage}
                       </span>
                     )}
                   </div>
                 </div>
-                <div className={`p-3 rounded-full ${config.iconBg} ${getIconAnimationClass()}`}>
-                  <div className={config.iconColor}>
-                    {config.icon}
-                  </div>
+                <div
+                  className={`p-3 rounded-full ${
+                    config.iconBg
+                  } ${getIconAnimationClass()}`}
+                >
+                  <div className={config.iconColor}>{config.icon}</div>
                 </div>
               </CardHeader>
               <CardContent className="relative pt-0">
@@ -307,12 +327,14 @@ const DashboardPage = () => {
                   {config.description}
                 </p>
                 <Link href={config.href}>
-                  <Button 
-                    variant="secondary" 
+                  <Button
+                    variant="secondary"
                     className="w-full group/btn hover:bg-background/80 dark:hover:bg-background/80 transition-all duration-200"
                   >
                     <span>Go to {config.title}</span>
-                    <ArrowRight className={`w-4 h-4 ml-2 ${getButtonAnimationClass()}`} />
+                    <ArrowRight
+                      className={`w-4 h-4 ml-2 ${getButtonAnimationClass()}`}
+                    />
                   </Button>
                 </Link>
               </CardContent>
@@ -393,7 +415,9 @@ const DashboardPage = () => {
         <Card className="bg-white dark:bg-zinc-900 border border-border/50 shadow-sm">
           <CardHeader className="flex flex-row items-center gap-2 pb-2">
             <Activity className="w-5 h-5 text-blue-500" />
-            <CardTitle className="text-base font-semibold text-foreground">Recent Activity</CardTitle>
+            <CardTitle className="text-base font-semibold text-foreground">
+              Recent Activity
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {activityLoading ? (
@@ -431,7 +455,9 @@ const DashboardPage = () => {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <div className="w-1 h-6 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full" />
-          <h2 className="text-xl font-semibold text-foreground">Quick Actions</h2>
+          <h2 className="text-xl font-semibold text-foreground">
+            Quick Actions
+          </h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickActions.map((action, index) => (
@@ -439,9 +465,7 @@ const DashboardPage = () => {
               <Card className="p-4 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-black/20 transition-all duration-200 hover:scale-[1.02] cursor-pointer border-border/50 hover:border-border group bg-white dark:bg-zinc-900">
                 <div className="flex items-center space-x-3">
                   <div className="p-2 rounded-lg bg-muted group-hover:bg-muted/80 transition-colors duration-200">
-                    <div className={action.color}>
-                      {action.icon}
-                    </div>
+                    <div className={action.color}>{action.icon}</div>
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-foreground group-hover:text-foreground/80 transition-colors duration-200">
