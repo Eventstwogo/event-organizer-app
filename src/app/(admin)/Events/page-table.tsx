@@ -475,11 +475,11 @@ const CreateEventPage = () => {
 
                       {/* Organizer */}
                       <TableCell className="p-4">
-                        {event.organizer && (
+                        {event.extra_data && (
                           <div className="flex items-center space-x-2">
                             <Users className="h-4 w-4 text-gray-400" />
                             <span className="text-sm text-gray-600 line-clamp-1">
-                              {event.organizer.username}
+                              {event?.extra_data?.organizer}
                             </span>
                           </div>
                         )}

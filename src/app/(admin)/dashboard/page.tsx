@@ -247,11 +247,11 @@ const DashboardPage = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/Settings">
+          {/* <Link href="/Settings">
             <Button variant="ghost" size="icon" className="rounded-full">
               <Settings className="w-5 h-5 text-muted-foreground" />
             </Button>
-          </Link>
+          </Link> */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-100 dark:bg-green-900/30">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <span className="text-sm font-medium text-green-700 dark:text-green-400">

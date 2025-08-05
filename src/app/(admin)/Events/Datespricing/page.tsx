@@ -31,8 +31,8 @@ interface TimeSlot {
   id: string;
   startTime: string;
   endTime: string;
-  price: number;
-  ticketCount: number;
+  price: string;
+  ticketCount: string;
   duration: number; // Duration in minutes for this specific slot
 }
 
@@ -411,8 +411,8 @@ const CreateEventDatesPricingContent = () => {
       id: Date.now().toString(),
       startTime: "",
       endTime: "",
-      price: 0,
-      ticketCount: 100,
+      price: "",
+      ticketCount: "",
       duration: defaultDuration,
     };
     setEventDates((prev) =>

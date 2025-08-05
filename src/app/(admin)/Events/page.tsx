@@ -79,7 +79,7 @@ const CreateEventPage = () => {
       if (response.data.statusCode === 200) {
         const eventsData = response.data.data.events || [];
         setEvents(eventsData);
-        toast.success(`Loaded ${eventsData.length} events successfully!`);
+        // toast.success(`Loaded ${eventsData.length} events successfully!`);
       } else {
         toast.error(response.data.message || "Failed to fetch events");
         setEvents([]);

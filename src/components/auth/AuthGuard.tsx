@@ -65,7 +65,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
       const isCurrentPathAllowed = userAllowedRoutes.some(route => {
         if (route === pathname) return true;
         // Handle dynamic routes
-        if (pathname.startsWith("/Events/view/") && route === "/Events") return true;
+        if (pathname.startsWith("/Events/") && route === "/Events") return true;
         if (pathname.startsWith("/queries/") && route === "/queries") return true;
         return false;
       });
