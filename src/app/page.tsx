@@ -89,7 +89,7 @@ export default function EventOrganizerLogin() {
           case 1:
             router.push(`/hold?ref=${encodeURIComponent(organizer_info?.ref_number || "N/A")}`)
             break;
-            case -1:
+          case -1:
             router.push(
               `/rejected?ref=${encodeURIComponent(
                 organizer_info?.ref_number || "N/A"

@@ -86,7 +86,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
             router.push(`/rejected?ref=${encodeURIComponent(user.ref_number || "N/A")}`);
             break;
           default:
-            router.push("/");
+            router.push("/onboarding");
         }
         return;
       }
