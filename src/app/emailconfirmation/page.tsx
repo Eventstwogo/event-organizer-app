@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, Mail } from "lucide-react";
@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import axiosInstance from "@/lib/axiosinstance";
 import EmailConfirmationInfo from "@/components/organizer/auth/email-confirmation-info";
 
-export default function EmailConfirmation() {
+function EmailConfirmationContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<
     "idle" | "verifying" | "success" | "error"
@@ -144,5 +144,20 @@ export default function EmailConfirmation() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function EmailConfirmation() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <EmailConfirmationContent />
+    </Suspense>
   );
 }

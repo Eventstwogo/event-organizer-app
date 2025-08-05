@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
@@ -96,7 +96,7 @@ interface GalleryImage {
   isExisting?: boolean;
 }
 
-const BasicInfoPage = () => {
+const BasicInfoContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { userId } = useStore();
@@ -1310,6 +1310,21 @@ const BasicInfoPage = () => {
         </form>
       </div>
     </div>
+  );
+};
+
+const BasicInfoPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <BasicInfoContent />
+    </Suspense>
   );
 };
 

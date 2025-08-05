@@ -94,11 +94,11 @@
 import Image from "next/image";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
- 
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
  
-export default function VerificationRejected() {
+function VerificationRejectedContent() {
   const searchParams = useSearchParams();
   const referenceNumber = searchParams.get("ref") || "N/A";
   const comment = searchParams.get("comment") || "N/A";
@@ -202,5 +202,20 @@ export default function VerificationRejected() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerificationRejected() {
+  return (
+    <Suspense fallback={
+      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-rose-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <VerificationRejectedContent />
+    </Suspense>
   );
 }

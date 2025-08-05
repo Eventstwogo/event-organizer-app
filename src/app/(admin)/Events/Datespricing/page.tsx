@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
@@ -51,7 +51,7 @@ interface Step2Data {
   requireApproval: boolean;
 }
 
-const CreateEventDatesPricing = () => {
+const CreateEventDatesPricingContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useStore();
@@ -1557,6 +1557,21 @@ const CreateEventDatesPricing = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const CreateEventDatesPricing = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <CreateEventDatesPricingContent />
+    </Suspense>
   );
 };
 

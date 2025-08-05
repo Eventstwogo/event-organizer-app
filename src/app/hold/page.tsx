@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import Image from "next/image";
 import { Clock, CheckCircle, AlertCircle, Mail, Phone, MessageSquare, RefreshCw, User, Building } from "lucide-react";
 import Link from "next/link";
@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosinstance";
 import useStore from "@/lib/Zustand";
 
-export default function OrganizationHoldPage() {
+function OrganizationHoldContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { userId, logout } = useStore();
@@ -261,5 +261,20 @@ export default function OrganizationHoldPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OrganizationHoldPage() {
+  return (
+    <Suspense fallback={
+      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <OrganizationHoldContent />
+    </Suspense>
   );
 }
