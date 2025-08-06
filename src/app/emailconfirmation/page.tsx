@@ -19,7 +19,7 @@ function EmailConfirmationContent() {
 
   useEffect(() => {
     const token = searchParams.get("token");
-    const email = searchParams.get("email");
+    const email = decodeURIComponent(searchParams.get("email") || "");
 
     if (token && email) {
       setStatus("verifying");
