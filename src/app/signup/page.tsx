@@ -81,16 +81,14 @@ export default function EventOrganizerSignup() {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
                 Join Us!
               </h1>
-              <p className="text-lg text-gray-600">
-                Get started by creating your account and start organizing
-                incredible events.
-              </p>
+             
             </div>
           </div>
 
           <form onSubmit={handleSubmit}>
             <Card className="border-0 shadow-2xl bg-white/90 backdrop-blur-sm">
-              <CardContent className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+            <img src="/logo.png" alt="Logo" className="w-40 mx-auto"/>
+              <CardContent className="p-4 sm:p-6 lg:px-8 space-y-4 sm:space-y-6">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-semibold text-gray-800">
                     Event Organizer Sign Up

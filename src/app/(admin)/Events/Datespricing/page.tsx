@@ -1446,11 +1446,8 @@ const CreateEventDatesPricingContent = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="USD">USD ($)</SelectItem>
-                      <SelectItem value="EUR">EUR (€)</SelectItem>
-                      <SelectItem value="GBP">GBP (£)</SelectItem>
-                      <SelectItem value="INR">INR (₹)</SelectItem>
-                      <SelectItem value="CAD">CAD (C$)</SelectItem>
+                      <SelectItem value="AUD">AUD ($)</SelectItem>
+                      
                     </SelectContent>
                   </Select>
                 </div>

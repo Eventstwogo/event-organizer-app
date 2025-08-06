@@ -137,14 +137,12 @@ export default function EventOrganizerLogin() {
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
               Welcome Back!
             </h1>
-            <p className="text-lg text-gray-600">
-              Ready to create amazing events? Sign in to your event organizer
-              dashboard.
-            </p>
+          
           </div>
           <form onSubmit={handleSubmit}>
             <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-8 space-y-6">
+            <img src="/logo.png" alt="Logo" className="w-40 mx-auto "/>
+              <CardContent className="px-8 space-y-2">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-semibold text-gray-800">
                     Event Organizer Sign In
