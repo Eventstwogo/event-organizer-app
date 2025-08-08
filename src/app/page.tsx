@@ -134,13 +134,11 @@ export default function EventOrganizerLogin() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl mb-4 shadow-lg">
               <Calendar className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-              Welcome Back!
-            </h1>
+
           
           </div>
           <form onSubmit={handleSubmit}>
-            <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-lg">
             <img src="/logo.png" alt="Logo" className="w-40 mx-auto "/>
               <CardContent className="px-8 space-y-2">
                 <div className="text-center mb-6">
