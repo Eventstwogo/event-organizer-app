@@ -33,7 +33,7 @@ const CreateEventPage = () => {
   //     console.log(userId)
   //     try {
   //       setLoading(true);
-  //     const response = await axiosInstance.get(`/organizers/analytics/organizer-details/${userId}`, {
+  //     const response = await axiosInstance.get(`/organizers/new-analytics/organizer-details/${userId}`, {
   //   timeout: 30000,
   // });
   //       if (response.data.statusCode === 200) {
@@ -70,7 +70,7 @@ const CreateEventPage = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        `/organizers/analytics/organizer-details/${userId}`,
+        `/organizers/new-analytics/organizer-details/${userId}`,
         {
           timeout: 10000,
         }

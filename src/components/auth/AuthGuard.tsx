@@ -30,6 +30,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
     hold: ["/hold"],
     rejected: ["/rejected"],
     approved: ["/dashboard", "/Events", "/profile", "/queries", "/onboarding"]
+    // approved: ["/dashboard", "/Events", "/profile", "/queries", "/onboarding", "/analytics", "/bookings", "/revenue"]
   };
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,10 +24,22 @@ import {MessageSquare,
   AlertCircle,
   Bell,
   User as UserIcon,
+  DollarSign,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useDashboardStats, useThemeAnimations } from "@/hooks/use-dashboard-stats";
 import { useDashboardActivity } from "@/hooks/use-dashboard-activity";
+import { 
+  useDashboardOverview, 
+  usePerformanceMetrics,
+  AnalyticsPeriod 
+} from "@/hooks/use-analytics";
+import { 
+  AnalyticsCards, 
+  RecentEvents, 
+  PeriodSelector, 
+  PerformanceMetrics 
+} from "@/components/analytics";
 
 
 // Mock user info (replace with real user data if available)
@@ -131,10 +143,21 @@ const DashboardSkeleton = () => {
 };
 
 const DashboardPage = () => {
+  const [selectedPeriod, setSelectedPeriod] = useState<AnalyticsPeriod>("30d");
+  
+  // New analytics hooks
+  const { data: overviewData, isLoading: overviewLoading, error: overviewError, refetch: refetchOverview } = useDashboardOverview(selectedPeriod);
+  const { data: performanceData, isLoading: performanceLoading, error: performanceError } = usePerformanceMetrics();
+  
+  // Legacy hooks (keeping for fallback)
   const { formattedStats, isLoading, error, refetch } = useDashboardStats();
   const { activity, isLoading: activityLoading, markNotificationAsRead } = useDashboardActivity();
   const { mounted, getCardHoverClass, getIconAnimationClass, getButtonAnimationClass } = useThemeAnimations();
   const { user: currentUser } = useStore();
+
+  // Use new analytics data if available, fallback to legacy
+  const isAnalyticsLoading = overviewLoading || performanceLoading;
+  const analyticsError = overviewError || performanceError;
 
   const getTrendIcon = (direction: "up" | "down" | "neutral") => {
     switch (direction) {
@@ -182,19 +205,25 @@ const DashboardPage = () => {
       color: "text-rose-600 dark:text-rose-400",
     },
     {
-      title: "New Query",
-      icon: <MessageSquare className="w-5 h-5" />,
-      description: "Create support query",
-      href: "/queries/new",
-      color: "text-cyan-600 dark:text-cyan-400",
+      title: "View Bookings",
+      icon: <Users className="w-5 h-5" />,
+      description: "Manage bookings",
+      href: "/bookings",
+      color: "text-green-600 dark:text-green-400",
     },
- 
     {
-      title: "Profile",
-      icon: <UserIcon className="w-5 h-5" />,
-      description: "Update profile",
-      href: "/profile",
-      color: "text-teal-600 dark:text-teal-400",
+      title: "Revenue",
+      icon: <DollarSign className="w-5 h-5" />,
+      description: "Track revenue",
+      href: "/revenue",
+      color: "text-purple-600 dark:text-purple-400",
+    },
+    {
+      title: "Analytics",
+      icon: <BarChart3 className="w-5 h-5" />,
+      description: "View detailed analytics",
+      href: "/analytics",
+      color: "text-blue-600 dark:text-blue-400",
     },
   ];
 
@@ -207,11 +236,11 @@ const DashboardPage = () => {
     minute: "2-digit",
   });
 
-  if (isLoading) {
+  if (isAnalyticsLoading && isLoading) {
     return <DashboardSkeleton />;
   }
 
-  if (error) {
+  if (analyticsError && error) {
     return (
       <main className="container mx-auto px-4 py-8">
         <Card className="p-8 text-center">
@@ -219,11 +248,17 @@ const DashboardPage = () => {
           <h2 className="text-xl font-semibold mb-2">
             Error Loading Dashboard
           </h2>
-          <p className="text-muted-foreground mb-4">{error}</p>
-          <Button onClick={refetch} variant="outline">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Try Again
-          </Button>
+          <p className="text-muted-foreground mb-4">{analyticsError || error}</p>
+          <div className="flex gap-2 justify-center">
+            <Button onClick={refetchOverview} variant="outline">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Retry Analytics
+            </Button>
+            <Button onClick={refetch} variant="outline">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Retry Legacy
+            </Button>
+          </div>
         </Card>
       </main>
     );
@@ -269,83 +304,37 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Quick Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statsConfig.map((config, index) => {
-          const statData = formattedStats[index];
-          if (!statData) return null;
-          return (
-            <Card
-              key={config.title}
-              className={`relative overflow-hidden border-0 bg-gradient-to-br ${
-                config.bgGradient
-              } ${getCardHoverClass(
-                config.bgGradient
-              )} group transition-shadow duration-200 hover:shadow-lg dark:hover:shadow-black/30`}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent dark:from-white/5 dark:to-transparent" />
-              <CardHeader className="relative flex flex-row items-center justify-between pb-3">
-                <div className="space-y-1">
-                  <CardTitle className="text-sm font-medium text-foreground/80">
-                    {config.title}
-                  </CardTitle>
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl font-bold text-foreground">
-                      {statData.count}
-                    </span>
-                    {getTrendIcon(statData.trendDirection)}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="text-xs text-muted-foreground">
-                      {statData.trend}
-                    </p>
-                    {statData.percentage && (
-                      <span
-                        className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${
-                          statData.trendDirection === "up"
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                            : statData.trendDirection === "down"
-                            ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                            : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
-                        }`}
-                      >
-                        {statData.percentage}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div
-                  className={`p-3 rounded-full ${
-                    config.iconBg
-                  } ${getIconAnimationClass()}`}
-                >
-                  <div className={config.iconColor}>{config.icon}</div>
-                </div>
-              </CardHeader>
-              <CardContent className="relative pt-0">
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                  {config.description}
-                </p>
-                <Link href={config.href}>
-                  <Button
-                    variant="secondary"
-                    className="w-full group/btn hover:bg-background/80 dark:hover:bg-background/80 transition-all duration-200"
-                  >
-                    <span>Go to {config.title}</span>
-                    <ArrowRight
-                      className={`w-4 h-4 ml-2 ${getButtonAnimationClass()}`}
-                    />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          );
-        })}
+      {/* Period Selector */}
+      <PeriodSelector
+        selectedPeriod={selectedPeriod}
+        onPeriodChange={setSelectedPeriod}
+        dateRange={overviewData?.date_range}
+      />
+
+      {/* Analytics Cards */}
+      <AnalyticsCards
+        data={overviewData}
+        isLoading={overviewLoading}
+        error={overviewError}
+      />
+
+      {/* Recent Events and Performance Metrics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentEvents
+          data={overviewData}
+          isLoading={overviewLoading}
+          error={overviewError}
+        />
+        {/* <PerformanceMetrics
+          data={performanceData}
+          isLoading={performanceLoading}
+          error={performanceError}
+        /> */}
       </div>
 
-      {/* System Health/Notifications Card and Recent Activity Section */}
+      {/* Legacy Notifications and Activity (keeping for backward compatibility) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="bg-white dark:bg-zinc-900 border border-border/50 shadow-sm">
+        {/* <Card className="bg-white dark:bg-zinc-900 border border-border/50 shadow-sm">
           <CardHeader className="flex flex-row items-center gap-2 pb-2">
             <Bell className="w-5 h-5 text-yellow-500" />
             <CardTitle className="text-base font-semibold text-foreground">Notifications</CardTitle>
@@ -409,10 +398,10 @@ const DashboardPage = () => {
               <div className="text-sm text-muted-foreground">No new notifications. All systems operational!</div>
             )}
           </CardContent>
-        </Card>
+        </Card> */}
         
         {/* Recent Activity Section */}
-        <Card className="bg-white dark:bg-zinc-900 border border-border/50 shadow-sm">
+        {/* <Card className="bg-white dark:bg-zinc-900 border border-border/50 shadow-sm">
           <CardHeader className="flex flex-row items-center gap-2 pb-2">
             <Activity className="w-5 h-5 text-blue-500" />
             <CardTitle className="text-base font-semibold text-foreground">
@@ -448,11 +437,11 @@ const DashboardPage = () => {
               <div className="text-sm text-muted-foreground">No recent activity to display.</div>
             )}
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Quick Actions Section */}
-      <div className="space-y-4">
+      {/* <div className="space-y-4">
         <div className="flex items-center gap-2">
           <div className="w-1 h-6 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full" />
           <h2 className="text-xl font-semibold text-foreground">
@@ -481,7 +470,7 @@ const DashboardPage = () => {
             </Link>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Footer Section */}
       <div className="pt-8 border-t border-border/50">
