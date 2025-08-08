@@ -37,7 +37,7 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({
       year: startDate.getFullYear() !== endDate.getFullYear() ? "numeric" : undefined,
     };
     
-    return `${startDate.toLocaleDateString("en-US", formatOptions)} - ${endDate.toLocaleDateString("en-US", formatOptions)}`;
+    return `${startDate.toLocaleDateString("en-AU", formatOptions)} - ${endDate.toLocaleDateString("en-AU", formatOptions)}`;
   };
 
   return (

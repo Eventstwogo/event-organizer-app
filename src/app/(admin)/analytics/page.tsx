@@ -39,14 +39,14 @@ const AnalyticsPage = () => {
   const { data: performanceData, isLoading: performanceLoading, error: performanceError } = usePerformanceMetrics();
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-AU', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'AUD',
     }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString("en-AU", {
       month: "short",
       day: "numeric",
       year: "numeric",

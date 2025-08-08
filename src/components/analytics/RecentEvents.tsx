@@ -25,7 +25,7 @@ interface RecentEventsProps {
 
 const RecentEvents: React.FC<RecentEventsProps> = ({ data, isLoading, error }) => {
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString("en-AU", {
       month: "short",
       day: "numeric",
       year: "numeric",
