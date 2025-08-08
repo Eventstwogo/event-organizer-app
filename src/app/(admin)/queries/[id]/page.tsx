@@ -109,7 +109,7 @@ const QueryDetailsPage = () => {
       };
 
       // Send message to the query thread
-      await axiosInstance.post(`/organizers/queries/${params.id}/messages`, payload);
+      await axiosInstance.post(`/organizers/queries/messages/${params.id}`, payload);
       
       // Refresh the query to get updated thread
       await fetchQuery();
@@ -145,7 +145,7 @@ const QueryDetailsPage = () => {
       };
 
       // Send follow-up message
-      await axiosInstance.post(`/organizers/queries/${params.id}/messages`, payload);
+      await axiosInstance.post(`/organizers/queries/messages/${params.id}`, payload);
       
       // Refresh the query to get updated thread
       await fetchQuery();
@@ -187,7 +187,7 @@ const QueryDetailsPage = () => {
       };
 
       // Update query status
-      await axiosInstance.patch(`/organizers/queries/${params.id}/status`, payload);
+      await axiosInstance.patch(`/organizers/queries/status/${params.id}`, payload);
       
       // Refresh the query to get updated data
       await fetchQuery();
