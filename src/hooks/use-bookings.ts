@@ -5,48 +5,22 @@ import axiosInstance from "@/lib/axiosinstance";
 import useStore from "@/lib/Zustand";
 import { toast } from "sonner";
  
-// API Response interfaces
-interface ApiEvent {
-  event_id: string;
-  title: string;
-  slug: string;
-  card_image: string;
-  start_date: string;
-  end_date: string;
-  status: string;
-  slots_count: number;
-}
- 
+// API Response interfaces - Updated to match actual API response
 interface ApiBooking {
-  booking_id: string;
-  booking_reference: string;
-  customer_name: string;
-  customer_email: string;
-  customer_phone?: string;
-  total_amount: number;
-  currency: string;
-  booking_status: 'confirmed' | 'pending' | 'cancelled' | 'refunded';
-  payment_status?: 'paid' | 'pending' | 'failed' | 'refunded';
-  created_at: string;
-  updated_at?: string;
-  tickets_count: number;
-}
- 
-interface ApiSlot {
-  slot_id: string;
+  booking_id: number;
+  event_title: string;
+  event_id: string;
+  user_name: string;
+  user_email: string;
   slot_time: string;
-  total_capacity: number;
-  booked_seats: number;
-  remaining_seats: number;
-  user_bookings_count: number;
-  bookings: ApiBooking[];
+  booking_date: string;
+  num_seats: number;
+  total_price: number;
+  booking_status: 'approved' | 'processing' | 'cancelled' | 'refunded';
+  payment_status: 'COMPLETED' | 'PENDING' | 'FAILED' | null;
+  created_at: string;
 }
- 
-interface ApiEventWithSlots {
-  event: ApiEvent;
-  slots: ApiSlot[];
-}
- 
+
 export interface ApiBookingsResponse {
   statusCode: number;
   message: string;
@@ -54,12 +28,7 @@ export interface ApiBookingsResponse {
   method: string;
   path: string;
   data: {
-    events_count: {
-      total: number;
-      active: number;
-      inactive: number;
-    };
-    events: ApiEventWithSlots[];
+    bookings: ApiBooking[];
     total_items: number;
     page: number;
     per_page: number;
@@ -107,54 +76,81 @@ export interface TransformedBooking {
 // Transform API data to UI format
 const transformApiDataToBookings = (apiData: ApiBookingsResponse): TransformedBooking[] => {
   const bookings: TransformedBooking[] = [];
- 
-  apiData.data.events.forEach((eventWithSlots) => {
-    const { event, slots } = eventWithSlots;
+
+  apiData.data.bookings.forEach((apiBooking) => {
+    // Map booking status from API to UI format
+    const mapBookingStatus = (status: string): 'confirmed' | 'pending' | 'cancelled' | 'refunded' => {
+      switch (status.toLowerCase()) {
+        case 'approved':
+          return 'confirmed';
+        case 'processing':
+          return 'pending';
+        case 'cancelled':
+          return 'cancelled';
+        case 'refunded':
+          return 'refunded';
+        default:
+          return 'pending';
+      }
+    };
+
+    // Map payment status from API to UI format
+    const mapPaymentStatus = (status: string | null): 'paid' | 'pending' | 'failed' | 'refunded' => {
+      if (!status) return 'pending';
+      switch (status.toUpperCase()) {
+        case 'COMPLETED':
+          return 'paid';
+        case 'PENDING':
+          return 'pending';
+        case 'FAILED':
+          return 'failed';
+        case 'REFUNDED':
+          return 'refunded';
+        default:
+          return 'pending';
+      }
+    };
+
+    const transformedBooking: TransformedBooking = {
+      booking_id: apiBooking.booking_id.toString(),
+      booking_reference: `BK-${apiBooking.booking_id}`,
+      customer: {
+        customer_id: `customer_${apiBooking.booking_id}`,
+        name: apiBooking.user_name,
+        email: apiBooking.user_email,
+        phone: undefined,
+        avatar: ""
+      },
+      event: {
+        event_id: apiBooking.event_id,
+        event_title: apiBooking.event_title,
+        event_slug: apiBooking.event_id, // Using event_id as slug since slug is not provided
+        card_image: undefined,
+        event_date: apiBooking.booking_date,
+        event_time: apiBooking.slot_time.split(' - ')[0], // Take start time
+        location: ""
+      },
+      tickets: [
+        {
+          ticket_id: `ticket_${apiBooking.booking_id}`,
+          ticket_type: "General Admission",
+          price: apiBooking.total_price / apiBooking.num_seats,
+          quantity: apiBooking.num_seats
+        }
+      ],
+      total_amount: apiBooking.total_price,
+      currency: "USD", // Default currency since not provided in API
+      booking_status: mapBookingStatus(apiBooking.booking_status),
+      payment_status: mapPaymentStatus(apiBooking.payment_status),
+      booking_date: apiBooking.booking_date,
+      created_at: apiBooking.created_at,
+      updated_at: apiBooking.created_at, // Using created_at since updated_at is not provided
+      slot_time: apiBooking.slot_time
+    };
    
-    slots.forEach((slot) => {
-      slot.bookings.forEach((apiBooking) => {
-        const transformedBooking: TransformedBooking = {
-          booking_id: apiBooking.booking_id,
-          booking_reference: apiBooking.booking_reference,
-          customer: {
-            customer_id: `customer_${apiBooking.booking_id}`,
-            name: apiBooking.customer_name,
-            email: apiBooking.customer_email,
-            phone: apiBooking.customer_phone,
-            avatar: ""
-          },
-          event: {
-            event_id: event.event_id,
-            event_title: event.title,
-            event_slug: event.slug,
-            card_image: event.card_image,
-            event_date: event.start_date,
-            event_time: slot.slot_time.split(' - ')[0], // Take start time
-            location: ""
-          },
-          tickets: [
-            {
-              ticket_id: `ticket_${apiBooking.booking_id}`,
-              ticket_type: "General Admission",
-              price: apiBooking.total_amount / (apiBooking.tickets_count || 1),
-              quantity: apiBooking.tickets_count || 1
-            }
-          ],
-          total_amount: apiBooking.total_amount,
-          currency: apiBooking.currency,
-          booking_status: apiBooking.booking_status,
-          payment_status: apiBooking.payment_status || 'pending',
-          booking_date: apiBooking.created_at,
-          created_at: apiBooking.created_at,
-          updated_at: apiBooking.updated_at || apiBooking.created_at,
-          slot_time: slot.slot_time
-        };
-       
-        bookings.push(transformedBooking);
-      });
-    });
+    bookings.push(transformedBooking);
   });
- 
+
   return bookings;
 };
  
@@ -179,7 +175,9 @@ export const useBookings = () => {
       const response = await axiosInstance.get(`/bookings/organizer/${userId}`);
      
       if (response.data && response.data.statusCode === 200) {
+        console.log("Raw API Response:", response.data);
         const transformedBookings = transformApiDataToBookings(response.data);
+        console.log("Transformed Bookings:", transformedBookings);
         setBookings(transformedBookings);
         setRawApiData(response.data);
        
