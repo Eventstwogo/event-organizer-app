@@ -120,7 +120,7 @@ const EventViewPage = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString("en-AU", {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -129,15 +129,15 @@ const EventViewPage = () => {
   };
 
   const formatTime = (timeString: string) => {
-    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString("en-US", {
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString("en-AU", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
     });
   };
 
-  // const formatCurrency = (amount: number, currency: string = 'USD') => {
-  //   return new Intl.NumberFormat('en-US', {
+  // const formatCurrency = (amount: number, currency: string = 'AUD') => {
+  //   return new Intl.NumberFormat('en-AU', {
   //     style: 'currency',
   //     currency: currency
   //   }).format(amount);
@@ -532,9 +532,9 @@ const EventViewPage = () => {
                           <span className="break-words">
                             Updated: {formatDate(slotInfo.updated_at)}
                           </span>
-                          <span className="break-all">
+                          {/* <span className="break-all">
                             Slot ID: {slotInfo.slot_id}
-                          </span>
+                          </span> */}
                         </div>
                       </div>
                     </div>
@@ -709,7 +709,7 @@ const EventViewPage = () => {
                       .length || 0}
                   </Badge>
                 </div>
-                <div className="flex items-center justify-between gap-2">
+                {/* <div className="flex items-center justify-between gap-2">
                   <span className="text-sm sm:text-base text-blue-700 min-w-0 flex-1">
                     Event ID
                   </span>
@@ -719,7 +719,7 @@ const EventViewPage = () => {
                   >
                     {eventData.event_id.slice(-8)}
                   </Badge>
-                </div>
+                </div> */}
               </CardContent>
             </Card>
           </div>

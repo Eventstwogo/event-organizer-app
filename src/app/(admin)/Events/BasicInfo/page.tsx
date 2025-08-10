@@ -457,7 +457,7 @@ const BasicInfoContent = () => {
           );
           const newSlotId = response.data.data.slot_id;
           router.push(
-            `/Events/Datespricing?slot_id=${newSlotId}&event_id=${eventId}`
+            `/Events/DatesPricing?slot_id=${newSlotId}&event_id=${eventId}`
           );
         } else {
           toast.error(response.data.message || "Failed to update event");
@@ -482,7 +482,7 @@ const BasicInfoContent = () => {
             "Event created successfully! Proceeding to dates and pricing."
           );
           router.push(
-            `/Events/Datespricing?slot_id=${newSlotId}&event_id=${newEventId}`
+            `/Events/DatesPricing?slot_id=${newSlotId}&event_id=${newEventId}`
           );
         } else {
           toast.error(response.data.message || "Failed to create event");

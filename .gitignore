@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+.zencoder
 
 # debug
 npm-debug.log*

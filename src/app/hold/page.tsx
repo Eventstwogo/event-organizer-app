@@ -83,7 +83,7 @@ function OrganizationHoldContent() {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleString('en-US', {
+    return date.toLocaleString('en-AU', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',

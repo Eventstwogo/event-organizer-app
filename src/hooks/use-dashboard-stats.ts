@@ -76,12 +76,19 @@ export const useDashboardStats = () => {
       setError(null);
      
       // Fetch real dashboard data from multiple endpoints
-      const [eventsResponse, queriesResponse, usersResponse, revenueResponse] = await Promise.allSettled([
-        axiosInstance.get(`/organizers/analytics/events/${userId}`),
-        axiosInstance.get(`/organizers/analytics/queries/${userId}`),
-        axiosInstance.get(`/organizers/analytics/users/${userId}`),
-        axiosInstance.get(`/organizers/analytics/revenue/${userId}`)
-      ]);
+      // COMMENTED OUT: Temporarily disabled analytics API calls
+      // const [eventsResponse, queriesResponse, usersResponse, revenueResponse] = await Promise.allSettled([
+      //   axiosInstance.get(`/organizers/analytics/events/${userId}`),
+      //   axiosInstance.get(`/organizers/analytics/queries/${userId}`),
+      //   axiosInstance.get(`/organizers/analytics/users/${userId}`),
+      //   axiosInstance.get(`/organizers/analytics/revenue/${userId}`)
+      // ]);
+
+      // Mock responses to maintain functionality
+      const eventsResponse = { status: 'rejected' as const };
+      const queriesResponse = { status: 'rejected' as const };
+      const usersResponse = { status: 'rejected' as const };
+      const revenueResponse = { status: 'rejected' as const };
 
       // Process events data
       let eventsData: EventStats = { total_events: 0, upcoming_events: 0, past_events: 0, active_events: 0, event_categories: 0 };

@@ -11,6 +11,8 @@ import {
   CalendarDays,
   Tags,
   LineChart,
+  BarChart3,
+  MessageSquare,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -32,11 +34,12 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
+  // { label: 'Analytics', icon: BarChart3, href: '/analytics' },
   { label: 'Events', icon: CalendarDays, href: '/Events' },
-    { label: 'Queries', icon: CalendarDays, href: '/queries' },
+  // { label: 'Bookings', icon: Users, href: '/bookings' },
+  // { label: 'Revenue', icon: DollarSign, href: '/revenue' },
+  { label: 'Queries', icon: MessageSquare, href: '/queries' },
   // { label: 'Users', icon: Users, href: '/Users' },
- 
-  // { label: 'Revenue', icon: LineChart, href: '/Revenue' },
 ];
 
 export default function AppSidebar({
@@ -77,7 +80,7 @@ export default function AppSidebar({
     >
       {/* Header */}
       <div className="flex items-center justify-center py-4 border-b border-gray-700 ">
-        <Image src="/logo.png" alt="Events2Go" height={50} width={50} />
+        <Image src="/logo.png" alt="Events2Go" height={50} width={50} className="mr-2"/>
         <h1
           className={`text-xl font-bold text-purple-400 transition-all ${
             collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"

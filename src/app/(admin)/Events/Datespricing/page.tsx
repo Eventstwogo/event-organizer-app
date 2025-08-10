@@ -56,7 +56,7 @@ const CreateEventDatesPricingContent = () => {
   const searchParams = useSearchParams();
   const { user } = useStore();
   const [eventDates, setEventDates] = useState<EventDate[]>([]);
-  const [currency, setCurrency] = useState("USD");
+  const [currency, setCurrency] = useState("AUD");
   const [isPublic, setIsPublic] = useState(true);
   const [isFeatured, setIsFeatured] = useState(false);
   const [allowWaitlist, setAllowWaitlist] = useState(true);
@@ -1065,7 +1065,7 @@ const CreateEventDatesPricingContent = () => {
                                 <span className="text-sm font-medium">
                                   {date.date
                                     ? new Date(date.date).toLocaleDateString(
-                                        "en-US",
+                                        "en-AU",
                                         {
                                           weekday: "short",
                                           month: "short",
@@ -1151,7 +1151,7 @@ const CreateEventDatesPricingContent = () => {
                           <span className="ml-2 text-blue-600 font-semibold">
                             (
                             {new Date(eventDate.date).toLocaleDateString(
-                              "en-US",
+                              "en-AU",
                               {
                                 weekday: "short",
                                 month: "short",

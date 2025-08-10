@@ -57,10 +57,15 @@ export const useDashboardActivity = () => {
       setError(null);
 
       // Fetch activity data from multiple sources
-      const [activityResponse, notificationsResponse] = await Promise.allSettled([
-        axiosInstance.get(`/organizers/activity/${userId}?limit=5`),
-        axiosInstance.get(`/organizers/notifications/${userId}?limit=3`)
-      ]);
+      // COMMENTED OUT: Temporarily disabled activity and notifications API calls
+      // const [activityResponse, notificationsResponse] = await Promise.allSettled([
+      //   axiosInstance.get(`/organizers/activity/${userId}?limit=5`),
+      //   axiosInstance.get(`/organizers/notifications/${userId}?limit=3`)
+      // ]);
+
+      // Mock responses to maintain functionality
+      const activityResponse = { status: 'rejected' as const };
+      const notificationsResponse = { status: 'rejected' as const };
 
       let recentActivity: ActivityItem[] = [];
       let notifications: NotificationItem[] = [];
@@ -197,8 +202,10 @@ export const useDashboardActivity = () => {
     if (!activity) return;
 
     try {
-      await axiosInstance.patch(`/organizers/notifications/${notificationId}/read`);
+      // COMMENTED OUT: Temporarily disabled notification read API call
+      // await axiosInstance.patch(`/organizers/notifications/${notificationId}/read`);
       
+      // Update state locally without API call
       setActivity(prev => {
         if (!prev) return prev;
         return {
