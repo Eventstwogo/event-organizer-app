@@ -13,6 +13,7 @@ import {
   LineChart,
   BarChart3,
   MessageSquare,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -36,7 +37,7 @@ const navItems: NavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
   // { label: 'Analytics', icon: BarChart3, href: '/analytics' },
   { label: 'Events', icon: CalendarDays, href: '/Events' },
-  // { label: 'Bookings', icon: Users, href: '/bookings' },
+  { label: 'Bookings', icon: BookOpen, href: '/bookings' },
   // { label: 'Revenue', icon: DollarSign, href: '/revenue' },
   { label: 'Queries', icon: MessageSquare, href: '/queries' },
   // { label: 'Users', icon: Users, href: '/Users' },
