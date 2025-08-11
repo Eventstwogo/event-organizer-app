@@ -165,7 +165,7 @@ const mockSummaryData: BookingSummaryData = {
       customer_name: "John Doe",
       event_title: "Tech Conference 2024",
       total_amount: 199.98,
-      currency: "USD",
+      currency: "AUD",
       booking_status: "confirmed",
       created_at: "2024-02-15T10:30:00Z"
     },
@@ -175,7 +175,7 @@ const mockSummaryData: BookingSummaryData = {
       customer_name: "Jane Smith",
       event_title: "Music Festival",
       total_amount: 299.99,
-      currency: "USD",
+      currency: "AUD",
       booking_status: "pending",
       created_at: "2024-02-20T14:15:00Z"
     },
@@ -185,7 +185,7 @@ const mockSummaryData: BookingSummaryData = {
       customer_name: "Mike Johnson",
       event_title: "Art Exhibition",
       total_amount: 100.00,
-      currency: "USD",
+      currency: "AUD",
       booking_status: "confirmed",
       created_at: "2024-02-25T09:45:00Z"
     }

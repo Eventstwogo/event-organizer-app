@@ -125,7 +125,7 @@ const transformApiDataToBookings = (apiData: ApiBookingsResponse): TransformedBo
         event_id: apiBooking.event_id,
         event_title: apiBooking.event_title,
         event_slug: apiBooking.event_id, // Using event_id as slug since slug is not provided
-        card_image: undefined,
+        card_image: "", // Default empty string since card_image is not provided in API
         event_date: apiBooking.booking_date,
         event_time: apiBooking.slot_time.split(' - ')[0], // Take start time
         location: ""
@@ -133,13 +133,13 @@ const transformApiDataToBookings = (apiData: ApiBookingsResponse): TransformedBo
       tickets: [
         {
           ticket_id: `ticket_${apiBooking.booking_id}`,
-          ticket_type: "General Admission",
+          ticket_type: "",
           price: apiBooking.total_price / apiBooking.num_seats,
           quantity: apiBooking.num_seats
         }
       ],
       total_amount: apiBooking.total_price,
-      currency: "USD", // Default currency since not provided in API
+      currency: "AUD", // Default currency since not provided in API
       booking_status: mapBookingStatus(apiBooking.booking_status),
       payment_status: mapPaymentStatus(apiBooking.payment_status),
       booking_date: apiBooking.booking_date,

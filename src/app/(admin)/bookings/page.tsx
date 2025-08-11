@@ -172,7 +172,7 @@ const transformApiDataToBookings = (apiData: ApiResponse): Booking[] => {
           tickets: [
             {
               ticket_id: `ticket_${apiBooking.booking_id}`,
-              ticket_type: "General Admission",
+              ticket_type: "",
               price: apiBooking.total_amount / (apiBooking.tickets_count || 1),
               quantity: apiBooking.tickets_count || 1
             }

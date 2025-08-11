@@ -90,13 +90,13 @@ const mockBooking: Booking = {
   tickets: [
     {
       ticket_id: "t1",
-      ticket_type: "General Admission",
+      ticket_type: "",
       price: 99.99,
       quantity: 2
     }
   ],
   total_amount: 199.98,
-  currency: "USD",
+  currency: "AUD",
   booking_status: "confirmed",
   payment_status: "paid",
   booking_date: "2024-03-15T09:00:00Z",
