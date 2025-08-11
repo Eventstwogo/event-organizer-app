@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axiosinstance";
 import useStore from "@/lib/Zustand";
-
+import {jwtDecode} from "jwt-decode"
 export default function EventOrganizerLogin() {
   const { login } = useStore();
   const [showPassword, setShowPassword] = useState(false);
@@ -57,7 +57,17 @@ export default function EventOrganizerLogin() {
 
       if (response.status === 200) {
         const { access_token, organizer_info } = response.data;
+        
+        const decoded: { rid: string } = jwtDecode(access_token);
+  
+ 
+  if (decoded.rid !== '7t94rb') {
+    toast.error("Unauthorized role. Only consultants can log in here.");
+      
 
+    return;
+  }
+ 
         if (!access_token) {
           throw new Error("Invalid response: Missing access token");
         }
