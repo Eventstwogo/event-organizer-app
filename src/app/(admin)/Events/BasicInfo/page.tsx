@@ -457,7 +457,7 @@ const BasicInfoContent = () => {
           );
           const newSlotId = response.data.data.slot_id;
           router.push(
-            `/Events/DatesPricing?slot_id=${newSlotId}&event_id=${eventId}`
+            `/Events/Datespricing?slot_id=${newSlotId}&event_id=${eventId}`
           );
         } else {
           toast.error(response.data.message || "Failed to update event");

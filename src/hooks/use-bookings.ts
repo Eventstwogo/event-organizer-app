@@ -10,6 +10,7 @@ interface ApiBooking {
   booking_id: number;
   event_title: string;
   event_id: string;
+  card_image: string;
   user_name: string;
   user_email: string;
   slot_time: string;
@@ -125,7 +126,7 @@ const transformApiDataToBookings = (apiData: ApiBookingsResponse): TransformedBo
         event_id: apiBooking.event_id,
         event_title: apiBooking.event_title,
         event_slug: apiBooking.event_id, // Using event_id as slug since slug is not provided
-        card_image: "", // Default empty string since card_image is not provided in API
+        card_image: apiBooking.card_image, // Default empty string since card_image is not provided in API
         event_date: apiBooking.booking_date,
         event_time: apiBooking.slot_time.split(' - ')[0], // Take start time
         location: ""
