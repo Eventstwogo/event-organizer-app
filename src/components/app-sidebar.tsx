@@ -14,6 +14,7 @@ import {
   BarChart3,
   MessageSquare,
   BookOpen,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -41,6 +42,7 @@ const navItems: NavItem[] = [
   // { label: 'Revenue', icon: DollarSign, href: '/revenue' },
   { label: 'Queries', icon: MessageSquare, href: '/queries' },
   // { label: 'Users', icon: Users, href: '/Users' },
+  { label: 'Visit Website', icon: ExternalLink, href: 'https://www.events2go.com.au' },
 ];
 
 export default function AppSidebar({
@@ -62,6 +64,8 @@ export default function AppSidebar({
   };
 
   const isLinkActive = (item: NavItem) => {
+    // External links are never considered "active"
+    if (item.href && item.href.startsWith('http')) return false;
     if (item.href && pathname === item.href) return true;
     if (item.children) {
       return item.children.some((child) => pathname.startsWith(child.href));
@@ -170,20 +174,38 @@ function SidebarLink({
   active,
   collapsed,
 }: SidebarLinkProps) {
+  const isExternalLink = href.startsWith('http');
+  
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Link
-          href={href}
-          className={`flex items-center p-3 rounded-lg text-sm font-medium transition-all group ${
-            active
-              ? "bg-purple-700 text-white"
-              : "hover:bg-purple-600/20 text-gray-300"
-          }`}
-        >
-          <Icon className="w-5 h-5 mr-2 shrink-0" />
-          {!collapsed && <span>{label}</span>}
-        </Link>
+        {isExternalLink ? (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex items-center p-3 rounded-lg text-sm font-medium transition-all group ${
+              active
+                ? "bg-purple-700 text-white"
+                : "hover:bg-purple-600/20 text-gray-300"
+            }`}
+          >
+            <Icon className="w-5 h-5 mr-2 shrink-0" />
+            {!collapsed && <span>{label}</span>}
+          </a>
+        ) : (
+          <Link
+            href={href}
+            className={`flex items-center p-3 rounded-lg text-sm font-medium transition-all group ${
+              active
+                ? "bg-purple-700 text-white"
+                : "hover:bg-purple-600/20 text-gray-300"
+            }`}
+          >
+            <Icon className="w-5 h-5 mr-2 shrink-0" />
+            {!collapsed && <span>{label}</span>}
+          </Link>
+        )}
       </TooltipTrigger>
       {collapsed && <TooltipContent side="right">{label}</TooltipContent>}
     </Tooltip>

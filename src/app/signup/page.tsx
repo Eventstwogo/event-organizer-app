@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState,useEffect } from "react";
 import { Calendar, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,13 +18,70 @@ export default function EventOrganizerSignup() {
   const [password, setPassword] = useState<string>(""); // New state
   const [emailValid, setEmailValid] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+    const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [checkingUsername, setCheckingUsername] = useState(false);
+    const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
   const router = useRouter();
-
+const generateUsernameSuggestions = (baseUsername: string): string[] => {
+  const suggestions = [];
+  const randomNumbers = Math.floor(Math.random() * 999) + 1;
+  
+  suggestions.push(`${baseUsername}${randomNumbers}`);
+  suggestions.push(`${baseUsername}_${randomNumbers}`);
+  suggestions.push(`${baseUsername}.${randomNumbers}`);
+  suggestions.push(`${baseUsername}-${randomNumbers}`);
+  
+  return suggestions.slice(0, 3); // Return top 3 suggestions
+};
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setEmailValid(emailRegex.test(email));
   };
+  const checkUsernameAvailability = async (username: string) => {
+    if (!username || username.length < 3) {
+      setUsernameAvailable(null);
+      setUsernameSuggestions([]);
+      return;
+    }
 
+    setCheckingUsername(true);
+    try {
+      const response = await axiosInstance.post("/organizers/auth/check-username", {
+        username: username
+      });
+      const isAvailable = response.data.data.available;
+      setUsernameAvailable(isAvailable);
+      
+      // Generate suggestions if username is not available
+      if (!isAvailable) {
+        const suggestions = generateUsernameSuggestions(username);
+        setUsernameSuggestions(suggestions);
+      } else {
+        setUsernameSuggestions([]);
+      }
+    } catch (err: any) {
+      setUsernameAvailable(false);
+      console.error("Username check failed:", err);
+      // Generate suggestions on error as well
+      const suggestions = generateUsernameSuggestions(username);
+      setUsernameSuggestions(suggestions);
+    } finally {
+      setCheckingUsername(false);
+    }
+  };
+
+  // Handle username change with debounced availability check
+  useEffect(() => {
+    if (username && username.length >= 3) {
+      const timeoutId = setTimeout(() => {
+        checkUsernameAvailability(username);
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
+    } else {
+      setUsernameAvailable(null);
+    }
+  }, [username]);
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -35,6 +92,21 @@ export default function EventOrganizerSignup() {
 
     if (!username || !password) {
       toast.error("Please fill out all required fields.");
+      return;
+    }
+
+    if (username.length < 3) {
+      toast.error("Username must be at least 3 characters long.");
+      return;
+    }
+
+    if (usernameAvailable === false) {
+      toast.error("Please choose an available username.");
+      return;
+    }
+
+    if (usernameAvailable === null && username.length >= 3) {
+      toast.error("Please wait for username availability check to complete.");
       return;
     }
 
@@ -113,6 +185,43 @@ export default function EventOrganizerSignup() {
                       placeholder="Your username"
                       required
                     />
+                    {/* Username availability feedback */}
+                    {username && username.length >= 3 && (
+                      <div className="mt-2">
+                        {checkingUsername ? (
+                          <span className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700">
+                            Checking availability...
+                          </span>
+                        ) : usernameAvailable === true ? (
+                          <span className="text-xs px-2 py-1 rounded bg-green-100 text-green-700">
+                            ✓ Username is available
+                          </span>
+                        ) : usernameAvailable === false ? (
+                          <div className="space-y-2">
+                            <span className="text-xs px-2 py-1 rounded bg-red-100 text-red-700">
+                              ✗ Username is not available
+                            </span>
+                            {usernameSuggestions.length > 0 && (
+                              <div className="space-y-1">
+                                <p className="text-xs text-gray-600">Suggestions:</p>
+                                <div className="flex flex-wrap gap-1">
+                                  {usernameSuggestions.map((suggestion, index) => (
+                                    <button
+                                      key={index}
+                                      type="button"
+                                      onClick={() => setUsername(suggestion)}
+                                      className="text-xs px-2 py-1 rounded bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors cursor-pointer"
+                                    >
+                                      {suggestion}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ) : null}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -168,11 +277,19 @@ export default function EventOrganizerSignup() {
 
                   <Button
                     type="submit"
-                    disabled={loading}
-                    className="w-full h-10 sm:h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg"
+                    disabled={
+                      loading || 
+                      checkingUsername || 
+                      !emailValid || 
+                      (username.length >= 3 && usernameAvailable === false) ||
+                      (username.length >= 3 && usernameAvailable === null)
+                    }
+                    className="w-full h-10 sm:h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading
                       ? "Creating Account..."
+                      : checkingUsername
+                      ? "Checking Username..."
                       : "Start Organizing Events"}
                   </Button>
                 </div>

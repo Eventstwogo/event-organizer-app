@@ -140,20 +140,14 @@ export default function EventOrganizerLogin() {
         <div className="absolute bottom-20 right-10 w-16 h-16 bg-gradient-to-r from-violet-400 to-purple-400 rounded-full opacity-10 animate-pulse delay-1000"></div>
 
         <div className="mx-auto w-full max-w-md space-y-8 relative z-10">
-          <div className="text-center space-y-4">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl mb-4 shadow-lg">
-              <Calendar className="w-8 h-8 text-white" />
-            </div>
-
-          
-          </div>
+     
           <form onSubmit={handleSubmit}>
             <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-lg">
             <img src="/logo.png" alt="Logo" className="w-40 mx-auto "/>
               <CardContent className="px-8 space-y-2">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-semibold text-gray-800">
-                    Event Organizer Sign In
+                    Event Organizer 
                   </h2>
                   <p className="text-gray-500 mt-1">
                     Access your event management dashboard
