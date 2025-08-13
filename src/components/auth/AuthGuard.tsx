@@ -29,7 +29,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
     verification: ["/verification"],
     hold: ["/hold"],
     rejected: ["/rejected"],
-    approved: ["/dashboard", "/Events", "/profile", "/queries", "/onboarding", "/bookings"]
+    approved: ["/dashboard", "/Events", "/profile", "/queries", "/onboarding", "/bookings","/Coupons"]
     // approved: ["/dashboard", "/Events", "/profile", "/queries", "/onboarding", "/analytics", "/bookings", "/revenue"]
   };
 

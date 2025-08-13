@@ -18,7 +18,16 @@ import axiosInstance from "@/lib/axiosinstance";
 import useStore from "@/lib/Zustand";
 import { toast } from "sonner";
 import { Plus, Calendar, RefreshCw } from "lucide-react";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 const CreateEventPage = () => {
   const router = useRouter();
   const { user, isAuthenticated } = useStore();
@@ -27,7 +36,11 @@ const CreateEventPage = () => {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
-
+   const [showFeaturedDialog, setShowFeaturedDialog] = useState(false);
+  const [selectedEventForFeatured, setSelectedEventForFeatured] = useState<{
+    eventId: string;
+    currentStatus: boolean;
+  } | null>(null);
   // Fetch events - memoized to prevent re-creation
   //   const fetchEvents = useCallback(async () => {
   //     console.log(userId)
@@ -101,7 +114,69 @@ const CreateEventPage = () => {
       setLoading(false);
     }
   }, [userId]);
+   const handleFeaturedToggle = useCallback((eventId: string, currentStatus: boolean) => {
+    if (!currentStatus) {
+      // If not currently featured, show payment dialog
+      setSelectedEventForFeatured({ eventId, currentStatus });
+      setShowFeaturedDialog(true);
+    } else {
+      // If currently featured, directly remove from featured
+      handleFeaturedUpdate(eventId, false);
+    }
+  }, []);
 
+  // Handle featured update
+  const handleFeaturedUpdate = async (eventId: string, isFeatured: boolean) => {
+    try {
+      await axiosInstance.patch(`/featured-events/featured/${eventId}`, {
+        featured_event: isFeatured
+      });
+      
+      if (isFeatured) {
+        toast.success("Event added to featured list successfully!");
+      } else {
+        toast.success("Event removed from featured list successfully!");
+      }
+      
+      fetchEvents(); // Refresh the list
+    } catch (error) {
+      console.error("Error updating featured status:", error);
+      toast.error("Failed to update featured status");
+    }
+  };
+  const handleCreateCoupons = useCallback((eventId: string) => {
+    router.push(`/Coupons?eventId=${eventId}`);
+  }, [router]);
+  const handleStatusToggle = useCallback(async (eventId: string, currentStatus: "ACTIVE" | "INACTIVE" | "PENDING") => {
+    if (currentStatus === "PENDING") return; // Should not happen, but safety check
+    
+    try {
+      // Toggle between ACTIVE (false) and INACTIVE (true)
+      const newStatus = currentStatus === "ACTIVE" ? 'INACTIVE' : 'ACTIVE'; // true = INACTIVE, false = ACTIVE
+      
+        const formData = new FormData();
+    formData.append("event_status", newStatus);
+
+    await axiosInstance.patch(`/events/status/${eventId}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+      
+      const statusText = newStatus=='INACTIVE'? "INACTIVE" : "ACTIVE";
+      toast.success(`Event status updated to ${statusText} successfully!`);
+      
+      fetchEvents(); // Refresh the list
+    } catch (error) {
+      console.error("Error updating event status:", error);
+      toast.error("Failed to update event status");
+    }
+  }, [fetchEvents]);
+
+  // Handle create slots redirect
+  const handleCreateSlots = useCallback((eventId: string) => {
+    router.push(`/Events/DatesPricing?event_id=${eventId}`);
+  }, [router]);
   // Delete event - memoized to prevent re-creation
   const handleDeleteEvent = useCallback(
     async (eventId: string) => {
@@ -149,10 +224,14 @@ const CreateEventPage = () => {
   }, [events, statusFilter, categoryFilter]);
 
   // Create columns with delete handler
-  const columns = useMemo(
-    () => createColumns(handleDeleteEvent),
-    [handleDeleteEvent]
-  );
+     const columns = useMemo(() => createColumns(
+    handleDeleteEvent,
+    handleFeaturedToggle,
+    handleCreateCoupons,
+    handleStatusToggle,
+    handleCreateSlots
+  ), [handleDeleteEvent, handleFeaturedToggle, handleCreateCoupons, handleStatusToggle, handleCreateSlots]);
+
 
   useEffect(() => {
     fetchEvents();
@@ -338,7 +417,39 @@ const CreateEventPage = () => {
               </div>
             </CardContent>
           </Card>
+
+
+
         )}
+            <AlertDialog open={showFeaturedDialog} onOpenChange={setShowFeaturedDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Add to Featured List</AlertDialogTitle>
+              <AlertDialogDescription>
+                To add this event to the featured list, you need to pay $50.00. 
+                This will make your event more visible to users and increase bookings.
+                Do you want to proceed with the payment?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => {
+                setShowFeaturedDialog(false);
+                setSelectedEventForFeatured(null);
+              }}>
+                No, Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={() => {
+                if (selectedEventForFeatured) {
+                  handleFeaturedUpdate(selectedEventForFeatured.eventId, true);
+                  setShowFeaturedDialog(false);
+                  setSelectedEventForFeatured(null);
+                }
+              }}>
+                Yes, Pay $50.00
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
