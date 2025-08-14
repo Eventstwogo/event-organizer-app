@@ -683,7 +683,7 @@ export const createColumns = (
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onCreateSlots?.(event.event_id)}
+            onClick={() => onCreateSlots?.(event)}
             className="flex items-center gap-2 hover:bg-orange-50 hover:text-orange-600 border-orange-200"
           >
             <Settings className="h-4 w-4" />

@@ -175,7 +175,7 @@ const CreateEventPage = () => {
 
   // Handle create slots redirect
   const handleCreateSlots = useCallback((eventId: string) => {
-    router.push(`/Events/DatesPricing?event_id=${eventId}`);
+     router.push(`/Events/DatesPricing?slot_id=${eventId.slot_id}&event_id=${eventId.event_id}`);
   }, [router]);
   // Delete event - memoized to prevent re-creation
   const handleDeleteEvent = useCallback(
