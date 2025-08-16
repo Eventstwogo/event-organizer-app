@@ -143,7 +143,7 @@ export default function EventOrganizerLogin() {
      
           <form onSubmit={handleSubmit}>
             <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-lg">
-            <img src="/logo.png" alt="Logo" className="w-40 mx-auto "/>
+            <img src="/logo1.png" alt="Logo" className="w-40 mx-auto "/>
               <CardContent className="px-8 space-y-2">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-semibold text-gray-800">

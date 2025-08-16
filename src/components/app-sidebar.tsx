@@ -85,7 +85,7 @@ export default function AppSidebar({
     >
       {/* Header */}
       <div className="flex items-center justify-center py-4 border-b border-gray-700 ">
-        <Image src="/logo.png" alt="Events2Go" height={50} width={50} className="mr-2"/>
+        <Image src="/logo1.png" alt="Events2Go" height={50} width={50} className="mr-2"/>
         <h1
           className={`text-xl font-bold text-purple-400 transition-all ${
             collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
