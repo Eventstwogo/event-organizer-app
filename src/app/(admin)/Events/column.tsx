@@ -644,11 +644,11 @@ export const createColumns = (
     },
     cell: ({ row }) => {
       const event = row.original
-      return event.organizer ? (
+      return event.organizer_info ? (
         <div className="flex items-center space-x-2 w-full pl-2">
           <Users className="h-4 w-4 text-gray-400 flex-shrink-0" />
           <span className="text-sm text-gray-600 truncate max-w-[150px]" title={event.extra_data?.organizer || event.organizer.username}>
-            {event.extra_data?.organizer || event.organizer.username}
+            {event.extra_data?.organizer || event.organizer_info.username}
           </span>
         </div>
       ) : (
