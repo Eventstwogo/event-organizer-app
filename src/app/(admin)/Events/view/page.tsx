@@ -100,7 +100,7 @@ const EventViewPage = () => {
     setLoading(true);
     try {
       const eventResponse = await axiosInstance.get(
-        `/api/v1/events/${eventId}`
+        `/events/${eventId}`
       );
       const event = eventResponse.data.data;
       setEventData(event);
