@@ -971,51 +971,7 @@ export const createColumns = (
               </span>
             </div>
           )}
-          {event.extra_data?.duration && (
-            <div className="flex items-center text-xs text-gray-600">
-              <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
-              <span className="truncate">{event.extra_data.duration}</span>
-            </div>
-          )}
-          {event.hash_tags && event.hash_tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-1">
-              {event.hash_tags.slice(0, 2).map((tag, index) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="text-xs px-1 py-0"
-                >
-                  {tag.length > 10 ? `${tag.substring(0, 10)}...` : tag}
-                </Badge>
-              ))}
-              {event.hash_tags.length > 2 && (
-                <Badge variant="secondary" className="text-xs px-1 py-0">
-                  +{event.hash_tags.length - 2}
-                </Badge>
-              )}
-            </div>
-          )}
-        </div>
-      );
-    },
-    size: 350,
-  },
-  {
-    accessorKey: "category",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Category
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => {
-      const event = row.original;
-      return event.category ? (
-        <div className="space-y-1 w-full pl-2">
-          <Badge
+           <Badge
             variant="outline"
             className="text-xs truncate max-w-[150px]"
             title={event.category.category_name}
@@ -1024,27 +980,12 @@ export const createColumns = (
               ? `${event.category.category_name.substring(0, 18)}...`
               : event.category.category_name}
           </Badge>
-          {event.subcategory && (
-            <div
-              className="text-xs text-gray-500 truncate max-w-[150px]"
-              title={event.subcategory.subcategory_name}
-            >
-              {event.subcategory.subcategory_name.length > 20
-                ? `${event.subcategory.subcategory_name.substring(0, 20)}...`
-                : event.subcategory.subcategory_name}
-            </div>
-          )}
         </div>
-      ) : (
-        <span className="text-gray-400 text-sm">No category</span>
       );
     },
-    sortingFn: (rowA, rowB) =>
-      (rowA.original.category?.category_name || "").localeCompare(
-        rowB.original.category?.category_name || ""
-      ),
-    size: 180,
+    size: 350,
   },
+ 
   {
     accessorKey: "organizer",
     header: ({ column }) => (
@@ -1093,7 +1034,7 @@ export const createColumns = (
     ),
     cell: ({ row }) => {
       const event = row.original;
-
+console.log(event)
       if (event.event_status === "PENDING") {
         return (
           <Button
@@ -1121,24 +1062,7 @@ export const createColumns = (
     },
     size: 150,
   },
-  {
-    accessorKey: "created_at",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Created
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-600">
-        {new Date(row.original.created_at).toLocaleDateString()}
-      </div>
-    ),
-    size: 120,
-  },
+
   {
     id: "featured",
     header: "Featured List",
@@ -1192,7 +1116,27 @@ export const createColumns = (
     size: 140,
   },
   {
+    id:'view bookings',
+    header: "View Bookings",
+
+    cell: ({ row }) => {
+    const router = useRouter();
+      return (
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => router.push(`/Events/EventBookings?event_id=${row.original.event_id}`)}
+        className="flex items-center gap-2 hover:bg-blue-50 hover:text-blue-600"
+      >
+        <Calendar className="h-4 w-4" />
+        View Bookings
+      </Button>
+      )
+    }
+  },
+  {
     id: "actions",
+    header: "Actions",
     enableHiding: false,
     cell: ({ row }) => <ActionsCell event={row.original} onDelete={onDelete} />,
     size: 80,

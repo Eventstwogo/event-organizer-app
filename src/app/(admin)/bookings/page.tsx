@@ -251,42 +251,8 @@ const BookingsPage = () => {
 
   // Table columns
   const columns: ColumnDef<Booking>[] = [
-    {
-      accessorKey: "booking_reference",
-      header: "Booking Ref",
-      cell: ({ row }) => {
-        const booking = row.original;
-        return (
-          <button
-            onClick={() => router.push(`/bookings/${booking.booking_id}`)}
-            className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
-          >
-            {booking.booking_reference}
-          </button>
-        );
-      },
-    },
-    {
-      accessorKey: "customer",
-      header: "Customer",
-      cell: ({ row }) => {
-        const booking = row.original;
-        return (
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={booking.customer.avatar} />
-              <AvatarFallback>
-                {booking.customer.name.split(' ').map(n => n[0]).join('')}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <div className="font-medium">{booking.customer.name}</div>
-              <div className="text-sm text-gray-500">{booking.customer.email}</div>
-            </div>
-          </div>
-        );
-      },
-    },
+ 
+  
     {
       accessorKey: "event",
       header: "Event",
@@ -307,6 +273,22 @@ const BookingsPage = () => {
         );
       },
     },
+      {
+      accessorKey: "customer",
+      header: "Customer",
+      cell: ({ row }) => {
+        const booking = row.original;
+        return (
+          <div className="flex items-center space-x-3">
+          
+            <div>
+              <div className="font-medium">{booking.customer.name}</div>
+            
+            </div>
+          </div>
+        );
+      },
+    },
     {
       accessorKey: "tickets",
       header: "Tickets",
@@ -318,7 +300,7 @@ const BookingsPage = () => {
             <div className="font-medium">{totalTickets} tickets</div>
             {booking.tickets.map((ticket, index) => (
               <div key={index} className="text-sm text-gray-500">
-                {ticket.quantity}x {ticket.ticket_type}
+                {ticket.quantity}x {ticket.price}
               </div>
             ))}
           </div>
@@ -332,7 +314,7 @@ const BookingsPage = () => {
         const booking = row.original;
         return (
           <div className="font-medium">
-            {booking.currency} {booking.total_amount.toFixed(2)}
+            {booking.currency} {booking.total_amount}
           </div>
         );
       },

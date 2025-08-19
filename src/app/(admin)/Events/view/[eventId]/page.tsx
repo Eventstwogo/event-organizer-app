@@ -99,7 +99,7 @@ const EventViewPage = () => {
 
     setLoading(true);
     try {
-      const eventResponse = await axiosInstance.get(`/events/${eventId}`);
+      const eventResponse = await axiosInstance.get(`/new-events/${eventId}`);
       const event = eventResponse.data.data;
       setEventData(event);
     } catch (error) {
@@ -475,8 +475,8 @@ const EventViewPage = () => {
                                               Time
                                             </p>
                                             <p className="font-semibold text-gray-800 text-sm break-words">
-                                              {formatTime(slot.start_time)} -{" "}
-                                              {formatTime(slot.end_time)}
+                                              {slot.time} -{" "}
+                                              {slot.end_time}
                                             </p>
                                           </div>
                                         </div>
@@ -498,7 +498,7 @@ const EventViewPage = () => {
                                               Capacity
                                             </p>
                                             <p className="font-semibold text-gray-800 text-sm">
-                                              {slot.capacity} seats
+                                              {slot.seat_categories} seats
                                             </p>
                                           </div>
                                         </div>

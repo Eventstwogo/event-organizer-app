@@ -68,6 +68,8 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
         // Handle dynamic routes
         if (pathname.startsWith("/Events/") && route === "/Events") return true;
         if (pathname.startsWith("/queries/") && route === "/queries") return true;
+        if (pathname.startsWith("/bookings/") && route === "/bookings") return true;
+        if (pathname.startsWith("/Coupons/") && route === "/Coupons") return true;
         return false;
       });
 

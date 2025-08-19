@@ -7,6 +7,11 @@ import { toast } from "sonner";
  
 // API Response interfaces - Updated to match actual API response
 interface ApiBooking {
+  seat_categories: any;
+  total_amount: number;
+  order_id: any;
+  user: any;
+  event: any;
   booking_id: number;
   event_title: string;
   event_id: string;
@@ -113,33 +118,32 @@ const transformApiDataToBookings = (apiData: ApiBookingsResponse): TransformedBo
     };
 
     const transformedBooking: TransformedBooking = {
-      booking_id: apiBooking.booking_id.toString(),
+      booking_id: apiBooking.order_id.toString(), // Assuming order_id is the booking ID
       booking_reference: `BK-${apiBooking.booking_id}`,
       customer: {
-        customer_id: `customer_${apiBooking.booking_id}`,
-        name: apiBooking.user_name,
-        email: apiBooking.user_email,
-        phone: undefined,
-        avatar: ""
+        name: apiBooking.user.username,
+        email: apiBooking.user.email,
+
+        customer_id: ""
       },
       event: {
         event_id: apiBooking.event_id,
-        event_title: apiBooking.event_title,
+        event_title: apiBooking.event.title,
         event_slug: apiBooking.event_id, // Using event_id as slug since slug is not provided
-        card_image: apiBooking.card_image, // Default empty string since card_image is not provided in API
-        event_date: apiBooking.booking_date,
-        event_time: apiBooking.slot_time.split(' - ')[0], // Take start time
+        card_image: apiBooking.event.card_image, // Default empty string since card_image is not provided in API
+        event_date: apiBooking.event.event_date, // Take event date
+        event_time: apiBooking.event.event_time, // Take start time
         location: ""
       },
       tickets: [
         {
-          ticket_id: `ticket_${apiBooking.booking_id}`,
-          ticket_type: "",
-          price: apiBooking.total_price / apiBooking.num_seats,
-          quantity: apiBooking.num_seats
+          price: apiBooking.seat_categories[0].price_per_seat,
+          quantity: apiBooking.seat_categories[0].num_seats,
+          ticket_id: "",
+          ticket_type: ""
         }
       ],
-      total_amount: apiBooking.total_price,
+      total_amount: apiBooking.total_amount,
       currency: "AUD", // Default currency since not provided in API
       booking_status: mapBookingStatus(apiBooking.booking_status),
       payment_status: mapPaymentStatus(apiBooking.payment_status),
@@ -173,7 +177,7 @@ export const useBookings = () => {
       setError(null);
      
       // Call the actual API endpoint
-      const response = await axiosInstance.get(`/bookings/organizer/${userId}`);
+      const response = await axiosInstance.get(`/new-bookings/organizer/${userId}`);
      
       if (response.data && response.data.statusCode === 200) {
         console.log("Raw API Response:", response.data);

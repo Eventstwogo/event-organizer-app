@@ -45,7 +45,7 @@ const CreateEventPage = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        `/organizers/new-analytics/organizer-details/${userId}`
+        `/new-events/new-analytics/organizer-details/${userId}`
       );
 
       if (response.data.statusCode === 200) {
@@ -182,7 +182,7 @@ const CreateEventPage = () => {
   const handleCreateSlots = useCallback(
     (event: any) => {
       router.push(
-        `/Events/DatesPricing?slot_id=${event.slot_id}&event_id=${event.event_id}`
+        `/Events/Datespricing?event_id=${event}`
       );
     },
     [router]

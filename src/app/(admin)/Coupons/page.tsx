@@ -137,7 +137,7 @@ const CouponsPage = () => {
       return;
     }
 
-    const code = formData.name.replace(/\s+/g, "").toUpperCase() + generateSuffix();
+    const code =  generateSuffix();
 
     const newCoupon = {
 

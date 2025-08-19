@@ -31,7 +31,7 @@ const router = useRouter();
   }
 
   const handleEventSave = async (eventData: any) => {
-
+console.log(searchParams.event_id)
     // Use the eventId from route params
     const payload = transformToApiPayload({ ...eventData, eventId: searchParams.event_id });
     console.log(payload)
