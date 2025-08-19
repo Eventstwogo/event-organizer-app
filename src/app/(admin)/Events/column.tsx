@@ -1069,7 +1069,7 @@ console.log(event)
     cell: ({ row }) => {
       const event = row.original;
       const isFeatured = event.featured_event || false;
-
+console.log(event)
       return (
         <Button
           variant={isFeatured ? "default" : "outline"}
@@ -1079,8 +1079,8 @@ console.log(event)
               event.event_id,
               event.event_title,
               isFeatured,
-              event.start_date,
-              event.end_date
+              event.event_dates[0],
+              event.event_dates[event.event_dates.length - 1] // Assuming event_dates is an array of date strings
             )
           }
           disabled={isFeatured} // Disable if already featured
