@@ -465,7 +465,7 @@ const BasicInfoContent = () => {
       } else {
         // Create new event
         response = await axiosInstance.post(
-          "/events/create-with-images",
+          "/new-events/create-with-images",
           formData,
           {
             headers: {
@@ -482,7 +482,7 @@ const BasicInfoContent = () => {
             "Event created successfully! Proceeding to dates and pricing."
           );
           router.push(
-            `/Events/Datespricing?slot_id=${newSlotId}&event_id=${newEventId}`
+            `/Events/Datespricing?event_id=${newEventId}`
           );
         } else {
           toast.error(response.data.message || "Failed to create event");
