@@ -3,10 +3,13 @@
 import { EventOrganizer } from "@/components/event-organizer";
 import axiosInstance from "@/lib/axiosinstance";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-export default function Home({ searchParams }: { searchParams: { event_id?: string } }) {
+
+import { useRouter, useSearchParams } from "next/navigation";
+export default function Home() {
   // Helper to convert your state to the required API payload
 const router = useRouter();
+  const searchParams = useSearchParams();
+  const eventId = searchParams.get("event_id");
   function transformToApiPayload(eventData: any) {
     const slot_data: Record<string, any[]> = {};
     for (const date of eventData.selectedDates) {
@@ -31,9 +34,9 @@ const router = useRouter();
   }
 
   const handleEventSave = async (eventData: any) => {
-console.log(searchParams.event_id)
+
     // Use the eventId from route params
-    const payload = transformToApiPayload({ ...eventData, eventId: searchParams.event_id });
+    const payload = transformToApiPayload({ ...eventData, eventId: eventId });
     console.log(payload)
     try {
       const response = await axiosInstance.post("/new-slots/create", payload);
@@ -50,7 +53,7 @@ console.log(searchParams.event_id)
   return (
     <div className="min-h-screen bg-background">
       {/* Pass the eventId as initialData to the component */}
-      <EventOrganizer onEventSave={handleEventSave} initialData={{ eventId: searchParams.event_id }} />
+      <EventOrganizer onEventSave={handleEventSave} initialData={{ eventId: eventId }} />
     </div>
   );
 }

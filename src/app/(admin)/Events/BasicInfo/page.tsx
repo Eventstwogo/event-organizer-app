@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, EventType } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -112,7 +112,7 @@ const BasicInfoContent = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingEventData, setIsLoadingEventData] = useState(false);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
-
+  const [eventTypes, setEventTypes] = useState<EventType[]>([]);
   // Image states
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [mainImagePreview, setMainImagePreview] = useState<string>("");
@@ -141,6 +141,7 @@ const BasicInfoContent = () => {
       description: "",
       organizer: "",
       duration: "",
+      event_type: "",
       language: "",
       ageRestriction: "",
       tags: "",
@@ -208,6 +209,18 @@ const BasicInfoContent = () => {
     try {
       const response = await axiosInstance.get("/categories/list");
       setCategories(response.data.data || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      toast.error("Failed to load categories");
+    } finally {
+      setIsLoadingCategories(false);
+    }
+  }, []);
+    const fetchEventTypes = useCallback(async () => {
+    setIsLoadingCategories(true);
+    try {
+      const response = await axiosInstance.get("/eventtype/active");
+      setEventTypes(response.data.data || []);
     } catch (error) {
       console.error("Error fetching categories:", error);
       toast.error("Failed to load categories");
@@ -359,6 +372,7 @@ const BasicInfoContent = () => {
     }
 
     fetchCategories();
+    fetchEventTypes();
 
     if (isEditMode) {
       console.log('Edit mode detected, loading event data...');
@@ -366,7 +380,7 @@ const BasicInfoContent = () => {
     } else {
       console.log('Create mode - no data to load');
     }
-  }, [userId, router, isEditMode, loadEventData, fetchCategories]);
+  }, [userId, router, isEditMode, loadEventData, fetchCategories,fetchEventTypes]);
 
   // Update subcategories when category changes
   useEffect(() => {
@@ -733,6 +747,35 @@ const BasicInfoContent = () => {
                                 value={subcategory.subcategory_id}
                               >
                                 {subcategory.subcategory_name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
+                     <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">Event Type</Label>
+                    <Controller
+                      name="eventType"
+                      control={control}
+                      render={({ field }) => (
+                        <Select 
+                          onValueChange={field.onChange} 
+                          value={field.value}
+                          disabled={eventTypes.length === 0}
+                        >
+                          <SelectTrigger className="h-12 border-2 border-gray-200 focus:border-blue-500 hover:border-gray-300 transition-all duration-200">
+                            <SelectValue placeholder={
+                              eventTypes.length === 0 
+                                ? "Select event type first" 
+                                : "Select event type"
+                            } />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {eventTypes.map((eventType) => (
+                              <SelectItem key={eventType.type_id} value={eventType.type_id}>
+                                {eventType.event_type}
                               </SelectItem>
                             ))}
                           </SelectContent>
