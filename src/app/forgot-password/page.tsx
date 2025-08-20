@@ -35,7 +35,7 @@ export default function ForgotPasswordPage() {
     if (isSubmitting) return; // Prevent multiple simultaneous requests
     
     try {
-      await axiosInstance.post("/admin/forgot-password", new URLSearchParams({ email: data.email }), {
+      await axiosInstance.post("/organizers/forgot-password", new URLSearchParams({ email: data.email }), {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
       

@@ -239,7 +239,7 @@ export default function ProfilePage() {
       formData.append("new_password", newPassword);
 
       const response = await axiosInstance.post(
-        "/admin/change-password",
+        "/organizers/change-password",
         formData,
         {
           headers: {

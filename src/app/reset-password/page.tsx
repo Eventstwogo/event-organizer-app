@@ -73,7 +73,7 @@ function ResetPasswordForm() {
     setSubmitting(true);
     try {
       await axiosInstance.post(
-        "/admin/reset-password/token",
+        "/organizers/reset-password/token",
         new URLSearchParams({
           email,
           token,
