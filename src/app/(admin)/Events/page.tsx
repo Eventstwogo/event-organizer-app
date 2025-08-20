@@ -160,12 +160,13 @@ const CreateEventPage = () => {
 
       try {
         const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
-        const formData = new FormData();
+
+        const formData = new URLSearchParams();
         formData.append("event_status", newStatus);
 
-        await axiosInstance.patch(`/events/status/${eventId}`, formData, {
+        await axiosInstance.patch(`/new-events/status/${eventId}`, formData, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/x-www-form-urlencoded",
           },
         });
 

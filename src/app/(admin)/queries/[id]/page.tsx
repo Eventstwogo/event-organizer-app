@@ -378,10 +378,10 @@ const QueryDetailsPage = () => {
           <CardContent>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
+                {/* <div>
                   <Label className="text-xs font-medium text-muted-foreground">Sender User ID</Label>
                   <p>{query.sender_user_id}</p>
-                </div>
+                </div> */}
                 <div>
                   <Label className="text-xs font-medium text-muted-foreground">Last Updated</Label>
                   <p>{new Date(query.updated_at).toLocaleString()}</p>

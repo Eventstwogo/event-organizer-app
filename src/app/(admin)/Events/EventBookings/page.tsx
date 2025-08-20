@@ -654,7 +654,7 @@ const EventBookingsPage = () => {
             <div className="space-y-2">
               <h1 className="text-3xl sm:text-4xl font-bold text-foreground leading-tight">{event.event_title}</h1>
               <div className="flex items-center gap-4 text-muted-foreground">
-                <span className="text-sm font-medium">Event ID: {event.event_id}</span>
+                {/* <span className="text-sm font-medium">Event ID: {event.event_id}</span> */}
                 {event.location && (
                   <div className="flex items-center gap-1">
                     <MapPin className="h-4 w-4" />
