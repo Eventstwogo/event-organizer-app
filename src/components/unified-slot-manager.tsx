@@ -27,6 +27,19 @@ interface UnifiedSlotManagerProps {
   onAddSlotToAllDates: (slotData?: Omit<TimeSlot, "id">) => void
 }
 
+
+export function validateTimeFormat(time: string): boolean {
+  // HH:MM AM/PM (with space only)
+  const regex = /^(0?[1-9]|1[0-2]):[0-5][0-9]\s(AM|PM)$/i;
+  return regex.test(time.trim());
+}
+
+// ✅ Matches "2 hours", "1 hour", "30 minutes", "1 hour 20 minutes"
+export function validateDurationFormat(duration: string): boolean {
+  const regex =
+    /^((\d+)\s+hours?(\s+(\d+)\s+minutes?)?|(\d+)\s+minutes?)$/i
+  return regex.test(duration.trim())
+}
 export function UnifiedSlotManager({
   selectedDates,
   slots,
@@ -68,6 +81,19 @@ export function UnifiedSlotManager({
   }
 
   const handleBulkSlotsCreate = () => {
+
+          for (const slotData of bulkSlots) {
+    if (!validateTimeFormat(slotData.time)) {
+      toast.error(`Invalid time format: ${slotData.time}. Please use HH:MM AM/PM (e.g., 10:00 AM)`)
+      return
+    }
+    if (!validateDurationFormat(slotData.duration)) {
+      toast.error(
+        `Invalid duration format: ${slotData.duration}. Please use "X hours", "Y minutes", or "X hours Y minutes"`
+      )
+      return
+    }
+  }
     bulkSlots.forEach((slotData) => {
       const { id, ...slotWithoutId } = slotData
       onAddSlotToAllDates(slotWithoutId)

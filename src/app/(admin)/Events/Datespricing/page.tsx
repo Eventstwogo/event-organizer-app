@@ -45,8 +45,18 @@ const router = useRouter();
       toast.success("Event saved successfully!");
       // Optionally, you can do more with result here
       router.push('/Events')
-    } catch (err: any) {
-      alert("Error saving event: " + err.message);
+    } catch (error: any) {
+        if (error.response?.data?.detail) {
+      // Backend returns a detail array
+      const details = error.response.data.detail;
+
+      // Collect all messages
+      const messages = details.map((d: any) => d.msg).join("\n");
+
+      toast.error(messages || "Something went wrong");
+    } else {
+      toast.error("Unexpected error, please try again.");
+    }
     }
   };
 

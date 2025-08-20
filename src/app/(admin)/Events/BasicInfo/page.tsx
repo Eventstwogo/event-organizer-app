@@ -62,6 +62,7 @@ const basicInfoSchema = z.object({
     .min(5, "Address must be at least 5 characters")
     .max(200, "Address must not exceed 200 characters"),
   category: z.string().min(1, "Please select a category"),
+    eventType: z.string().min(1, "Please select Event Type"),
   subcategory: z.string().optional(),
   description: z.string().min(10, "Description must be at least 10 characters"),
   organizer: z
@@ -247,6 +248,7 @@ const BasicInfoContent = () => {
       setValue("title", eventData.event_title || "");
       setValue("address", eventData.extra_data?.address || "");
       setValue("category", eventData.category?.category_id || "");
+      setValue('eventType', eventData.event_type || '');
       setValue("description", eventData.extra_data?.description || "");
       setValue("organizer", eventData.extra_data?.organizer || ""); // Fixed typo
       setValue("duration", eventData.extra_data?.duration || "");
@@ -424,7 +426,7 @@ const BasicInfoContent = () => {
       formData.append("event_title", data.title);
       formData.append("event_slug", generateEventSlug(data.title));
       formData.append("category_id", data.category);
-
+  formData.append('event_type', data.eventType || '');
       // Optional subcategory
       formData.append("subcategory_id", data.subcategory?.trim() || "");
 
