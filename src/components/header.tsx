@@ -142,12 +142,12 @@ export default function AppHeader({ toggleSidebar }: Readonly<AppHeaderProps>) {
                       >
                         Profile
                       </DropdownMenuItem>
-                      <DropdownMenuItem
+                      {/* <DropdownMenuItem
                         onClick={() => router.push("/Settings")}
                         className="cursor-pointer"
                       >
                         Settings
-                      </DropdownMenuItem>
+                      </DropdownMenuItem> */}
                       <DropdownMenuItem
                         onClick={async () => {
                           try {
