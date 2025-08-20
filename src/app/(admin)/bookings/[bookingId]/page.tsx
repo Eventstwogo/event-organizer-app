@@ -432,6 +432,10 @@ console.log(bookingId)
                     </Badge>
                   </div>
                 </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600">Booked Date</label>
+                  <p className="text-sm">{new Date(booking.booking_date).toLocaleDateString()}</p>
+                </div>
               </CardContent>
             </Card>
 
@@ -473,7 +477,7 @@ console.log(bookingId)
             </Card>
 
             {/* Booking Timeline */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Timeline</CardTitle>
               </CardHeader>
@@ -493,7 +497,7 @@ console.log(bookingId)
                   <p className="text-sm">{new Date(booking.booking_date).toLocaleString()}</p>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </div>
