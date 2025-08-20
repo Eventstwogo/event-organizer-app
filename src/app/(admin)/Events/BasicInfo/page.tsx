@@ -239,7 +239,7 @@ const BasicInfoContent = () => {
     console.log('Loading event data for eventId:', eventId);
     setIsLoadingEventData(true);
     try {
-      const response = await axiosInstance.get(`/events/${eventId}`);
+      const response = await axiosInstance.get(`/new-events/${eventId}`);
       const eventData = response.data.data;
       
       console.log('Loaded event data:', eventData);
@@ -457,8 +457,8 @@ const BasicInfoContent = () => {
 
       if (isEditMode && eventId) {
         // Update existing event
-        response = await axiosInstance.patch(
-          `/events/${eventId}/update-with-images`,
+        response = await axiosInstance.put(
+          `/new-events/update-with-images/${eventId}`,
           formData,
           {
             headers: {
@@ -623,6 +623,35 @@ const BasicInfoContent = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {/* Event Title - spans 2 columns on xl screens */}
                   <div className="xl:col-span-2 space-y-2">
+                      <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">Event Type</Label>
+                    <Controller
+                      name="eventType"
+                      control={control}
+                      render={({ field }) => (
+                        <Select 
+                          onValueChange={field.onChange} 
+                          value={field.value}
+                          disabled={eventTypes.length === 0}
+                        >
+                          <SelectTrigger className="h-12 border-2 border-gray-200 focus:border-blue-500 hover:border-gray-300 transition-all duration-200">
+                            <SelectValue placeholder={
+                              eventTypes.length === 0 
+                                ? "Select event type first" 
+                                : "Select event type"
+                            } />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {eventTypes.map((eventType) => (
+                              <SelectItem key={eventType.type_id} value={eventType.type_id}>
+                                {eventType.event_type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
                     <Label
                       htmlFor="title"
                       className="text-sm font-medium text-gray-700"
@@ -647,9 +676,10 @@ const BasicInfoContent = () => {
                       </p>
                     )}
                   </div>
+                  
 
                   {/* Category */}
-                  <div className="space-y-2">
+                  <div className="space-y-2 ">
                     <Label className="text-sm font-medium text-gray-700">
                       Category *
                     </Label>
@@ -756,35 +786,7 @@ const BasicInfoContent = () => {
                       )}
                     />
                   </div>
-                     <div className="space-y-2">
-                    <Label className="text-sm font-medium text-gray-700">Event Type</Label>
-                    <Controller
-                      name="eventType"
-                      control={control}
-                      render={({ field }) => (
-                        <Select 
-                          onValueChange={field.onChange} 
-                          value={field.value}
-                          disabled={eventTypes.length === 0}
-                        >
-                          <SelectTrigger className="h-12 border-2 border-gray-200 focus:border-blue-500 hover:border-gray-300 transition-all duration-200">
-                            <SelectValue placeholder={
-                              eventTypes.length === 0 
-                                ? "Select event type first" 
-                                : "Select event type"
-                            } />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {eventTypes.map((eventType) => (
-                              <SelectItem key={eventType.type_id} value={eventType.type_id}>
-                                {eventType.event_type}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
+                   
                 </div>
               </CardContent>
             </Card>
