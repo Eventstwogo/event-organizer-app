@@ -38,7 +38,7 @@ interface Query {
   title: string;
   category: string;
   thread: ThreadMessage[];
-  query_status: 'open'  | 'resolved' | 'in-progress'|'closed';
+  query_status: "open"  | "resolved" | "in-progress" | "closed";
   created_at: string;
   updated_at: string;
   last_message: string;
@@ -311,6 +311,7 @@ const QueryDetailsPage = () => {
           </div>
           
           {/* Status Action Buttons */}
+          {query.query_status !== 'closed' && (
           <div className="flex items-center gap-2">
             {query.query_status !== 'in-progress' && (
               <Button
@@ -336,7 +337,7 @@ const QueryDetailsPage = () => {
                 Resolve
               </Button>
             )}
-            {query.query_status !== 'closed' && (
+            {query.query_status !== "closed" && (
               <Button
                 variant="outline"
                 size="sm"
@@ -349,6 +350,7 @@ const QueryDetailsPage = () => {
               </Button>
             )}         
           </div>
+          )}
         </div>
       </div>
 

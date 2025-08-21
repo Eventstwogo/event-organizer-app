@@ -870,9 +870,9 @@ const EventBookingsPage = () => {
                                 <p className="text-sm text-muted-foreground">Duration: {slotData.duration}</p>
                               </div>
                             </div>
-                            <Badge variant="secondary" className="text-sm px-3 py-1">
+                            {/* <Badge variant="secondary" className="text-sm px-3 py-1">
                               ID: {slotData.slot_id}
-                            </Badge>
+                            </Badge> */}
                           </div>
 
                           <Separator className="my-6" />
