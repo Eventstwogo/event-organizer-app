@@ -427,7 +427,7 @@ export default function ProfilePage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-card-foreground">
             <Camera className="h-5 w-5" />
-            Profile Picture
+            Business Logo
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -462,7 +462,7 @@ export default function ProfilePage() {
                 disabled={uploadLoading}
               >
                 <Camera className="h-4 w-4" />
-                Change Photo
+                Change Logo
               </Button>
               <p className="text-xs text-muted-foreground">
                 JPG, JPEG or PNG. Max size 10MB.
