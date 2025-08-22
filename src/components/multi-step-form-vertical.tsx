@@ -3805,9 +3805,28 @@ function getEventTypeName(id: string) {
                             </h5>
                             <div className="space-y-1">
                               {(formData.timeSlots[date] || []).map((slot, index) => (
-                                <p key={index} className="text-sm text-gray-600">
-                                  {slot.startTime} - {slot.endTime} (Capacity: {slot.capacity})
-                                </p>
+                                <div
+      key={index}
+      className="border rounded-lg p-3 bg-gray-50 shadow-sm"
+    >
+      <p className="text-sm font-medium text-gray-800">
+        {slot.startTime} – {slot.endTime}
+      </p>
+      <div className="mt-2 text-sm text-gray-600">
+        <span className="font-semibold">Seat Categories:</span>{" "}
+        {slot.seatCategories?.length > 0 ? (
+          <ul className="list-disc list-inside mt-1 space-y-1">
+            {slot.seatCategories.map((cat) => (
+              <li key={cat.id}>
+                {cat.name} (${cat.price} × {cat.quantity})
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <span>No categories</span>
+        )}
+      </div>
+    </div>
                               ))}
                             </div>
                           </div>

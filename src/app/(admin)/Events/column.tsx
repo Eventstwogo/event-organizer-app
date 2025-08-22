@@ -900,7 +900,7 @@ const ActionsCell = ({
           <Eye className="mr-2 h-4 w-4" />
           View Details
         </DropdownMenuItem>
-        <DropdownMenuItem
+        {/* <DropdownMenuItem
           onClick={() =>
             router.push(`/Events/BasicInfo?event_id=${event.event_id}`)
           }
@@ -915,7 +915,7 @@ const ActionsCell = ({
         >
           <Trash2 className="mr-2 h-4 w-4" />
           Delete event
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
