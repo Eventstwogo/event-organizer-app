@@ -1989,6 +1989,9 @@ import { TimeSlotPopup } from "./eventcreationpopups/TimeSlotPopup"
 import { CategoryPricingPopup } from "./eventcreationpopups/CategoryPricingPopup"
 
 interface MyFormData {
+  Country: string | number | readonly string[] | undefined
+  State: string | number | readonly string[] | undefined
+  suburb: string | number | readonly string[] | undefined
   title: string
   category: string
   subcategory: string
@@ -2073,6 +2076,9 @@ export default function MultiStepForm() {
     ageRestriction: "",
     additionalInfo: "",
     tags: "",
+    suburb:'',
+    State:'',
+    Country:'',
     mainImage: null,
     bannerImage: null,
     galleryImages: [],
@@ -2213,6 +2219,7 @@ export default function MultiStepForm() {
             endTime: "",
             capacity: 0,
             duration: "",
+            seatCategories: [],
           },
         ],
       },
@@ -2319,7 +2326,16 @@ export default function MultiStepForm() {
     const preview = file ? URL.createObjectURL(file) : null
     updateFormData(field, file ? { file, preview } : null)
   }
+function getCategoryName(id: string) {
+  return categories.find(cat => cat.category_id === id)?.category_name || "Not provided";
+}
 
+function getSubcategoryName(id: string) {
+  return subcategories.find(sub => sub.subcategory_id === id)?.subcategory_name || "Not provided";
+}
+function getEventTypeName(id: string) {
+  return eventTypes.find(sub => sub.id === id)?.event_type || "Not provided";
+}
   const addGalleryImage = (file: File) => {
     const preview = URL.createObjectURL(file)
     setFormData((prev) => ({
@@ -2355,11 +2371,11 @@ export default function MultiStepForm() {
     })
   }
 
-  const prepareExtraData = (formData) => {
+  const prepareExtraData = (formData: MyFormData) => {
     return JSON.stringify({
       description: formData.description,
       organizer: formData.organizer,
-      address: formData.address,
+      address: formData.address+', '+formData.suburb+', '+formData.State+', '+formData.Country,
       duration: formData.duration || "",
       language: formData.language || "",
       postal_code: formData.postalCode,
@@ -2546,6 +2562,9 @@ export default function MultiStepForm() {
         ageRestriction: "",
         additionalInfo: "",
         tags: "",
+        suburb: "",
+        State: "",
+        Country: "",
         mainImage: null,
         bannerImage: null,
         galleryImages: [],
@@ -2879,7 +2898,7 @@ export default function MultiStepForm() {
                             {sub.subcategory_name}
                           </SelectItem>
                         ))}
-                        <SelectItem value="Other">Other</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                     {formData.subcategory === "Other" && (
@@ -2951,9 +2970,11 @@ export default function MultiStepForm() {
                     className="text-sm"
                   />
                 </div>
+
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="address" className="text-sm font-medium text-gray-700">
-                    Event Address *
+                    Venue Location *
                   </Label>
                   <Input
                     id="address"
@@ -2963,29 +2984,43 @@ export default function MultiStepForm() {
                     className="h-10"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="location" className="text-sm font-medium text-gray-700">
-                    Event Location *
-                  </Label>
-                  <Input
-                    id="location"
-                    value={formData.location}
-                    onChange={(e) => updateFormData("location", e.target.value)}
-                    placeholder="Full address including city, state"
-                    className="h-10"
-                  />
-                </div>
+            
                 <div className="space-y-2">
                   <Label htmlFor="postalCode" className="text-sm font-medium text-gray-700">
-                    Postal Code *
+                   suburb *
                   </Label>
                   <Input
                     id="postalCode"
-                    value={formData.postalCode}
-                    onChange={(e) => updateFormData("postalCode", e.target.value)}
+                    value={formData.suburb}
+                    onChange={(e) => updateFormData("suburb", e.target.value)}
                     placeholder="Enter postal code"
                     className="h-10"
                   />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="postalCode" className="text-sm font-medium text-gray-700">
+                   State *
+                  </Label>
+                  <Input
+                    id="postalCode"
+                    value={formData.State}
+                    onChange={(e) => updateFormData("State", e.target.value)}
+                    placeholder="Enter postal code"
+                    className="h-10"
+                  />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="postalCode" className="text-sm font-medium text-gray-700">
+             Country
+                  </Label>
+                  <Input
+                    id="postalCode"
+                    value={formData.Country}
+                    onChange={(e) => updateFormData("Country", e.target.value)}
+                    placeholder="Enter postal code"
+                    className="h-10"
+                  />
+                </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -3039,6 +3074,18 @@ export default function MultiStepForm() {
                       className="h-10"
                     />
                   </div>
+                    <div className="space-y-2">
+                  <Label htmlFor="tags" className="text-sm font-medium text-gray-700">
+                    Tags
+                  </Label>
+                  <Input
+                    id="tags"
+                    value={formData.tags}
+                    onChange={(e) => updateFormData("tags", e.target.value)}
+                    placeholder="Comma-separated tags"
+                    className="h-10"
+                  />
+                </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="additionalInfo" className="text-sm font-medium text-gray-700">
@@ -3053,18 +3100,7 @@ export default function MultiStepForm() {
                     className="text-sm"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tags" className="text-sm font-medium text-gray-700">
-                    Tags
-                  </Label>
-                  <Input
-                    id="tags"
-                    value={formData.tags}
-                    onChange={(e) => updateFormData("tags", e.target.value)}
-                    placeholder="Comma-separated tags"
-                    className="h-10"
-                  />
-                </div>
+         
               </div>
             )}
 
@@ -3155,45 +3191,7 @@ export default function MultiStepForm() {
 
 
 {/* Main Card Image */}
-<div className="space-y-3">
-  <Label className="text-sm font-medium text-gray-700">Main Card Image</Label>
 
-  <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors h-40 flex items-center justify-center">
-    {!formData.mainImage?.preview ? (
-      // Upload UI
-      <div>
-        <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
-          <Upload className="w-6 h-6 text-blue-600" />
-        </div>
-        <p className="text-sm font-medium text-gray-700 mb-2">Upload Main Image</p>
-        <p className="text-xs text-gray-500 mb-3">For event cards</p>
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleFileUpload("mainImage", e.target.files?.[0] || null)}
-          className="text-xs"
-        />
-      </div>
-    ) : (
-      // Preview UI
-      <>
-        <img
-          src={formData.mainImage.preview}
-          alt="Main Image Preview"
-          className="w-full h-full object-cover rounded-lg"
-        />
-        <Button
-          size="sm"
-          variant="destructive"
-          className="absolute top-2 right-2 h-6 w-6 rounded-full p-0"
-          onClick={() => handleFileUpload("mainImage", null)}
-        >
-          <X className="w-4 h-4" />
-        </Button>
-      </>
-    )}
-  </div>
-</div>
 
 
                 </div>
@@ -3498,7 +3496,7 @@ export default function MultiStepForm() {
                   <div className="flex-1 bg-white rounded-xl border border-gray-200 p-4 overflow-auto">
                     <div className="flex items-center justify-between mb-4">
                       <h4 className="text-lg font-semibold text-gray-900">Categories And Pricing</h4>
-                      {formData.selectedDates.length > 1 && (
+                      {formData.selectedDates?.length > 1 && (
                         <Button
                           type="button"
                           onClick={createApplyAllTemplate}
@@ -3510,7 +3508,7 @@ export default function MultiStepForm() {
                         </Button>
                       )}
                     </div>
-                    {formData.selectedDates.length === 0 ? (
+                    {formData.selectedDates?.length === 0 ? (
                       <div className="text-center py-12 text-gray-500">
                         <div className="text-lg mb-2">No dates selected</div>
                         <div className="text-sm">Select dates from the calendar to set categories and pricing</div>
@@ -3580,13 +3578,13 @@ export default function MultiStepForm() {
                                         + Add Category
                                       </Button>
                                     </div>
-                                    {slot.seatCategories.length === 0 ? (
+                                    {slot.seatCategories?.length === 0 ? (
                                       <div className="text-center py-3 text-gray-500 text-sm">
                                         No ticket categories added. Click "Add Category" to get started.
                                       </div>
                                     ) : (
                                       <div className="space-y-2">
-                                        {slot.seatCategories.map((category) => (
+                                        {slot.seatCategories?.map((category) => (
                                           <div
                                             key={category.id}
                                             className="grid grid-cols-4 gap-3 items-center p-3 bg-white rounded border"
@@ -3688,6 +3686,7 @@ export default function MultiStepForm() {
             )}
 
             {currentStep === 6 && (
+              
               <div className="space-y-8 animate-in fade-in-50 duration-500">
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border border-blue-100">
                   <h3 className="text-2xl font-bold text-gray-900 mb-6">Review Your Event</h3>
@@ -3700,13 +3699,11 @@ export default function MultiStepForm() {
                             <span className="font-medium">Title:</span> {formData.title || "Not provided"}
                           </p>
                           <p>
-                            <span className="font-medium">Category:</span> {formData.category || "Not provided"}
+                            <span className="font-medium">Category:</span> {getCategoryName(formData.category) || "Not provided"}
                           </p>
                           <p>
                             <span className="font-medium">Subcategory:</span>{" "}
-                            {formData.subcategory === "Other"
-                              ? formData.otherSubcategory
-                              : formData.subcategory || "Not provided"}
+                            {getSubcategoryName( formData.subcategory) || "Not provided"}
                           </p>
                           <p>
                             <span className="font-medium">Organizer:</span> {formData.organizer || "Not provided"}
@@ -3717,7 +3714,7 @@ export default function MultiStepForm() {
                         <h4 className="font-semibold text-gray-900 mb-2">Organizer Details</h4>
                         <div className="space-y-2 text-sm">
                           <p>
-                            <span className="font-medium">Name:</span> {formData.organizerName || "Not provided"}
+                            <span className="font-medium">Name:</span> {formData.organizer || "Not provided"}
                           </p>
                           <p>
                             <span className="font-medium">Contact:</span> {formData.organizerContact || "Not provided"}
