@@ -1979,12 +1979,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress"
 import { CheckCircle, Upload, ImageIcon, Info, ArrowRight, ArrowLeft, X, MapPin, Calendar, Clock } from "lucide-react"
 import useStore from "@/lib/Zustand"
-import type { EventType } from "@/app/(AdminPanel)/EventType/columns"
+import type { EventType } from "@/components/EventType/columns"
 import { toast } from "sonner"
 
 import { useRouter } from "next/navigation"
 import slugify from "slugify"
-import axiosInstance from "@/lib/axiosInstance"
+import axiosInstance from "@/lib/axiosinstance"
 import { TimeSlotPopup } from "./eventcreationpopups/TimeSlotPopup"
 import { CategoryPricingPopup } from "./eventcreationpopups/CategoryPricingPopup"
 
@@ -2124,7 +2124,7 @@ export default function MultiStepForm() {
   const fetchCategories = useCallback(async () => {
     setIsLoadingCategories(true)
     try {
-      const response = await axiosInstance.get("/api/v1/categories/list")
+      const response = await axiosInstance.get("/categories/list")
       setCategories(response.data.data || [])
     } catch (error) {
       console.error("Error fetching categories:", error)
@@ -2137,7 +2137,7 @@ export default function MultiStepForm() {
   const fetchEventTypes = useCallback(async () => {
     setIsLoadingCategories(true)
     try {
-      const response = await axiosInstance.get("/api/v1/eventtype/active")
+      const response = await axiosInstance.get("/eventtype/active")
       setEventTypes(response.data.data || [])
     } catch (error) {
       console.error("Error fetching event types:", error)
@@ -2514,7 +2514,7 @@ export default function MultiStepForm() {
         }
       })
 
-      const response = await axiosInstance.post("/api/v1/new-events/create-with-images", formsData, {
+      const response = await axiosInstance.post("/new-events/create-with-images", formsData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -2523,7 +2523,7 @@ export default function MultiStepForm() {
       const event_id = response.data.data.event_id
       const api2Payload = buildPayload(event_id, formData)
       console.log("API 2 Payload:", api2Payload)
-      const res2 = await axiosInstance.post("/api/v1/new-slots/create", api2Payload)
+      const res2 = await axiosInstance.post("/new-slots/create", api2Payload)
       console.log("API 2 Response:", res2.data)
       toast.success("Event created successfully!")
     } catch (err) {
