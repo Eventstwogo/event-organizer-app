@@ -2898,7 +2898,7 @@ function getEventTypeName(id: string) {
                             {sub.subcategory_name}
                           </SelectItem>
                         ))}
-                    <SelectItem value="Other">Other</SelectItem>
+                    {/* <SelectItem value="Other">Other</SelectItem> */}
                       </SelectContent>
                     </Select>
                     {formData.subcategory === "Other" && (
