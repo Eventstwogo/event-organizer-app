@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useStore from "@/lib/Zustand";
 import { useRouter } from "next/navigation";
- 
+ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 import { CheckCircle, XCircle, Loader2, Store } from "lucide-react";
 import {
   Select,
@@ -21,19 +22,30 @@ import {
 import slugify from "slugify";
 import { toast } from "sonner";
 
+interface OrganizerType {
+  type_id: string;
+  organizer_type: string;
+  type_status: boolean;
+  created_at: string;
+}
+
+{/* Organizer Type Selection */}
+
+
+
 interface Step1Props {
   storeDetails: {
     storeName: string;
     storeUrl: string;
     location: string;
-    industry_id: string;
+    type_ref_id: string;
   };
   setStoreDetails: React.Dispatch<
     React.SetStateAction<{
       storeName: string;
       storeUrl: string;
       location: string;
-      industry_id: string;
+      type_ref_id: string;
     }>
   >;
   onNext: () => void;
@@ -46,7 +58,8 @@ export default function Step1StoreSetup({
 }: Step1Props) {
   const { logout } = useStore();
   const router = useRouter();
-
+const [organizerTypes, setOrganizerTypes] = useState<OrganizerType[]>([]);
+const [loadingTypes, setLoadingTypes] = useState(false);
   const handleLogout = () => {
     logout();
     router.push("/");
@@ -56,7 +69,7 @@ export default function Step1StoreSetup({
     if (
       storeDetails.storeName &&
       storeDetails.storeUrl &&
-      // storeDetails.industry_id &&
+      storeDetails.type_ref_id &&
       storeDetails.location
     ) {
       onNext();
@@ -68,7 +81,24 @@ export default function Step1StoreSetup({
   const [storeNameStatus, setStoreNameStatus] = useState<
     "available" | "unavailable" | "checking" | null
   >(null);
+useEffect(() => {
+  const fetchOrganizerTypes = async () => {
+    try {
+      setLoadingTypes(true);
+      const response = await axiosInstance.get("/organizers/types/active");
+      if (response.status === 200) {
+        setOrganizerTypes(response.data.data || []);
+      }
+    } catch (error) {
+      console.error("Error fetching organizer types:", error);
+      toast.error("Failed to fetch organizer types");
+    } finally {
+      setLoadingTypes(false);
+    }
+  };
 
+  fetchOrganizerTypes();
+}, []);
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (storeDetails.storeName.trim()) {
@@ -205,6 +235,38 @@ export default function Step1StoreSetup({
               />
             </div>
           </div>
+{/* Organizer Type Selection */}
+{/* Organizer Type Selection */}
+<div className="space-y-2">
+  <Label>Organizer Type</Label>
+
+  <div className="border-2 border-gray-200 rounded-lg p-4">
+    {loadingTypes ? (
+      <p className="text-sm text-gray-500">Loading organizer types...</p>
+    ) : organizerTypes.length > 0 ? (
+      <RadioGroup
+        value={storeDetails.type_ref_id}
+        onValueChange={(value) =>
+          setStoreDetails({ ...storeDetails, type_ref_id: value })
+        }
+      >
+        {organizerTypes.map((type) => (
+          <div key={type.type_id} className="flex items-center space-x-2">
+            <RadioGroupItem value={type.type_id} id={type.type_id} />
+            <Label htmlFor={type.type_id}>{type.organizer_type}</Label>
+          </div>
+        ))}
+      </RadioGroup>
+    ) : (
+      <p className="text-sm text-gray-500">No organizer types available</p>
+    )}
+  </div>
+
+  <p className="text-sm text-muted-foreground mt-1">
+    Choose what best describes your organization.
+  </p>
+</div>
+
 
           {/* Location Selection */}
           <div className="space-y-2">

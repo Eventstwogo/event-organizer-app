@@ -18,15 +18,28 @@ import useStore from "@/lib/Zustand";
 import { toast } from "sonner";
 import { Calendar, Plus, RefreshCw } from "lucide-react";
 import { FeaturedEventModal } from "@/components/organizer/featuredevent/featured-event-modal";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const CreateEventPage = () => {
   const router = useRouter();
   const { userId } = useStore();
-  const [events, setEvents] = useState<Event[]>([]);
+const [eventsData, setEventsData] = useState<{
+  upcoming: Event[];
+  past: Event[];
+}>({
+  upcoming: [],
+  past: [],
+});
+
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [showFeaturedModal, setShowFeaturedModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
+const [filters, setFilters] = useState({
+  upcoming: { status: "all", category: "all" },
+  past: { status: "all", category: "all" },
+});
   const [selectedEventForFeatured, setSelectedEventForFeatured] = useState<{
     eventId: string;
     eventName: string;
@@ -36,41 +49,47 @@ const CreateEventPage = () => {
   } | null>(null);
 
   // Fetch events
-  const fetchEvents = useCallback(async () => {
-    if (!userId) {
-      console.warn("User ID not available yet. Skipping fetch.");
-      return;
-    }
-
+const fetchEvents = useCallback(
+  async (tab: "upcoming" | "past" = activeTab) => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get(
-        `/new-events/new-analytics/organizer-details/${userId}`
-      );
+
+      const endpoint =
+        tab === "upcoming"
+          ? `/new-events/new-analytics/organizer-details/${userId}?event_type=active`
+          : `/new-events/new-analytics/organizer-details/${userId}?event_type=past`;
+
+      const response = await axiosInstance.get(endpoint);
 
       if (response.data.statusCode === 200) {
-        const eventsData = response.data.data.events || [];
-        setEvents(eventsData);
+        const eventsArr = response.data.data.events || [];
+        setEventsData((prev) => ({
+          ...prev,
+          [tab]: eventsArr, // ✅ store separately
+        }));
+        toast.success(`Loaded ${eventsArr.length} ${tab} events successfully!`);
       } else {
         toast.error(response.data.message || "Failed to fetch events");
-        setEvents([]);
+        setEventsData((prev) => ({
+          ...prev,
+          [tab]: [],
+        }));
       }
     } catch (error: any) {
       console.error("Error fetching events:", error);
-      if (error.response?.status === 404) {
-        toast.error("Events endpoint not found. Please check the API.");
-      } else if (error.code === "ECONNABORTED") {
-        toast.error("Request timeout. Please check your connection.");
-      } else if (error.response?.status === 500) {
-        toast.error("Server error. Please try again later.");
-      } else {
-        toast.error("Failed to fetch events. Please try again.");
-      }
-      setEvents([]);
+      toast.error("Failed to fetch events. Please try again.");
+      setEventsData((prev) => ({
+        ...prev,
+        [tab]: [],
+      }));
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  },
+  [activeTab, userId]
+);
+
+
 
   // Toggle featured
   const handleFeaturedToggle = useCallback(
@@ -97,6 +116,9 @@ const CreateEventPage = () => {
     []
   );
 
+const events = eventsData[activeTab] || [];
+
+console.log("events",events)
   // Update featured status
   const handleFeaturedUpdate = useCallback(
     async (
@@ -207,20 +229,19 @@ const CreateEventPage = () => {
   );
 
   // Unique categories
-  const uniqueCategories = useMemo(() => {
-    const categories = events
-      .filter((event) => event.category != null)
-      .map((event) => event.category!);
-    return Array.from(
-      new Map(
-        categories.map((category) => [category.category_id, category])
-      ).values()
-    );
+const uniqueCategories = useMemo(() => {
+    const categoryMap: { [key: string]: { category_id: string; category_name: string; category_slug: string } } = {};
+    events.forEach((event) => {
+      if (event.category && !categoryMap[event.category.category_id]) {
+        categoryMap[event.category.category_id] = event.category;
+      }
+    });
+    return Object.values(categoryMap);
   }, [events]);
 
   // Filtered events
   const filteredEvents = useMemo(() => {
-    return events.filter((event) => {
+    return events?.filter((event) => {
       const matchesStatus =
         statusFilter === "all" ||
         (statusFilter === "ACTIVE" && event.event_status === "ACTIVE") ||
@@ -272,14 +293,14 @@ const CreateEventPage = () => {
             </p>
             {!loading && (
               <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                {filteredEvents.length} of {events.length} events
+                {filteredEvents?.length} of {events?.length} events
               </p>
             )}
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
             <Button
-              onClick={fetchEvents}
+              onClick={() => fetchEvents()}
               variant="outline"
               className="h-10 sm:h-11 px-3 sm:px-4 text-sm w-full sm:w-auto order-2 sm:order-1"
               disabled={loading}
@@ -338,7 +359,7 @@ const CreateEventPage = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
-                    {uniqueCategories.map((category) => (
+                    {uniqueCategories?.map((category) => (
                       <SelectItem
                         key={category.category_id}
                         value={category.category_slug}
@@ -375,70 +396,63 @@ const CreateEventPage = () => {
               </div>
             </CardContent>
           </Card>
-        ) : filteredEvents.length === 0 && events.length === 0 ? (
-          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-6 sm:p-8 lg:p-12 text-center">
-              <Calendar className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300 mx-auto mb-3 sm:mb-4" />
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
-                No Events Found
-              </h3>
-              <p className="text-sm sm:text-base text-gray-500 mb-4 sm:mb-6 px-2">
-                You haven&apos;t created any events yet. Create your first event
-                to get started!
-              </p>
-              <Button
-                onClick={() => router.push("/Events/BasicInfo")}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white h-10 sm:h-11 px-4 sm:px-6 text-sm sm:text-base w-full sm:w-auto max-w-xs"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create Your First Event
-              </Button>
-            </CardContent>
-          </Card>
-        ) : filteredEvents.length === 0 ? (
-          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-6 sm:p-8 text-center">
-              <Calendar className="h-12 w-12 sm:h-14 sm:w-14 text-gray-300 mx-auto mb-3 sm:mb-4" />
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
-                No Events Match Your Filters
-              </h3>
-              <p className="text-sm sm:text-base text-gray-500 mb-4 px-2">
-                Try adjusting your filters or create a new event.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center items-center">
-                <Button
-                  onClick={() => {
-                    setStatusFilter("all");
-                    setCategoryFilter("all");
-                  }}
-                  variant="outline"
-                  className="h-10 text-sm w-full sm:w-auto"
-                >
-                  Clear Filters
-                </Button>
-                <Button
-                  onClick={() => router.push("/Events/BasicInfo")}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white h-10 text-sm w-full sm:w-auto"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Event
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm overflow-hidden">
-            <CardContent className="p-0 sm:p-3 lg:p-6">
-              <div className="overflow-x-auto">
-                <DataTable
-                  columns={columns}
-                  data={filteredEvents}
-                  searchKey="event_title"
-                  searchPlaceholder="Search events..."
-                />
-              </div>
-            </CardContent>
-          </Card>
+        )  : (
+         <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+  <CardContent className="p-6">
+<Tabs
+  value={activeTab}
+  onValueChange={(val) => {
+    setActiveTab(val as "upcoming" | "past");
+    fetchEvents(val as "upcoming" | "past");
+  }}
+  className="w-full"
+>
+  <TabsList className="mb-6">
+    <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>
+    <TabsTrigger value="past">Past Events</TabsTrigger>
+  </TabsList>
+<TabsContent value="upcoming">
+  {loading ? (
+    <div className="text-center py-8 text-gray-500">Loading...</div>
+  ) : events.length === 0 ? (
+    <div className="text-center py-8">
+      <p className="text-gray-600">You have no upcoming events yet.</p>
+      <Button onClick={() => router.push("/Events/BasicInfo")} className="mt-4">
+        Create Your First Event
+      </Button>
+    </div>
+  ) : (
+    <DataTable
+      columns={columns}
+      data={events}
+      searchKey="event_title"
+      searchPlaceholder="Search upcoming events..."
+    />
+  )}
+</TabsContent>
+
+<TabsContent value="past">
+  {loading ? (
+    <div className="text-center py-8 text-gray-500">Loading...</div>
+  ) : events.length === 0 ? (
+    <div className="text-center py-8">
+      <p className="text-gray-600">No past events found.</p>
+    </div>
+  ) : (
+    <DataTable
+      columns={columns}
+      data={events}
+      searchKey="event_title"
+      searchPlaceholder="Search past events..."
+    />
+  )}
+</TabsContent>
+
+</Tabs>
+
+  </CardContent>
+</Card>
+
         )}
 
         {/* Featured Event Modal */}

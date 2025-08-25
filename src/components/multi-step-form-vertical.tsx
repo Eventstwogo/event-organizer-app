@@ -2514,6 +2514,7 @@ function getEventTypeName(id: string) {
       formsData.append("subcategory_id", formData.subcategory?.trim() || "")
       formsData.append("extra_data", prepareExtraData(formData))
       formsData.append("hash_tags", prepareHashtags(formData.tags || ""))
+       formsData.append("custom_subcategory_name", formData.otherSubcategory || "")
 
       if (formData.mainImage?.file) {
         formsData.append("card_image", formData.mainImage.file)
@@ -2898,10 +2899,10 @@ function getEventTypeName(id: string) {
                             {sub.subcategory_name}
                           </SelectItem>
                         ))}
-                    {/* <SelectItem value="Other">Other</SelectItem> */}
+              
                       </SelectContent>
                     </Select>
-                    {formData.subcategory === "Other" && (
+                 {formData.subcategory && subcategories.find(cat=>cat.subcategory_id===formData.subcategory)?.subcategory_name==='Others' && (
                       <Input
                         id="otherSubcategory"
                         value={formData.otherSubcategory || ""}

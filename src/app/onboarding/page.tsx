@@ -14,8 +14,9 @@ export default function VendorOnboarding() {
   const [storeDetails, setStoreDetails] = useState({
     storeName: "",
     storeUrl: "",
-    industry_id: "", // Ensure this matches backend type (string or number)
+
     location: "",
+    type_ref_id: "", // Added to match required type
   });
   const [generalQuestions, setGeneralQuestions] = useState({
     mainGoals: [] as string[],
@@ -52,7 +53,7 @@ export default function VendorOnboarding() {
         abn_id: trimmedAbn,
         store_name: storeDetails.storeName,
         store_url: `https://events2go.com/${storeDetails.storeUrl}`,
-        industry_id: storeDetails.industry_id,
+        type_ref_id: storeDetails.type_ref_id,
         location: storeDetails.location,
       };
 
