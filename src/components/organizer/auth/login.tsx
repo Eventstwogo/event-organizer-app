@@ -12,14 +12,14 @@ export default function VendorLoginComponent() {
         <div className="absolute top-1/2 right-1/3 w-16 h-16 bg-white/10 rounded-full animate-pulse delay-1000"></div>
       </div>
 
-      <div className="flex flex-col items-center justify-center p-12 relative z-10 text-white">
+      <div className="flex flex-col items-center justify-center ml-10  p-12 relative z-10 text-white">
         <div className="text-center space-y-8 max-w-lg">
           <div className="space-y-4">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-3xl backdrop-blur-sm">
               <Calendar className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-4xl font-bold leading-tight">
-              Create Unforgettable Events
+             “Hop In. Leap Ahead. Live the Experience.”
             </h2>
             <p className="text-xl text-purple-100 leading-relaxed">
               Join thousands of successful event organizers who've brought their
@@ -28,36 +28,48 @@ export default function VendorLoginComponent() {
           </div>
 
           {/* Success metrics with icons */}
-          <div className="grid grid-cols-2 gap-6 pt-8">
-            <div className="text-center space-y-2">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm">
-                <Users className="w-6 h-6" />
-              </div>
-              <div className="text-3xl font-bold">15K+</div>
-              <div className="text-purple-100 text-sm">Event Organizers</div>
-            </div>
-            <div className="text-center space-y-2">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm">
-                <Ticket className="w-6 h-6" />
-              </div>
-              <div className="text-3xl font-bold">2.8M+</div>
-              <div className="text-purple-100 text-sm">Tickets Sold</div>
-            </div>
-            <div className="text-center space-y-2">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm">
-                <TrendingUp className="w-6 h-6" />
-              </div>
-              <div className="text-3xl font-bold">98.5%</div>
-              <div className="text-purple-100 text-sm">Event Success Rate</div>
-            </div>
-            <div className="text-center space-y-2">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm">
-                <Star className="w-6 h-6" />
-              </div>
-              <div className="text-3xl font-bold">4.8★</div>
-              <div className="text-purple-100 text-sm">Platform Rating</div>
-            </div>
-          </div>
+         <div className="grid grid-cols-2 gap-6 pt-8">
+  <div className="text-center space-y-2">
+    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm">
+      <Calendar className="w-6 h-6" />
+    </div>
+    <div className="text-lg font-semibold">Smart Scheduling</div>
+    <div className="text-purple-100 text-sm">
+      Plan, update, and manage events with ease.
+    </div>
+  </div>
+
+  <div className="text-center space-y-2">
+    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm">
+      <Ticket className="w-6 h-6" />
+    </div>
+    <div className="text-lg font-semibold">Seamless Ticketing</div>
+    <div className="text-purple-100 text-sm">
+      Sell and scan tickets effortlessly in real time.
+    </div>
+  </div>
+
+  <div className="text-center space-y-2">
+    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm">
+      <Users className="w-6 h-6" />
+    </div>
+    <div className="text-lg font-semibold">Audience Engagement</div>
+    <div className="text-purple-100 text-sm">
+      Keep attendees connected before and after events.
+    </div>
+  </div>
+
+  <div className="text-center space-y-2">
+    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm">
+      <TrendingUp className="w-6 h-6" />
+    </div>
+    <div className="text-lg font-semibold">Growth Insights</div>
+    <div className="text-purple-100 text-sm">
+      Track performance with powerful analytics.
+    </div>
+  </div>
+</div>
+
 
           {/* Testimonial */}
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mt-8">
