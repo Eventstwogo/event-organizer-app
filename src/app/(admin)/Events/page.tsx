@@ -548,8 +548,8 @@ const CreateEventPage = () => {
 
         const endpoint =
           tab === "upcoming"
-            ? `/new-events/new-analytics/organizer-details/${userId}?event_type=active&page=${page + 1}&limit=${size}` // 1-based page
-            : `/new-events/new-analytics/organizer-details/${userId}?event_type=past&page=${page + 1}&limit=${size}`; // Adjust based on API
+            ? `/new-events/new-analytics/organizer-details/${userId}?event_type=upcoming&page=${page + 1}&limit=${size}` // 1-based page
+            : `/new-events/new-analytics/organizer-details/${userId}?event_type=completed&page=${page + 1}&limit=${size}`; // Adjust based on API
 
         const response = await axiosInstance.get(endpoint);
 
