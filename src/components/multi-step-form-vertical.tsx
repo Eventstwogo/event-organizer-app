@@ -1,8 +1,3 @@
-
-
-
-
-
 // "use client"
 
 // import { useState, useEffect, useCallback } from "react"
@@ -15,17 +10,19 @@
 // import { Progress } from "@/components/ui/progress"
 // import { CheckCircle, Upload, ImageIcon, Info, ArrowRight, ArrowLeft, X, MapPin, Calendar, Clock } from "lucide-react"
 // import useStore from "@/lib/Zustand"
-// import type { EventType } from "@/app/(AdminPanel)/EventType/columns"
+// import type { EventType } from "@/components/EventType/columns"
 // import { toast } from "sonner"
 
 // import { useRouter } from "next/navigation"
 // import slugify from "slugify"
-// import axiosInstance from "@/lib/axiosInstance"
+// import axiosInstance from "@/lib/axiosinstance"
 // import { TimeSlotPopup } from "./eventcreationpopups/TimeSlotPopup"
 // import { CategoryPricingPopup } from "./eventcreationpopups/CategoryPricingPopup"
-// // Define subCategories object
 
 // interface MyFormData {
+//   Country: string | number | readonly string[] | undefined
+//   State: string | number | readonly string[] | undefined
+//   suburb: string | number | readonly string[] | undefined
 //   title: string
 //   category: string
 //   subcategory: string
@@ -110,6 +107,9 @@
 //     ageRestriction: "",
 //     additionalInfo: "",
 //     tags: "",
+//     suburb:'',
+//     State:'',
+//     Country:'',
 //     mainImage: null,
 //     bannerImage: null,
 //     galleryImages: [],
@@ -124,9 +124,7 @@
 //     customCategories: [],
 //   })
 
-
-
-//  const [applyAllSlot, setApplyAllSlot] = useState<{
+//   const [applyAllSlot, setApplyAllSlot] = useState<{
 //     startTime: string
 //     endTime: string
 //     capacity: number
@@ -140,10 +138,11 @@
 //   const [subcategories, setSubcategories] = useState<Subcategory[]>([])
 //   const [isLoadingCategories, setIsLoadingCategories] = useState(false)
 //   const [eventTypes, setEventTypes] = useState<EventType[]>([])
-//     const [categoriesToApply, setCategoriesToApply] = useState<TicketCategory[]>([])
+//   const [categoriesToApply, setCategoriesToApply] = useState<TicketCategory[]>([])
 //   const [showCustomCategoryForm, setShowCustomCategoryForm] = useState(false)
 //   const [newCustomCategory, setNewCustomCategory] = useState({ name: "", price: 0 })
 //   const router = useRouter()
+
 //   const updateFormData = (field: keyof MyFormData, value: any) => {
 //     setFormData((prev) => ({ ...prev, [field]: value }))
 //   }
@@ -158,10 +157,11 @@
 //     }
 //     return dates
 //   }
+
 //   const fetchCategories = useCallback(async () => {
 //     setIsLoadingCategories(true)
 //     try {
-//       const response = await axiosInstance.get("/api/v1/categories/list")
+//       const response = await axiosInstance.get("/categories/list")
 //       setCategories(response.data.data || [])
 //     } catch (error) {
 //       console.error("Error fetching categories:", error)
@@ -170,28 +170,30 @@
 //       setIsLoadingCategories(false)
 //     }
 //   }, [])
+
 //   const fetchEventTypes = useCallback(async () => {
 //     setIsLoadingCategories(true)
 //     try {
-//       const response = await axiosInstance.get("/api/v1/eventtype/active")
+//       const response = await axiosInstance.get("/eventtype/active")
 //       setEventTypes(response.data.data || [])
 //     } catch (error) {
-//       console.error("Error fetching categories:", error)
-//       toast.error("Failed to load categories")
+//       console.error("Error fetching event types:", error)
+//       toast.error("Failed to load event types")
 //     } finally {
 //       setIsLoadingCategories(false)
 //     }
 //   }, [])
+
 //   const selectedCategory = formData.category
 //   useEffect(() => {
 //     if (selectedCategory) {
 //       const category = categories.find((cat) => cat.category_id === selectedCategory)
 //       setSubcategories(category?.subcategories || [])
-//       // Reset subcategory when category changes
 //     } else {
 //       setSubcategories([])
 //     }
 //   }, [selectedCategory, categories])
+
 //   useEffect(() => {
 //     if (!userId) {
 //       toast.error("Please log in to create events")
@@ -202,6 +204,7 @@
 //     fetchCategories()
 //     fetchEventTypes()
 //   }, [userId, fetchCategories, fetchEventTypes])
+
 //   const toggleDateSelection = (date: string) => {
 //     const newSelectedDates = formData.selectedDates.includes(date)
 //       ? formData.selectedDates.filter((d) => d !== date)
@@ -209,12 +212,10 @@
 
 //     updateFormData("selectedDates", newSelectedDates)
 
-//     // Set active date to first selected date if none is active
 //     if (!activeDate && newSelectedDates.length > 0) {
 //       setActiveDate(newSelectedDates[0])
 //     }
 
-//     // Clear active date if it was deselected
 //     if (!newSelectedDates.includes(activeDate)) {
 //       setActiveDate(newSelectedDates[0] || "")
 //     }
@@ -249,6 +250,7 @@
 //             endTime: "",
 //             capacity: 0,
 //             duration: "",
+//             seatCategories: [],
 //           },
 //         ],
 //       },
@@ -261,7 +263,6 @@
 //         if (i === index) {
 //           const updatedSlot = { ...slot, [field]: value }
 
-//           // Auto-calculate duration when start or end time changes
 //           if (field === "startTime" || field === "endTime") {
 //             updatedSlot.duration = calculateDuration(
 //               field === "startTime" ? (value as string) : slot.startTime,
@@ -353,10 +354,19 @@
 //   }
 
 //   const handleFileUpload = (field: "mainImage" | "bannerImage", file: File | null) => {
-//     const preview= file ? URL.createObjectURL(file) : null
-//     updateFormData(field, file)
+//     const preview = file ? URL.createObjectURL(file) : null
+//     updateFormData(field, file ? { file, preview } : null)
 //   }
+// function getCategoryName(id: string) {
+//   return categories.find(cat => cat.category_id === id)?.category_name || "Not provided";
+// }
 
+// function getSubcategoryName(id: string) {
+//   return subcategories.find(sub => sub.subcategory_id === id)?.subcategory_name || "Not provided";
+// }
+// function getEventTypeName(id: string) {
+//   return eventTypes.find(sub => sub.id === id)?.event_type || "Not provided";
+// }
 //   const addGalleryImage = (file: File) => {
 //     const preview = URL.createObjectURL(file)
 //     setFormData((prev) => ({
@@ -383,6 +393,7 @@
 //       setCurrentStep(currentStep - 1)
 //     }
 //   }
+
 //   const generateEventSlug = (title: string): string => {
 //     return slugify(title, {
 //       lower: true,
@@ -390,15 +401,15 @@
 //       remove: /[*+~.()'"!:@]/g,
 //     })
 //   }
-//   const prepareExtraData = (formData) => {
+
+//   const prepareExtraData = (formData: MyFormData) => {
 //     return JSON.stringify({
 //       description: formData.description,
 //       organizer: formData.organizer,
-//       address: formData.address,
+//       address: formData.address+', '+formData.suburb+', '+formData.State+', '+formData.Country,
 //       duration: formData.duration || "",
 //       language: formData.language || "",
 //       postal_code: formData.postalCode,
-
 //       organizer_contact: formData.organizerContact,
 //       organizer_email: formData.organizerEmail,
 //       ageRestriction: formData.ageRestriction || "",
@@ -417,7 +428,8 @@
 
 //     return JSON.stringify(tagArray)
 //   }
-//   const isStepValid =  () => {
+
+//   const isStepValid = () => {
 //     switch (currentStep) {
 //       case 1:
 //         return (
@@ -431,11 +443,7 @@
 //         )
 //       case 2:
 //         return formData.description && formData.address && formData.startDate && formData.endDate
-
 //       case 3:
- 
-//         // Required fields
-       
 //         return true
 //       case 4:
 //         return formData.selectedDates.length > 0
@@ -444,7 +452,7 @@
 //           (date) =>
 //             formData.timeSlots[date] &&
 //             formData.timeSlots[date].length > 0 &&
-//             formData.timeSlots[date].every((slot) => slot.startTime && slot.endTime && slot.capacity > 0),
+//             formData.timeSlots[date].every((slot) => slot.startTime && slot.endTime),
 //         )
 //       case 6:
 //         return true
@@ -460,250 +468,187 @@
 //     }))
 //   }
 
-// function formatTime24to12(time: string) {
-//   // input: "20:19" → output: "08:19 PM"
-//   const [h, m] = time.split(":").map(Number);
-//   const date = new Date();
-//   date.setHours(h, m);
-//   return date.toLocaleTimeString("en-US", {
-//     hour: "2-digit",
-//     minute: "2-digit",
-//     hour12: true,
-//   });
-// }
-
-// function formatDuration(start: string, end: string) {
-//   const [sh, sm] = start.split(":").map(Number);
-//   const [eh, em] = end.split(":").map(Number);
-
-//   const startMinutes = sh * 60 + sm;
-//   const endMinutes = eh * 60 + em;
-
-//   let diff = endMinutes - startMinutes;
-//   if (diff < 0) diff += 24 * 60; // handle overnight
-
-//   const hours = Math.floor(diff / 60);
-//   const minutes = diff % 60;
-
-//   let result = "";
-//   if (hours > 0) result += `${hours} hour${hours > 1 ? "s" : ""}`;
-//   if (minutes > 0) {
-//     if (result) result += " ";
-//     result += `${minutes} minute${minutes > 1 ? "s" : ""}`;
-//   }
-//   return result || "0 minutes";
-// }
-
-// function buildPayload(event_id: string, formData: any) {
-//   const slot_data: Record<string, any[]> = {};
-
-//   Object.entries(formData.timeSlots).forEach(([date, slots]: [string, any]) => {
-//     slot_data[date] = slots.map((slot: any, index: number) => {
-//       const formattedTime = formatTime24to12(slot.startTime);
-
-//       return {
-//         time: formattedTime, // ✅ human-readable format "10:00 AM"
-//         duration: formatDuration(slot.startTime, slot.endTime), // ✅ human-readable duration
-//         seatCategories: slot.seatCategories.map((cat: any, catIndex: number) => {
-//           const cleanTime = slot.startTime.replace(":", "");
-//           return {
-//             id: `${cat.name.toLowerCase()}_${cleanTime}_${catIndex + 1}`,
-//             label: cat.name,
-//             price: cat.price,
-//             totalTickets: cat.quantity,
-//             booked: 0,
-//             held: 0,
-//             available: cat.quantity,
-//           };
-//         }),
-//       };
-//     });
-//   });
-
-//   return {
-//     event_ref_id: event_id,
-//     event_dates: formData.selectedDates,
-//     slot_data,
-  
-//   };
-// }
-
-
-
-// const handleSubmit = async () => {
-
-//   try {
-
-
-//  const formsData = new FormData()
-//         // Required fields
-//         formsData.append("user_id", userId.toString())
-//         formsData.append("event_title", formData.title)
-//         formsData.append("event_slug", generateEventSlug(formData.title))
-//         formsData.append("category_id", formData.category)
-//         formsData.append("event_type", formData.eventType || "")
-//         // Optional subcategory
-//         formsData.append("subcategory_id", formData.subcategory?.trim() || "")
-
-//         // Extra data as JSON string
-//         formsData.append("extra_data", prepareExtraData(formData))
-
-//         // Hashtags as JSON string
-//         formsData.append("hash_tags", prepareHashtags(formData.tags || ""))
-
-//         // Images - only append if new files are selected
-//         if (formData.mainImage) {
-//           formsData.append("card_image", formData.mainImage)
-//         }
-
-//         if (formData.bannerImage) {
-//           formsData.append("banner_image", formData.bannerImage)
-//         }
-
-//         // Extra images (gallery images) - only append new files
-//         const newGalleryImages = formData.galleryImages.filter((img) => img.file !== null)
-//         newGalleryImages.forEach((galleryImage) => {
-//           if (galleryImage.file) {
-//             formsData.append("extra_images", galleryImage.file)
-//           }
-//         })
-
- 
-//     // 1️⃣ Call first API
-
-// const response = await axiosInstance.post("/api/v1/new-events/create-with-images", formsData, {
-//           headers: {
-//             "Content-Type": "multipart/form-data",
-//           },
-//         })
- 
-  
- 
-// const event_id = response.data.data.event_id;
- 
-//     // 2️⃣ Call second API only if first succeeded
-//    const api2Payload = buildPayload(event_id, formData)
-// console.log("API 2 Payload:", api2Payload)
-//     const res2 = await axiosInstance.post("/api/v1/new-slots/create", api2Payload);
-  
-//  console.log("API 2 Response:", res2.data);
-//     toast.success("Event created successfully!");
- 
-//   } catch (err) {
-
-//     console.error(err);
-
-//     toast.error("Submission failed! Please try again.");
-
-//   }finally {
-//     router.push("/Events")
-//   setFormData({
-//     title: "",
-//     category: "",
-//     subcategory: "",
-//     description: "",
-//     location: "",
-//     postalCode: "",
-//     eventType: "",
-//     organizer: "",
-//     address: "",
-//     duration: "",
-//     language: "",
-//     ageRestriction: "",
-//     additionalInfo: "",
-//     tags: "",
-//     mainImage: null,
-//     bannerImage: null,
-//     galleryImages: [],
-//     otherSubcategory: "",
-//     organizerName: "",
-//     organizerContact: "",
-//     organizerEmail: "",
-//     startDate: "",
-//     endDate: "",
-//     selectedDates: [],
-//     timeSlots: {},
-//     customCategories: [],
-//   })
+//   function formatTime24to12(time: string) {
+//     const [h, m] = time.split(":").map(Number)
+//     const date = new Date()
+//     date.setHours(h, m)
+//     return date.toLocaleTimeString("en-US", {
+//       hour: "2-digit",
+//       minute: "2-digit",
+//       hour12: true,
+//     })
 //   }
 
-// };
+//   function formatDuration(start: string, end: string) {
+//     const [sh, sm] = start.split(":").map(Number)
+//     const [eh, em] = end.split(":").map(Number)
 
+//     const startMinutes = sh * 60 + sm
+//     const endMinutes = eh * 60 + em
 
-//   const progress = (currentStep / steps.length) * 100
-//   const currentStepData = steps.find((s) => s.id === currentStep)
+//     let diff = endMinutes - startMinutes
+//     if (diff < 0) diff += 24 * 60
 
-//   // const applySlotToAllDates = () => {
-//   //   if (!applyAllSlot) return
+//     const hours = Math.floor(diff / 60)
+//     const minutes = diff % 60
 
-//   //   setFormData((prev) => {
-//   //     const newTimeSlots = { ...prev.timeSlots }
-//   //     prev.selectedDates.forEach((date) => {
-//   //       if (!newTimeSlots[date]) {
-//   //         newTimeSlots[date] = []
-//   //       }
-//   //       newTimeSlots[date].push({ ...applyAllSlot })
-//   //     })
+//     let result = ""
+//     if (hours > 0) result += `${hours} hour${hours > 1 ? "s" : ""}`
+//     if (minutes > 0) {
+//       if (result) result += " "
+//       result += `${minutes} minute${minutes > 1 ? "s" : ""}`
+//     }
+//     return result || "0 minutes"
+//   }
 
-//   //     return {
-//   //       ...prev,
-//   //       timeSlots: newTimeSlots,
-//   //     }
-//   //   })
+//   function buildPayload(event_id: string, formData: any) {
+//     const slot_data: Record<string, any[]> = {}
 
-//   //   setApplyAllSlot(null)
-//  // }
+//     Object.entries(formData.timeSlots).forEach(([date, slots]: [string, any]) => {
+//       slot_data[date] = slots.map((slot: any, index: number) => {
+//         const formattedTime = formatTime24to12(slot.startTime)
 
- 
-//   const applySlotToAllDates = () => {
-//   if (!applyAllSlot) return;
-
-//   setFormData((prev) => {
-//     const newTimeSlots = { ...prev.timeSlots };
-
-//     prev.selectedDates.forEach((date) => {
-//       if (!newTimeSlots[date]) {
-//         newTimeSlots[date] = [];
-//       }
-
-//       const alreadyExists = newTimeSlots[date].some(
-//         (slot) =>
-//           slot.startTime === applyAllSlot.startTime &&
-//           slot.endTime === applyAllSlot.endTime
-//       );
-
-//       if (!alreadyExists) {
-//         newTimeSlots[date].push({ ...applyAllSlot });
-//       }
-//     });
+//         return {
+//           time: formattedTime,
+//           duration: formatDuration(slot.startTime, slot.endTime),
+//           seatCategories: slot.seatCategories.map((cat: any, catIndex: number) => {
+//             const cleanTime = slot.startTime.replace(":", "")
+//             return {
+//               id: `${cat.name.toLowerCase()}_${cleanTime}_${catIndex + 1}`,
+//               label: cat.name,
+//               price: cat.price,
+//               totalTickets: cat.quantity,
+//               booked: 0,
+//               held: 0,
+//               available: cat.quantity,
+//             }
+//           }),
+//         }
+//       })
+//     })
 
 //     return {
-//       ...prev,
-//       timeSlots: newTimeSlots,
-//     };
-//   });
+//       event_ref_id: event_id,
+//       event_dates: formData.selectedDates,
+//       slot_data,
+//     }
+//   }
 
-//   setApplyAllSlot(null);
-// };
+//   const handleSubmit = async () => {
+//     try {
+//       const formsData = new FormData()
+//       formsData.append("user_id", userId.toString())
+//       formsData.append("event_title", formData.title)
+//       formsData.append("event_slug", generateEventSlug(formData.title))
+//       formsData.append("category_id", formData.category)
+//       formsData.append("event_type", formData.eventType || "")
+//       formsData.append("subcategory_id", formData.subcategory?.trim() || "")
+//       formsData.append("extra_data", prepareExtraData(formData))
+//       formsData.append("hash_tags", prepareHashtags(formData.tags || ""))
+//        formsData.append("custom_subcategory_name", formData.otherSubcategory || "")
 
+//       if (formData.mainImage?.file) {
+//         formsData.append("card_image", formData.mainImage.file)
+//       }
 
-//   // const createApplyAllTemplate = () => {
-//   //   setShowApplyAll(true)
-//   //   setApplyAllSlot({
-//   //     startTime: "",
-//   //     endTime: "",
-//   //     capacity: 0,
-//   //     duration: "",
-//   //     seatCategories: [],
-//   //   })
-//   // }
+//       if (formData.bannerImage?.file) {
+//         formsData.append("banner_image", formData.bannerImage.file)
+//       }
+
+//       const newGalleryImages = formData.galleryImages.filter((img) => img.file !== null)
+//       newGalleryImages.forEach((galleryImage) => {
+//         if (galleryImage.file) {
+//           formsData.append("extra_images", galleryImage.file)
+//         }
+//       })
+
+//       const response = await axiosInstance.post("/new-events/create-with-images", formsData, {
+//         headers: {
+//           "Content-Type": "multipart/form-data",
+//         },
+//       })
+
+//       const event_id = response.data.data.event_id
+//       const api2Payload = buildPayload(event_id, formData)
+//       console.log("API 2 Payload:", api2Payload)
+//       const res2 = await axiosInstance.post("/new-slots/create", api2Payload)
+//       console.log("API 2 Response:", res2.data)
+//       toast.success("Event created successfully!")
+//     } catch (err) {
+//       console.error(err)
+//       toast.error("Submission failed! Please try again.")
+//     } finally {
+//       router.push("/Events")
+//       setFormData({
+//         title: "",
+//         category: "",
+//         subcategory: "",
+//         description: "",
+//         location: "",
+//         postalCode: "",
+//         eventType: "",
+//         organizer: "",
+//         address: "",
+//         duration: "",
+//         language: "",
+//         ageRestriction: "",
+//         additionalInfo: "",
+//         tags: "",
+//         suburb: "",
+//         State: "",
+//         Country: "",
+//         mainImage: null,
+//         bannerImage: null,
+//         galleryImages: [],
+//         otherSubcategory: "",
+//         organizerName: "",
+//         organizerContact: "",
+//         organizerEmail: "",
+//         startDate: "",
+//         endDate: "",
+//         selectedDates: [],
+//         timeSlots: {},
+//         customCategories: [],
+//       })
+//     }
+//   }
+
+//   const applySlotToAllDates = () => {
+//     if (!applyAllSlot) return
+
+//     setFormData((prev) => {
+//       const newTimeSlots = { ...prev.timeSlots }
+
+//       prev.selectedDates.forEach((date) => {
+//         if (!newTimeSlots[date]) {
+//           newTimeSlots[date] = []
+//         }
+
+//         const alreadyExists = newTimeSlots[date].some(
+//           (slot) =>
+//             slot.startTime === applyAllSlot.startTime &&
+//             slot.endTime === applyAllSlot.endTime
+//         )
+
+//         if (!alreadyExists) {
+//           newTimeSlots[date].push({ ...applyAllSlot })
+//         }
+//       })
+
+//       return {
+//         ...prev,
+//         timeSlots: newTimeSlots,
+//       }
+//     })
+
+//     setApplyAllSlot(null)
+//     setShowApplyAll(false)
+//   }
 
 //   const createApplyAllTemplate = () => {
 //     if (currentStep === 4) {
-//       // For time slots step - existing functionality
-//       const activeDateSlots = formData.timeSlots[activeDate] || [];
-      
-//       const defaultSlot = activeDateSlots.length > 0 
+//       const activeDateSlots = formData.timeSlots[activeDate] || []
+//       const defaultSlot = activeDateSlots.length > 0
 //         ? {
 //             startTime: activeDateSlots[0].startTime,
 //             endTime: activeDateSlots[0].endTime,
@@ -717,44 +662,42 @@
 //             capacity: 0,
 //             duration: "0h 0m",
 //             seatCategories: [],
-//           };
-
-//       setApplyAllSlot(defaultSlot);
+//           }
+//       setApplyAllSlot(defaultSlot)
 //     } else if (currentStep === 5) {
-//       // For categories step - just show the popup with empty categories
-//       setCategoriesToApply([]);
+//       setCategoriesToApply([])
 //     }
-    
-//     setShowApplyAll(true);
-//   };
-//  const applyCategoriesToAllSlots = () => {
-//     if (categoriesToApply.length === 0) return;
+//     setShowApplyAll(true)
+//   }
+
+//   const applyCategoriesToAllSlots = () => {
+//     if (categoriesToApply.length === 0) return
 
 //     setFormData((prev) => {
-//       const newTimeSlots = { ...prev.timeSlots };
+//       const newTimeSlots = { ...prev.timeSlots }
 
-//       // Apply categories to all slots in all selected dates
 //       prev.selectedDates.forEach((date) => {
 //         if (newTimeSlots[date]) {
 //           newTimeSlots[date] = newTimeSlots[date].map(slot => ({
 //             ...slot,
 //             seatCategories: [...slot.seatCategories, ...categoriesToApply.map(cat => ({
 //               ...cat,
-//               id: `${cat.id}_${Date.now()}_${Math.random()}` // Ensure unique IDs
+//               id: `${cat.id}_${Date.now()}_${Math.random()}`
 //             }))]
-//           }));
+//           }))
 //         }
-//       });
+//       })
 
 //       return {
 //         ...prev,
 //         timeSlots: newTimeSlots,
-//       };
-//     });
+//       }
+//     })
 
-//     setCategoriesToApply([]);
-//     setShowApplyAll(false);
-//   };
+//     setCategoriesToApply([])
+//     setShowApplyAll(false)
+//   }
+
 //   const updateApplyAllSlot = (field: string, value: string | number) => {
 //     if (!applyAllSlot) return
 
@@ -763,7 +706,6 @@
 
 //       const updatedSlot = { ...prev, [field]: value }
 
-//       // Auto-calculate duration when start or end time changes
 //       if (field === "startTime" || field === "endTime") {
 //         updatedSlot.duration = calculateDuration(
 //           field === "startTime" ? (value as string) : prev.startTime,
@@ -819,10 +761,7 @@
 //       }
 //     })
 //   }
-//   const applyToAllDates = () => {
-//     applySlotToAllDates()
-//     setShowApplyAll(false)
-//   }
+
 //   const removeTimeSlot = (date: string, index: number) => {
 //     setFormData((prev) => {
 //       const updatedTimeSlots = { ...prev.timeSlots }
@@ -845,9 +784,9 @@
 //           <div className="w-full mb-8">
 //             <div className="flex items-center justify-between mb-3">
 //               <span className="text-sm font-medium text-gray-700">Progress</span>
-//               <span className="text-sm text-gray-500">{Math.round(progress)}%</span>
+//               <span className="text-sm text-gray-500">{Math.round((currentStep / steps.length) * 100)}%</span>
 //             </div>
-//             <Progress value={progress} className="h-2 bg-gray-100 w-full" />
+//             <Progress value={(currentStep / steps.length) * 100} className="h-2 bg-gray-100 w-full" />
 //           </div>
 //         </div>
 
@@ -861,14 +800,12 @@
 
 //               return (
 //                 <div key={step.id} className="flex items-center flex-1 min-w-0">
-//                   {/* Step Circle and Content */}
 //                   <div
 //                     className={`flex flex-col items-center cursor-pointer transition-all duration-200 ${
 //                       isAccessible ? "hover:scale-105" : ""
 //                     }`}
 //                     onClick={() => isAccessible && setCurrentStep(step.id)}
 //                   >
-//                     {/* Step Icon */}
 //                     <div
 //                       className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-colors ${
 //                         isActive
@@ -880,8 +817,6 @@
 //                     >
 //                       {isCompleted ? <CheckCircle className="w-6 h-6" /> : <Icon className="w-6 h-6" />}
 //                     </div>
-
-//                     {/* Step Content */}
 //                     <div className="text-center max-w-32">
 //                       <h3
 //                         className={`font-semibold text-sm mb-1 ${
@@ -893,8 +828,6 @@
 //                       <p className="text-xs text-gray-500 leading-tight">{step.description}</p>
 //                     </div>
 //                   </div>
-
-//                   {/* Connector Line */}
 //                   {index < steps.length - 1 && (
 //                     <div
 //                       className={`flex-1 h-0.5 mx-4 ${step.id < currentStep ? "bg-green-300" : "bg-gray-200"}`}
@@ -910,8 +843,8 @@
 //           <CardHeader className="pb-6 border-b border-gray-100">
 //             <div className="flex items-center justify-between">
 //               <div>
-//                 <CardTitle className="text-2xl font-bold text-gray-900 mb-2">{currentStepData?.title}</CardTitle>
-//                 <p className="text-gray-600">{currentStepData?.description}</p>
+//                 <CardTitle className="text-2xl font-bold text-gray-900 mb-2">{steps.find((s) => s.id === currentStep)?.title}</CardTitle>
+//                 <p className="text-gray-600">{steps.find((s) => s.id === currentStep)?.description}</p>
 //               </div>
 //               <div className="text-right">
 //                 <div className="text-3xl font-bold text-blue-600">{currentStep}</div>
@@ -921,12 +854,9 @@
 //           </CardHeader>
 
 //           <CardContent className="p-8">
-//             {/* Step 1: Basic Information */}
 //             {currentStep === 1 && (
 //               <div className="space-y-6 animate-in fade-in-50 duration-500 h-full">
-//                 {/* Row 1: Event Type & Event Title */}
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-//                   {/* Event Type */}
 //                   <div className="space-y-2">
 //                     <Label htmlFor="eventType" className="text-sm font-medium text-gray-700">
 //                       Event Type *
@@ -935,8 +865,8 @@
 //                       value={formData.eventType}
 //                       onValueChange={(value) => {
 //                         updateFormData("eventType", value)
-//                         updateFormData("subcategory", "") // Reset subcategory when type changes
-//                         updateFormData("otherSubcategory", "") // Reset otherSubcategory
+//                         updateFormData("subcategory", "")
+//                         updateFormData("otherSubcategory", "")
 //                       }}
 //                     >
 //                       <SelectTrigger className="h-10 w-full">
@@ -951,8 +881,6 @@
 //                       </SelectContent>
 //                     </Select>
 //                   </div>
-
-//                   {/* Event Title */}
 //                   <div className="space-y-2">
 //                     <Label htmlFor="title" className="text-sm font-medium text-gray-700">
 //                       Event Title *
@@ -966,10 +894,7 @@
 //                     />
 //                   </div>
 //                 </div>
-
-//                 {/* Row 2: Subcategory & Category */}
 //                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-//                   {/* Category */}
 //                   <div className="space-y-2">
 //                     <Label htmlFor="category" className="text-sm font-medium text-gray-700">
 //                       Category *
@@ -987,7 +912,6 @@
 //                       </SelectContent>
 //                     </Select>
 //                   </div>
-//                   {/* Event Subcategory */}
 //                   <div className="space-y-2">
 //                     <Label htmlFor="subcategory" className="text-sm font-medium text-gray-700">
 //                       Event Subcategory *
@@ -995,7 +919,7 @@
 //                     <Select
 //                       value={formData.subcategory}
 //                       onValueChange={(value) => updateFormData("subcategory", value)}
-//                       disabled={!formData.eventType} // Disable if no type selected
+//                       disabled={!formData.eventType}
 //                     >
 //                       <SelectTrigger className="h-10 w-full">
 //                         <SelectValue placeholder="Select subcategory" />
@@ -1006,12 +930,10 @@
 //                             {sub.subcategory_name}
 //                           </SelectItem>
 //                         ))}
-//                         <SelectItem value="Other">Other</SelectItem>
+              
 //                       </SelectContent>
 //                     </Select>
-
-//                     {/* If user selects 'Other', show input */}
-//                     {formData.subcategory === "Other" && (
+//                  {formData.subcategory && subcategories.find(cat=>cat.subcategory_id===formData.subcategory)?.subcategory_name==='Others' && (
 //                       <Input
 //                         id="otherSubcategory"
 //                         value={formData.otherSubcategory || ""}
@@ -1022,9 +944,6 @@
 //                     )}
 //                   </div>
 //                 </div>
-
-//                 {/* Organizer */}
-
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 //                   <div className="space-y-2">
 //                     <Label htmlFor="organizer" className="text-sm font-medium text-gray-700">
@@ -1051,7 +970,6 @@
 //                       className="h-10 w-full"
 //                     />
 //                   </div>
-
 //                   <div className="space-y-2">
 //                     <Label htmlFor="organizerEmail" className="text-sm font-medium text-gray-700">
 //                       Email *
@@ -1069,7 +987,6 @@
 //               </div>
 //             )}
 
-//             {/* Step 2: Event Details */}
 //             {currentStep === 2 && (
 //               <div className="space-y-4 animate-in fade-in-50 duration-500 h-full overflow-auto">
 //                 <div className="space-y-2">
@@ -1086,9 +1003,10 @@
 //                   />
 //                 </div>
 
+//                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 //                 <div className="space-y-2">
 //                   <Label htmlFor="address" className="text-sm font-medium text-gray-700">
-//                     Event Address *
+//                     Venue Location *
 //                   </Label>
 //                   <Input
 //                     id="address"
@@ -1098,30 +1016,43 @@
 //                     className="h-10"
 //                   />
 //                 </div>
-
+            
 //                 <div className="space-y-2">
-//                   <Label htmlFor="address" className="text-sm font-medium text-gray-700">
-//                     Event Location*
+//                   <Label htmlFor="postalCode" className="text-sm font-medium text-gray-700">
+//                    suburb *
 //                   </Label>
 //                   <Input
-//                     id="address"
-//                     value={formData.location}
-//                     onChange={(e) => updateFormData("location", e.target.value)}
-//                     placeholder="Full address including city, state"
+//                     id="postalCode"
+//                     value={formData.suburb}
+//                     onChange={(e) => updateFormData("suburb", e.target.value)}
+//                     placeholder="Enter postal code"
 //                     className="h-10"
 //                   />
 //                 </div>
-//                 <div className="space-y-2">
-//                   <Label htmlFor="address" className="text-sm font-medium text-gray-700">
-//                     Postal Code *
+//                  <div className="space-y-2">
+//                   <Label htmlFor="postalCode" className="text-sm font-medium text-gray-700">
+//                    State *
 //                   </Label>
 //                   <Input
-//                     id="address"
-//                     value={formData.postalCode}
-//                     onChange={(e) => updateFormData("postalCode", e.target.value)}
-//                     placeholder="Full address including city, state"
+//                     id="postalCode"
+//                     value={formData.State}
+//                     onChange={(e) => updateFormData("State", e.target.value)}
+//                     placeholder="Enter postal code"
 //                     className="h-10"
 //                   />
+//                 </div>
+//                  <div className="space-y-2">
+//                   <Label htmlFor="postalCode" className="text-sm font-medium text-gray-700">
+//              Country
+//                   </Label>
+//                   <Input
+//                     id="postalCode"
+//                     value={formData.Country}
+//                     onChange={(e) => updateFormData("Country", e.target.value)}
+//                     placeholder="Enter postal code"
+//                     className="h-10"
+//                   />
+//                 </div>
 //                 </div>
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 //                   <div className="space-y-2">
@@ -1136,7 +1067,6 @@
 //                       className="h-10"
 //                     />
 //                   </div>
-
 //                   <div className="space-y-2">
 //                     <Label htmlFor="endDate" className="text-sm font-medium text-gray-700">
 //                       End Date *
@@ -1151,10 +1081,7 @@
 //                     />
 //                   </div>
 //                 </div>
-
 //                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                
-
 //                   <div className="space-y-2">
 //                     <Label htmlFor="language" className="text-sm font-medium text-gray-700">
 //                       Language
@@ -1167,7 +1094,6 @@
 //                       className="h-10"
 //                     />
 //                   </div>
-
 //                   <div className="space-y-2">
 //                     <Label htmlFor="ageRestriction" className="text-sm font-medium text-gray-700">
 //                       Age Restriction
@@ -1180,8 +1106,19 @@
 //                       className="h-10"
 //                     />
 //                   </div>
+//                     <div className="space-y-2">
+//                   <Label htmlFor="tags" className="text-sm font-medium text-gray-700">
+//                     Tags
+//                   </Label>
+//                   <Input
+//                     id="tags"
+//                     value={formData.tags}
+//                     onChange={(e) => updateFormData("tags", e.target.value)}
+//                     placeholder="Comma-separated tags"
+//                     className="h-10"
+//                   />
 //                 </div>
-
+//                 </div>
 //                 <div className="space-y-2">
 //                   <Label htmlFor="additionalInfo" className="text-sm font-medium text-gray-700">
 //                     Additional Information
@@ -1195,66 +1132,101 @@
 //                     className="text-sm"
 //                   />
 //                 </div>
-
-//                 <div className="space-y-2">
-//                   <Label htmlFor="tags" className="text-sm font-medium text-gray-700">
-//                     Tags
-//                   </Label>
-//                   <Input
-//                     id="tags"
-//                     value={formData.tags}
-//                     onChange={(e) => updateFormData("tags", e.target.value)}
-//                     placeholder="Comma-separated tags"
-//                     className="h-10"
-//                   />
-//                 </div>
+         
 //               </div>
 //             )}
 
-
-
-//             {/* Step 4: Images & Media */}
 //             {currentStep === 3 && (
 //               <div className="space-y-6 animate-in fade-in-50 duration-500 h-full overflow-auto">
 //                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-//                   {/* Main Image */}
-//                   <div className="space-y-3">
-//                     <Label className="text-sm font-medium text-gray-700">Main Card Image</Label>
-//                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-//                       <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
-//                         <Upload className="w-6 h-6 text-blue-600" />
-//                       </div>
-//                       <p className="text-sm font-medium text-gray-700 mb-2">Upload Main Image</p>
-//                       <p className="text-xs text-gray-500 mb-3">For event cards</p>
-//                       <Input
-//                         type="file"
-//                         accept="image/*"
-//                         onChange={(e) => handleFileUpload("mainImage", e.target.files?.[0] || null)}
-//                         className="text-xs"
-//                       />
-//                     </div>
-//                   </div>
+//   <div className="space-y-3">
+//   <Label className="text-sm font-medium text-gray-700">Main Card Image</Label>
 
-//                   {/* Banner Image */}
-//                   <div className="space-y-3">
-//                     <Label className="text-sm font-medium text-gray-700">Banner Image</Label>
-//                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-//                       <div className="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-full flex items-center justify-center">
-//                         <ImageIcon className="w-6 h-6 text-green-600" />
-//                       </div>
-//                       <p className="text-sm font-medium text-gray-700 mb-2">Upload Banner</p>
-//                       <p className="text-xs text-gray-500 mb-3">Wide banner image</p>
-//                       <Input
-//                         type="file"
-//                         accept="image/*"
-//                         onChange={(e) => handleFileUpload("bannerImage", e.target.files?.[0] || null)}
-//                         className="text-xs"
-//                       />
-//                     </div>
-//                   </div>
+//   <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors h-40 flex items-center justify-center">
+//     {!formData.mainImage?.preview ? (
+//       // Upload UI
+//       <div>
+//         <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
+//           <Upload className="w-6 h-6 text-blue-600" />
+//         </div>
+//         <p className="text-sm font-medium text-gray-700 mb-2">Upload Main Image</p>
+//         <p className="text-xs text-gray-500 mb-3">For event cards</p>
+//         <Input
+//           type="file"
+//           accept="image/*"
+//           onChange={(e) => handleFileUpload("mainImage", e.target.files?.[0] || null)}
+//           className="text-xs"
+//         />
+//       </div>
+//     ) : (
+//       // Preview inside card
+//       <>
+//         <img
+//           src={formData.mainImage.preview}
+//           alt="Main Image Preview"
+//           className="w-full h-full object-cover rounded-lg"
+//         />
+//         <Button
+//           size="sm"
+//           variant="destructive"
+//           className="absolute top-2 right-2 h-6 w-6 rounded-full p-0"
+//           onClick={() => handleFileUpload("mainImage", null)}
+//         >
+//           <X className="w-4 h-4" />
+//         </Button>
+//       </>
+//     )}
+//   </div>
+// </div>
+
+
+//  {/* Banner Image */}
+// <div className="space-y-3">
+//   <Label className="text-sm font-medium text-gray-700">Banner Image</Label>
+
+//   <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors h-40 flex items-center justify-center">
+//     {!formData.bannerImage?.preview ? (
+//       // Upload UI
+//       <div>
+//         <div className="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-full flex items-center justify-center">
+//           <ImageIcon className="w-6 h-6 text-green-600" />
+//         </div>
+//         <p className="text-sm font-medium text-gray-700 mb-2">Upload Banner</p>
+//         <p className="text-xs text-gray-500 mb-3">Wide banner image</p>
+//         <Input
+//           type="file"
+//           accept="image/*"
+//           onChange={(e) => handleFileUpload("bannerImage", e.target.files?.[0] || null)}
+//           className="text-xs"
+//         />
+//       </div>
+//     ) : (
+//       // Preview UI
+//       <>
+//         <img
+//           src={formData.bannerImage.preview}
+//           alt="Banner Image Preview"
+//           className="w-full h-full object-cover rounded-lg"
+//         />
+//         <Button
+//           size="sm"
+//           variant="destructive"
+//           className="absolute top-2 right-2 h-6 w-6 rounded-full p-0"
+//           onClick={() => handleFileUpload("bannerImage", null)}
+//         >
+//           <X className="w-4 h-4" />
+//         </Button>
+//       </>
+//     )}
+//   </div>
+// </div>
+
+
+// {/* Main Card Image */}
+
+
+
 //                 </div>
-
-//                 {/* Gallery Images */}
 //                 <div className="space-y-3">
 //                   <Label className="text-sm font-medium text-gray-700">Gallery Images</Label>
 //                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors">
@@ -1274,8 +1246,6 @@
 //                       className="text-xs"
 //                     />
 //                   </div>
-
-//                   {/* Gallery Preview */}
 //                   {formData.galleryImages.length > 0 && (
 //                     <div className="grid grid-cols-3 md:grid-cols-4 gap-2 max-h-32 overflow-auto">
 //                       {formData.galleryImages.map((img, index) => (
@@ -1312,7 +1282,7 @@
 //                     <div className="w-80 bg-white rounded-xl border border-gray-200 p-4">
 //                       <h4 className="text-lg font-semibold text-gray-900 mb-4">Select Dates</h4>
 //                       <div className="grid grid-cols-7 gap-1 mb-3">
-//                         {["S", "M", "T", "W", "T", "F", "S"].map((day,index) => (
+//                         {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
 //                           <div key={index} className="text-center text-xs font-medium text-gray-500 py-1">
 //                             {day}
 //                           </div>
@@ -1460,7 +1430,6 @@
 //                                           />
 //                                         </div>
 //                                       </div>
-                                     
 //                                       <div className="space-y-1">
 //                                         <Label className="text-xs font-medium text-gray-700">Duration</Label>
 //                                         <div className="text-sm text-gray-600 bg-white px-3 py-2 rounded border h-9 flex items-center min-w-[80px]">
@@ -1509,7 +1478,7 @@
 //                   <div className="w-80 bg-white rounded-xl border border-gray-200 p-4">
 //                     <h4 className="text-lg font-semibold text-gray-900 mb-4">Select Dates</h4>
 //                     <div className="grid grid-cols-7 gap-1 mb-3">
-//                       {["S", "M", "T", "W", "T", "F", "S"].map((day,index) => (
+//                       {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
 //                         <div key={index} className="text-center text-xs font-medium text-gray-500 py-1">
 //                           {day}
 //                         </div>
@@ -1559,7 +1528,7 @@
 //                   <div className="flex-1 bg-white rounded-xl border border-gray-200 p-4 overflow-auto">
 //                     <div className="flex items-center justify-between mb-4">
 //                       <h4 className="text-lg font-semibold text-gray-900">Categories And Pricing</h4>
-//                       {formData.selectedDates.length > 1 && (
+//                       {formData.selectedDates?.length > 1 && (
 //                         <Button
 //                           type="button"
 //                           onClick={createApplyAllTemplate}
@@ -1571,7 +1540,7 @@
 //                         </Button>
 //                       )}
 //                     </div>
-//                     {formData.selectedDates.length === 0 ? (
+//                     {formData.selectedDates?.length === 0 ? (
 //                       <div className="text-center py-12 text-gray-500">
 //                         <div className="text-lg mb-2">No dates selected</div>
 //                         <div className="text-sm">Select dates from the calendar to set categories and pricing</div>
@@ -1627,18 +1596,6 @@
 //                                       {slot.startTime} - {slot.endTime}
 //                                       <div className="text-xs text-gray-500">{slot.duration}</div>
 //                                     </div>
-//                                     {/* <div className="space-y-1">
-//                                       <Label className="text-xs font-medium text-gray-700">Capacity</Label>
-//                                       <Input
-//                                         type="number"
-//                                         value={slot.capacity}
-//                                         onChange={(e) =>
-//                                           updateTimeSlot(activeDate, index, "capacity", Number(e.target.value) || 0)
-//                                         }
-//                                         className="h-9 w-20"
-//                                         min="0"
-//                                       />
-//                                     </div> */}
 //                                   </div>
 //                                   <div className="space-y-3">
 //                                     <div className="flex items-center justify-between">
@@ -1653,13 +1610,13 @@
 //                                         + Add Category
 //                                       </Button>
 //                                     </div>
-//                                     {slot.seatCategories.length === 0 ? (
+//                                     {slot.seatCategories?.length === 0 ? (
 //                                       <div className="text-center py-3 text-gray-500 text-sm">
 //                                         No ticket categories added. Click "Add Category" to get started.
 //                                       </div>
 //                                     ) : (
 //                                       <div className="space-y-2">
-//                                         {slot.seatCategories.map((category) => (
+//                                         {slot.seatCategories?.map((category) => (
 //                                           <div
 //                                             key={category.id}
 //                                             className="grid grid-cols-4 gap-3 items-center p-3 bg-white rounded border"
@@ -1760,13 +1717,11 @@
 //               </div>
 //             )}
 
-            
-
 //             {currentStep === 6 && (
+              
 //               <div className="space-y-8 animate-in fade-in-50 duration-500">
 //                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border border-blue-100">
 //                   <h3 className="text-2xl font-bold text-gray-900 mb-6">Review Your Event</h3>
-
 //                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 //                     <div className="space-y-4">
 //                       <div className="bg-white rounded-lg p-4">
@@ -1776,25 +1731,22 @@
 //                             <span className="font-medium">Title:</span> {formData.title || "Not provided"}
 //                           </p>
 //                           <p>
-//                             <span className="font-medium">Category:</span> {formData.category || "Not provided"}
+//                             <span className="font-medium">Category:</span> {getCategoryName(formData.category) || "Not provided"}
 //                           </p>
 //                           <p>
 //                             <span className="font-medium">Subcategory:</span>{" "}
-//                             {formData.subcategory === "Other"
-//                               ? formData.otherSubcategory
-//                               : formData.subcategory || "Not provided"}
+//                             {getSubcategoryName( formData.subcategory) || "Not provided"}
 //                           </p>
 //                           <p>
 //                             <span className="font-medium">Organizer:</span> {formData.organizer || "Not provided"}
 //                           </p>
 //                         </div>
 //                       </div>
-
 //                       <div className="bg-white rounded-lg p-4">
 //                         <h4 className="font-semibold text-gray-900 mb-2">Organizer Details</h4>
 //                         <div className="space-y-2 text-sm">
 //                           <p>
-//                             <span className="font-medium">Name:</span> {formData.organizerName || "Not provided"}
+//                             <span className="font-medium">Name:</span> {formData.organizer || "Not provided"}
 //                           </p>
 //                           <p>
 //                             <span className="font-medium">Contact:</span> {formData.organizerContact || "Not provided"}
@@ -1804,7 +1756,6 @@
 //                           </p>
 //                         </div>
 //                       </div>
-
 //                       <div className="bg-white rounded-lg p-4">
 //                         <h4 className="font-semibold text-gray-900 mb-2">Location & Details</h4>
 //                         <div className="space-y-2 text-sm">
@@ -1826,18 +1777,17 @@
 //                         </div>
 //                       </div>
 //                     </div>
-
 //                     <div className="space-y-4">
 //                       <div className="bg-white rounded-lg p-4">
 //                         <h4 className="font-semibold text-gray-900 mb-2">Media & Content</h4>
 //                         <div className="space-y-2 text-sm">
 //                           <p>
 //                             <span className="font-medium">Main Image:</span>{" "}
-//                             {formData.mainImage ? "✓ Uploaded" : "Not uploaded"}
+//                             {formData.mainImage?.file ? "✓ Uploaded" : "Not uploaded"}
 //                           </p>
 //                           <p>
 //                             <span className="font-medium">Banner Image:</span>{" "}
-//                             {formData.bannerImage ? "✓ Uploaded" : "Not uploaded"}
+//                             {formData.bannerImage?.file ? "✓ Uploaded" : "Not uploaded"}
 //                           </p>
 //                           <p>
 //                             <span className="font-medium">Gallery Images:</span> {formData.galleryImages.length}{" "}
@@ -1848,12 +1798,10 @@
 //                           </p>
 //                         </div>
 //                       </div>
-
 //                       <div className="bg-white rounded-lg p-4">
 //                         <h4 className="font-semibold text-gray-900 mb-2">Tags</h4>
 //                         <p className="text-sm">{formData.tags || "No tags added"}</p>
 //                       </div>
-
 //                       <div className="bg-white rounded-lg p-4">
 //                         <h4 className="font-semibold text-gray-900 mb-2">Time Slots</h4>
 //                         <div className="space-y-2 text-sm">
@@ -1868,14 +1816,12 @@
 //                       </div>
 //                     </div>
 //                   </div>
-
 //                   {formData.description && (
 //                     <div className="bg-white rounded-lg p-4 mt-6">
 //                       <h4 className="font-semibold text-gray-900 mb-2">Description</h4>
 //                       <p className="text-sm text-gray-700 leading-relaxed">{formData.description}</p>
 //                     </div>
 //                   )}
-
 //                   {formData.selectedDates.length > 0 && (
 //                     <div className="bg-white rounded-lg p-4 mt-6">
 //                       <h4 className="font-semibold text-gray-900 mb-4">Time Slots Details</h4>
@@ -1891,9 +1837,28 @@
 //                             </h5>
 //                             <div className="space-y-1">
 //                               {(formData.timeSlots[date] || []).map((slot, index) => (
-//                                 <p key={index} className="text-sm text-gray-600">
-//                                   {slot.startTime} - {slot.endTime} (Capacity: {slot.capacity})
-//                                 </p>
+//                                 <div
+//       key={index}
+//       className="border rounded-lg p-3 bg-gray-50 shadow-sm"
+//     >
+//       <p className="text-sm font-medium text-gray-800">
+//         {slot.startTime} – {slot.endTime}
+//       </p>
+//       <div className="mt-2 text-sm text-gray-600">
+//         <span className="font-semibold">Seat Categories:</span>{" "}
+//         {slot.seatCategories?.length > 0 ? (
+//           <ul className="list-disc list-inside mt-1 space-y-1">
+//             {slot.seatCategories.map((cat) => (
+//               <li key={cat.id}>
+//                 {cat.name} (${cat.price} × {cat.quantity})
+//               </li>
+//             ))}
+//           </ul>
+//         ) : (
+//           <span>No categories</span>
+//         )}
+//       </div>
+//     </div>
 //                               ))}
 //                             </div>
 //                           </div>
@@ -1902,7 +1867,6 @@
 //                     </div>
 //                   )}
 //                 </div>
-
 //                 <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
 //                   <div className="flex items-start space-x-3">
 //                     <Info className="w-6 h-6 text-yellow-600 mt-0.5" />
@@ -1923,13 +1887,11 @@
 //           </CardContent>
 //         </Card>
 
-//         {/* Navigation Buttons */}
 //         <div className="flex gap-3 mt-8 justify-end">
 //           <Button variant="outline" onClick={prevStep} disabled={currentStep === 1} className="h-12 bg-transparent">
 //             <ArrowLeft className="w-4 h-4 mr-2" />
 //             Back
 //           </Button>
-
 //           {currentStep < steps.length ? (
 //             <Button onClick={nextStep} disabled={!isStepValid()} className="h-12 bg-blue-600 hover:bg-blue-700">
 //               Next
@@ -1943,7 +1905,7 @@
 //           )}
 //         </div>
 //       </div>
-//          {currentStep === 4 && showApplyAll && applyAllSlot && (
+//       {currentStep === 4 && showApplyAll && applyAllSlot && (
 //         <TimeSlotPopup
 //           applyAllSlot={applyAllSlot}
 //           setApplyAllSlot={setApplyAllSlot}
@@ -1964,9 +1926,6 @@
 //   )
 // }
 
-
-
-
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
@@ -1977,7 +1936,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
-import { CheckCircle, Upload, ImageIcon, Info, ArrowRight, ArrowLeft, X, MapPin, Calendar, Clock } from "lucide-react"
+import { CheckCircle, Upload, ImageIcon, Info, ArrowRight, ArrowLeft, X, MapPin, Calendar, Clock, AlertCircle } from "lucide-react"
 import useStore from "@/lib/Zustand"
 import type { EventType } from "@/components/EventType/columns"
 import { toast } from "sonner"
@@ -2050,6 +2009,10 @@ interface Subcategory {
   subcategory_slug: string
 }
 
+interface ValidationErrors {
+  [key: string]: string
+}
+
 const steps = [
   { id: 1, title: "Basic Information", icon: Info, description: "Event title, category and organizer" },
   { id: 2, title: "Event Details", icon: MapPin, description: "Description, location and specifications" },
@@ -2058,6 +2021,111 @@ const steps = [
   { id: 5, title: "Time Slots", icon: Clock, description: "Create time slots for selected dates" },
   { id: 6, title: "Review & Submit", icon: CheckCircle, description: "Review all details before submitting" },
 ]
+
+// Validation functions
+const validateField = (name: string, value: any, formData: MyFormData): string => {
+  switch (name) {
+    case 'title':
+      if (!value || value.trim() === '') return 'Event title is required'
+      if (value.length < 3) return 'Title must be at least 3 characters long'
+      if (value.length > 100) return 'Title must be less than 100 characters'
+      return ''
+
+    case 'organizerEmail':
+      if (!value || value.trim() === '') return 'Email is required'
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(value)) return 'Please enter a valid email address'
+      return ''
+
+    case 'organizerContact':
+      if (!value || value.trim() === '') return 'Contact number is required'
+      const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/
+      if (!phoneRegex.test(value.replace(/[\s\-\(\)]/g, ''))) return 'Please enter a valid phone number'
+      return ''
+
+    case 'organizer':
+      if (!value || value.trim() === '') return 'Organizer name is required'
+      if (value.length < 2) return 'Organizer name must be at least 2 characters long'
+      return ''
+
+    case 'description':
+      if (!value || value.trim() === '') return 'Event description is required'
+      if (value.length < 10) return 'Description must be at least 10 characters long'
+      if (value.length > 5000) return 'Description must be less than 5000 characters'
+      return ''
+
+    case 'address':
+      if (!value || value.trim() === '') return 'Venue address is required'
+      if (value.length < 5) return 'Please provide a complete address'
+      return ''
+
+    case 'suburb':
+      if (!value || value.trim() === '') return 'Suburb is required'
+      return ''
+
+    case 'State':
+      if (!value || value.trim() === '') return 'State is required'
+      return ''
+
+    case 'Country':
+      if (!value || value.trim() === '') return 'Country is required'
+      return ''
+
+    case 'startDate':
+      if (!value) return 'Start date is required'
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const startDate = new Date(value)
+      if (startDate < today) return 'Start date cannot be in the past'
+      return ''
+
+    case 'endDate':
+      if (!value) return 'End date is required'
+      if (!formData.startDate) return 'Please select a start date first'
+      const start = new Date(formData.startDate)
+      const end = new Date(value)
+      if (end < start) return 'End date must be after start date'
+      return ''
+
+    case 'language':
+      if (value && value.length > 0 && value.length < 2) return 'Language must be at least 2 characters'
+      return ''
+
+    case 'ageRestriction':
+      if (value && value.length > 20) return 'Age restriction must be less than 20 characters'
+      return ''
+
+    case 'tags':
+      if (value && value.length > 500) return 'Tags must be less than 500 characters'
+      return ''
+
+    case 'additionalInfo':
+      if (value && value.length > 1000) return 'Additional info must be less than 1000 characters'
+      return ''
+
+    case 'otherSubcategory':
+      if (formData.subcategory === 'Other' && (!value || value.trim() === '')) {
+        return 'Please specify the subcategory'
+      }
+      if (value && value.length < 2) return 'Subcategory must be at least 2 characters long'
+      return ''
+
+    case 'category':
+      if (!value) return 'Please select a category'
+      return ''
+
+    case 'subcategory':
+      if (!value) return 'Please select a subcategory'
+      return ''
+
+    case 'eventType':
+      if (!value) return 'Please select an event type'
+      return ''
+
+    default:
+      return ''
+  }
+}
 
 export default function MultiStepForm() {
   const [currentStep, setCurrentStep] = useState(1)
@@ -2093,6 +2161,9 @@ export default function MultiStepForm() {
     customCategories: [],
   })
 
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({})
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
+
   const [applyAllSlot, setApplyAllSlot] = useState<{
     startTime: string
     endTime: string
@@ -2112,8 +2183,52 @@ export default function MultiStepForm() {
   const [newCustomCategory, setNewCustomCategory] = useState({ name: "", price: 0 })
   const router = useRouter()
 
+  // Validation helper functions
+  const validateSingleField = (name: string, value: any) => {
+    const error = validateField(name, value, formData)
+    setValidationErrors(prev => ({
+      ...prev,
+      [name]: error
+    }))
+    return error === ''
+  }
+
+  const markFieldAsTouched = (fieldName: string) => {
+    setTouchedFields(prev => new Set([...prev, fieldName]))
+  }
+
   const updateFormData = (field: keyof MyFormData, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    setFormData((prev) => {
+      const newFormData = { ...prev, [field]: value }
+      
+      // Validate the field immediately
+      const error = validateField(field, value, newFormData)
+      setValidationErrors(prevErrors => ({
+        ...prevErrors,
+        [field]: error
+      }))
+
+      // If updating startDate, also validate endDate
+      if (field === 'startDate' && prev.endDate) {
+        const endError = validateField('endDate', prev.endDate, newFormData)
+        setValidationErrors(prevErrors => ({
+          ...prevErrors,
+          endDate: endError
+        }))
+      }
+
+      return newFormData
+    })
+  }
+
+  const handleInputChange = (field: keyof MyFormData, value: any) => {
+    markFieldAsTouched(field)
+    updateFormData(field, value)
+  }
+
+  const handleBlur = (field: keyof MyFormData) => {
+    markFieldAsTouched(field)
+    validateSingleField(field, formData[field])
   }
 
   const getDatesBetween = (startDate: string, endDate: string): string[] => {
@@ -2326,16 +2441,19 @@ export default function MultiStepForm() {
     const preview = file ? URL.createObjectURL(file) : null
     updateFormData(field, file ? { file, preview } : null)
   }
-function getCategoryName(id: string) {
-  return categories.find(cat => cat.category_id === id)?.category_name || "Not provided";
-}
 
-function getSubcategoryName(id: string) {
-  return subcategories.find(sub => sub.subcategory_id === id)?.subcategory_name || "Not provided";
-}
-function getEventTypeName(id: string) {
-  return eventTypes.find(sub => sub.id === id)?.event_type || "Not provided";
-}
+  function getCategoryName(id: string) {
+    return categories.find(cat => cat.category_id === id)?.category_name || "Not provided";
+  }
+
+  function getSubcategoryName(id: string) {
+    return subcategories.find(sub => sub.subcategory_id === id)?.subcategory_name || "Not provided";
+  }
+
+  function getEventTypeName(id: string) {
+    return eventTypes.find(sub => sub.id === id)?.event_type || "Not provided";
+  }
+
   const addGalleryImage = (file: File) => {
     const preview = URL.createObjectURL(file)
     setFormData((prev) => ({
@@ -2401,17 +2519,18 @@ function getEventTypeName(id: string) {
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return (
-          formData.title &&
-          formData.category &&
-          formData.organizer &&
-          formData.eventType &&
-          formData.organizerEmail &&
-          formData.organizerContact &&
-          (formData.subcategory === "Other" ? formData.otherSubcategory : formData.subcategory)
-        )
+        const step1Fields = ['title', 'category', 'organizer', 'eventType', 'organizerEmail', 'organizerContact', 'subcategory']
+        const step1Errors = step1Fields.some(field => validationErrors[field])
+        const step1Required = formData.title && formData.category && formData.organizer && 
+                             formData.eventType && formData.organizerEmail && formData.organizerContact &&
+                             (formData.subcategory === "Other" ? formData.otherSubcategory : formData.subcategory)
+        return step1Required && !step1Errors
       case 2:
-        return formData.description && formData.address && formData.startDate && formData.endDate
+        const step2Fields = ['description', 'address', 'suburb', 'State', 'Country', 'startDate', 'endDate']
+        const step2Errors = step2Fields.some(field => validationErrors[field])
+        const step2Required = formData.description && formData.address && formData.suburb && 
+                             formData.State && formData.Country && formData.startDate && formData.endDate
+        return step2Required && !step2Errors
       case 3:
         return true
       case 4:
@@ -2514,7 +2633,7 @@ function getEventTypeName(id: string) {
       formsData.append("subcategory_id", formData.subcategory?.trim() || "")
       formsData.append("extra_data", prepareExtraData(formData))
       formsData.append("hash_tags", prepareHashtags(formData.tags || ""))
-       formsData.append("custom_subcategory_name", formData.otherSubcategory || "")
+      formsData.append("custom_subcategory_name", formData.otherSubcategory || "")
 
       if (formData.mainImage?.file) {
         formsData.append("card_image", formData.mainImage.file)
@@ -2743,6 +2862,96 @@ function getEventTypeName(id: string) {
     })
   }
 
+  // Component for rendering input with validation
+  const ValidatedInput = ({ 
+    label, 
+    name, 
+    type = "text", 
+    placeholder, 
+    value, 
+    required = false, 
+    className = "",
+    ...props 
+  }: any) => {
+    const hasError = touchedFields.has(name) && validationErrors[name]
+    
+    return (
+      <div className="space-y-2">
+        <Label htmlFor={name} className={`text-sm font-medium ${hasError ? 'text-red-700' : 'text-gray-700'}`}>
+          {label} {required && <span className="text-red-500">*</span>}
+        </Label>
+        <div className="relative">
+          <Input
+            id={name}
+            type={type}
+            value={value}
+            onChange={(e) => handleInputChange(name, e.target.value)}
+            onBlur={() => handleBlur(name)}
+            placeholder={placeholder}
+            className={`h-10 w-full ${hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-200' : ''} ${className}`}
+            {...props}
+          />
+          {hasError && (
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <AlertCircle className="h-4 w-4 text-red-500" />
+            </div>
+          )}
+        </div>
+        {hasError && (
+          <p className="text-sm text-red-600 flex items-center gap-1">
+            <AlertCircle className="h-3 w-3" />
+            {validationErrors[name]}
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  // Component for rendering textarea with validation
+  const ValidatedTextarea = ({ 
+    label, 
+    name, 
+    placeholder, 
+    value, 
+    required = false, 
+    rows = 3,
+    className = "",
+    ...props 
+  }: any) => {
+    const hasError = touchedFields.has(name) && validationErrors[name]
+    
+    return (
+      <div className="space-y-2">
+        <Label htmlFor={name} className={`text-sm font-medium ${hasError ? 'text-red-700' : 'text-gray-700'}`}>
+          {label} {required && <span className="text-red-500">*</span>}
+        </Label>
+        <div className="relative">
+          <Textarea
+            id={name}
+            value={value}
+            onChange={(e) => handleInputChange(name, e.target.value)}
+            onBlur={() => handleBlur(name)}
+            placeholder={placeholder}
+            rows={rows}
+            className={`text-sm ${hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-200' : ''} ${className}`}
+            {...props}
+          />
+          {hasError && (
+            <div className="absolute top-3 right-3 pointer-events-none">
+              <AlertCircle className="h-4 w-4 text-red-500" />
+            </div>
+          )}
+        </div>
+        {hasError && (
+          <p className="text-sm text-red-600 flex items-center gap-1">
+            <AlertCircle className="h-3 w-3" />
+            {validationErrors[name]}
+          </p>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="max-w-6xl mx-auto">
@@ -2828,17 +3037,17 @@ function getEventTypeName(id: string) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="eventType" className="text-sm font-medium text-gray-700">
-                      Event Type *
+                      Event Type <span className="text-red-500">*</span>
                     </Label>
                     <Select
                       value={formData.eventType}
                       onValueChange={(value) => {
-                        updateFormData("eventType", value)
+                        handleInputChange("eventType", value)
                         updateFormData("subcategory", "")
                         updateFormData("otherSubcategory", "")
                       }}
                     >
-                      <SelectTrigger className="h-10 w-full">
+                      <SelectTrigger className={`h-10 w-full ${touchedFields.has('eventType') && validationErrors.eventType ? 'border-red-500' : ''}`}>
                         <SelectValue placeholder="Select event type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -2849,27 +3058,31 @@ function getEventTypeName(id: string) {
                         ))}
                       </SelectContent>
                     </Select>
+                    {touchedFields.has('eventType') && validationErrors.eventType && (
+                      <p className="text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {validationErrors.eventType}
+                      </p>
+                    )}
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="title" className="text-sm font-medium text-gray-700">
-                      Event Title *
-                    </Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => updateFormData("title", e.target.value)}
-                      placeholder="Enter event title"
-                      className="h-10 w-full"
-                    />
-                  </div>
+                  <ValidatedInput
+                    label="Event Title"
+                    name="title"
+                    placeholder="Enter event title"
+                    value={formData.title}
+                    required={true}
+                  />
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="category" className="text-sm font-medium text-gray-700">
-                      Category *
+                      Category <span className="text-red-500">*</span>
                     </Label>
-                    <Select value={formData.category} onValueChange={(value) => updateFormData("category", value)}>
-                      <SelectTrigger className="h-10 w-full">
+                    <Select 
+                      value={formData.category} 
+                      onValueChange={(value) => handleInputChange("category", value)}
+                    >
+                      <SelectTrigger className={`h-10 w-full ${touchedFields.has('category') && validationErrors.category ? 'border-red-500' : ''}`}>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
@@ -2880,17 +3093,23 @@ function getEventTypeName(id: string) {
                         ))}
                       </SelectContent>
                     </Select>
+                    {touchedFields.has('category') && validationErrors.category && (
+                      <p className="text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {validationErrors.category}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="subcategory" className="text-sm font-medium text-gray-700">
-                      Event Subcategory *
+                      Event Subcategory <span className="text-red-500">*</span>
                     </Label>
                     <Select
                       value={formData.subcategory}
-                      onValueChange={(value) => updateFormData("subcategory", value)}
+                      onValueChange={(value) => handleInputChange("subcategory", value)}
                       disabled={!formData.eventType}
                     >
-                      <SelectTrigger className="h-10 w-full">
+                      <SelectTrigger className={`h-10 w-full ${touchedFields.has('subcategory') && validationErrors.subcategory ? 'border-red-500' : ''}`}>
                         <SelectValue placeholder="Select subcategory" />
                       </SelectTrigger>
                       <SelectContent>
@@ -2899,302 +3118,217 @@ function getEventTypeName(id: string) {
                             {sub.subcategory_name}
                           </SelectItem>
                         ))}
-              
                       </SelectContent>
                     </Select>
-                 {formData.subcategory && subcategories.find(cat=>cat.subcategory_id===formData.subcategory)?.subcategory_name==='Others' && (
-                      <Input
-                        id="otherSubcategory"
-                        value={formData.otherSubcategory || ""}
-                        onChange={(e) => updateFormData("otherSubcategory", e.target.value)}
+                    {touchedFields.has('subcategory') && validationErrors.subcategory && (
+                      <p className="text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {validationErrors.subcategory}
+                      </p>
+                    )}
+                    {formData.subcategory && subcategories.find(cat=>cat.subcategory_id===formData.subcategory)?.subcategory_name==='Others' && (
+                      <ValidatedInput
+                        label=""
+                        name="otherSubcategory"
                         placeholder="Enter custom subcategory"
-                        className="h-10 w-full mt-2"
+                        value={formData.otherSubcategory || ""}
+                        className="mt-2"
                       />
                     )}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="organizer" className="text-sm font-medium text-gray-700">
-                      Organizer *
-                    </Label>
-                    <Input
-                      id="organizer"
-                      value={formData.organizer}
-                      onChange={(e) => updateFormData("organizer", e.target.value)}
-                      placeholder="Enter organizer name"
-                      className="h-10 w-full"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="organizerContact" className="text-sm font-medium text-gray-700">
-                      Contact Number *
-                    </Label>
-                    <Input
-                      id="organizerContact"
-                      type="tel"
-                      value={formData.organizerContact}
-                      onChange={(e) => updateFormData("organizerContact", e.target.value)}
-                      placeholder="Enter contact number"
-                      className="h-10 w-full"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="organizerEmail" className="text-sm font-medium text-gray-700">
-                      Email *
-                    </Label>
-                    <Input
-                      id="organizerEmail"
-                      type="email"
-                      value={formData.organizerEmail}
-                      onChange={(e) => updateFormData("organizerEmail", e.target.value)}
-                      placeholder="Enter email address"
-                      className="h-10 w-full"
-                    />
-                  </div>
+                  <ValidatedInput
+                    label="Organizer"
+                    name="organizer"
+                    placeholder="Enter organizer name"
+                    value={formData.organizer}
+                    required={true}
+                  />
+                  <ValidatedInput
+                    label="Contact Number"
+                    name="organizerContact"
+                    type="tel"
+                    placeholder="Enter contact number"
+                    value={formData.organizerContact}
+                    required={true}
+                  />
+                  <ValidatedInput
+                    label="Email"
+                    name="organizerEmail"
+                    type="email"
+                    placeholder="Enter email address"
+                    value={formData.organizerEmail}
+                    required={true}
+                  />
                 </div>
               </div>
             )}
 
             {currentStep === 2 && (
               <div className="space-y-4 animate-in fade-in-50 duration-500 h-full overflow-auto">
-                <div className="space-y-2">
-                  <Label htmlFor="description" className="text-sm font-medium text-gray-700">
-                    Event Description *
-                  </Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => updateFormData("description", e.target.value)}
-                    placeholder="Provide a detailed description of your event"
-                    rows={4}
-                    className="text-sm"
-                  />
-                </div>
+                <ValidatedTextarea
+                  label="Event Description"
+                  name="description"
+                  placeholder="Provide a detailed description of your event"
+                  value={formData.description}
+                  rows={4}
+                  required={true}
+                />
 
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="address" className="text-sm font-medium text-gray-700">
-                    Venue Location *
-                  </Label>
-                  <Input
-                    id="address"
-                    value={formData.address}
-                    onChange={(e) => updateFormData("address", e.target.value)}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <ValidatedInput
+                    label="Venue Location"
+                    name="address"
                     placeholder="Full address including city, state"
-                    className="h-10"
+                    value={formData.address}
+                    required={true}
                   />
-                </div>
-            
-                <div className="space-y-2">
-                  <Label htmlFor="postalCode" className="text-sm font-medium text-gray-700">
-                   suburb *
-                  </Label>
-                  <Input
-                    id="postalCode"
+                  <ValidatedInput
+                    label="Suburb"
+                    name="suburb"
+                    placeholder="Enter suburb"
                     value={formData.suburb}
-                    onChange={(e) => updateFormData("suburb", e.target.value)}
-                    placeholder="Enter postal code"
-                    className="h-10"
+                    required={true}
                   />
-                </div>
-                 <div className="space-y-2">
-                  <Label htmlFor="postalCode" className="text-sm font-medium text-gray-700">
-                   State *
-                  </Label>
-                  <Input
-                    id="postalCode"
+                  <ValidatedInput
+                    label="State"
+                    name="State"
+                    placeholder="Enter state"
                     value={formData.State}
-                    onChange={(e) => updateFormData("State", e.target.value)}
-                    placeholder="Enter postal code"
-                    className="h-10"
+                    required={true}
                   />
-                </div>
-                 <div className="space-y-2">
-                  <Label htmlFor="postalCode" className="text-sm font-medium text-gray-700">
-             Country
-                  </Label>
-                  <Input
-                    id="postalCode"
+                  <ValidatedInput
+                    label="Country"
+                    name="Country"
+                    placeholder="Enter country"
                     value={formData.Country}
-                    onChange={(e) => updateFormData("Country", e.target.value)}
-                    placeholder="Enter postal code"
-                    className="h-10"
+                    required={true}
                   />
-                </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="startDate" className="text-sm font-medium text-gray-700">
-                      Start Date *
-                    </Label>
-                    <Input
-                      id="startDate"
-                      type="date"
-                      value={formData.startDate}
-                      onChange={(e) => updateFormData("startDate", e.target.value)}
-                      className="h-10"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="endDate" className="text-sm font-medium text-gray-700">
-                      End Date *
-                    </Label>
-                    <Input
-                      id="endDate"
-                      type="date"
-                      value={formData.endDate}
-                      onChange={(e) => updateFormData("endDate", e.target.value)}
-                      min={formData.startDate}
-                      className="h-10"
-                    />
-                  </div>
+                  <ValidatedInput
+                    label="Start Date"
+                    name="startDate"
+                    type="date"
+                    value={formData.startDate}
+                    required={true}
+                  />
+                  <ValidatedInput
+                    label="End Date"
+                    name="endDate"
+                    type="date"
+                    value={formData.endDate}
+                    min={formData.startDate}
+                    required={true}
+                  />
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="language" className="text-sm font-medium text-gray-700">
-                      Language
-                    </Label>
-                    <Input
-                      id="language"
-                      value={formData.language}
-                      onChange={(e) => updateFormData("language", e.target.value)}
-                      placeholder="e.g., English"
-                      className="h-10"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="ageRestriction" className="text-sm font-medium text-gray-700">
-                      Age Restriction
-                    </Label>
-                    <Input
-                      id="ageRestriction"
-                      value={formData.ageRestriction}
-                      onChange={(e) => updateFormData("ageRestriction", e.target.value)}
-                      placeholder="e.g., 18+"
-                      className="h-10"
-                    />
-                  </div>
-                    <div className="space-y-2">
-                  <Label htmlFor="tags" className="text-sm font-medium text-gray-700">
-                    Tags
-                  </Label>
-                  <Input
-                    id="tags"
-                    value={formData.tags}
-                    onChange={(e) => updateFormData("tags", e.target.value)}
+                  <ValidatedInput
+                    label="Language"
+                    name="language"
+                    placeholder="e.g., English"
+                    value={formData.language}
+                  />
+                  <ValidatedInput
+                    label="Age Restriction"
+                    name="ageRestriction"
+                    placeholder="e.g., 18+"
+                    value={formData.ageRestriction}
+                  />
+                  <ValidatedInput
+                    label="Tags"
+                    name="tags"
                     placeholder="Comma-separated tags"
-                    className="h-10"
+                    value={formData.tags}
                   />
                 </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="additionalInfo" className="text-sm font-medium text-gray-700">
-                    Additional Information
-                  </Label>
-                  <Textarea
-                    id="additionalInfo"
-                    value={formData.additionalInfo}
-                    onChange={(e) => updateFormData("additionalInfo", e.target.value)}
-                    placeholder="Any special requirements or details"
-                    rows={3}
-                    className="text-sm"
-                  />
-                </div>
-         
+                <ValidatedTextarea
+                  label="Additional Information"
+                  name="additionalInfo"
+                  placeholder="Any special requirements or details"
+                  value={formData.additionalInfo}
+                  rows={3}
+                />
               </div>
             )}
 
             {currentStep === 3 && (
               <div className="space-y-6 animate-in fade-in-50 duration-500 h-full overflow-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-  <div className="space-y-3">
-  <Label className="text-sm font-medium text-gray-700">Main Card Image</Label>
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium text-gray-700">Main Card Image</Label>
+                    <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors h-40 flex items-center justify-center">
+                      {!formData.mainImage?.preview ? (
+                        <div>
+                          <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
+                            <Upload className="w-6 h-6 text-blue-600" />
+                          </div>
+                          <p className="text-sm font-medium text-gray-700 mb-2">Upload Main Image</p>
+                          <p className="text-xs text-gray-500 mb-3">For event cards</p>
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleFileUpload("mainImage", e.target.files?.[0] || null)}
+                            className="text-xs"
+                          />
+                        </div>
+                      ) : (
+                        <>
+                          <img
+                            src={formData.mainImage.preview}
+                            alt="Main Image Preview"
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            className="absolute top-2 right-2 h-6 w-6 rounded-full p-0"
+                            onClick={() => handleFileUpload("mainImage", null)}
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
 
-  <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors h-40 flex items-center justify-center">
-    {!formData.mainImage?.preview ? (
-      // Upload UI
-      <div>
-        <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
-          <Upload className="w-6 h-6 text-blue-600" />
-        </div>
-        <p className="text-sm font-medium text-gray-700 mb-2">Upload Main Image</p>
-        <p className="text-xs text-gray-500 mb-3">For event cards</p>
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleFileUpload("mainImage", e.target.files?.[0] || null)}
-          className="text-xs"
-        />
-      </div>
-    ) : (
-      // Preview inside card
-      <>
-        <img
-          src={formData.mainImage.preview}
-          alt="Main Image Preview"
-          className="w-full h-full object-cover rounded-lg"
-        />
-        <Button
-          size="sm"
-          variant="destructive"
-          className="absolute top-2 right-2 h-6 w-6 rounded-full p-0"
-          onClick={() => handleFileUpload("mainImage", null)}
-        >
-          <X className="w-4 h-4" />
-        </Button>
-      </>
-    )}
-  </div>
-</div>
-
-
- {/* Banner Image */}
-<div className="space-y-3">
-  <Label className="text-sm font-medium text-gray-700">Banner Image</Label>
-
-  <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors h-40 flex items-center justify-center">
-    {!formData.bannerImage?.preview ? (
-      // Upload UI
-      <div>
-        <div className="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-full flex items-center justify-center">
-          <ImageIcon className="w-6 h-6 text-green-600" />
-        </div>
-        <p className="text-sm font-medium text-gray-700 mb-2">Upload Banner</p>
-        <p className="text-xs text-gray-500 mb-3">Wide banner image</p>
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleFileUpload("bannerImage", e.target.files?.[0] || null)}
-          className="text-xs"
-        />
-      </div>
-    ) : (
-      // Preview UI
-      <>
-        <img
-          src={formData.bannerImage.preview}
-          alt="Banner Image Preview"
-          className="w-full h-full object-cover rounded-lg"
-        />
-        <Button
-          size="sm"
-          variant="destructive"
-          className="absolute top-2 right-2 h-6 w-6 rounded-full p-0"
-          onClick={() => handleFileUpload("bannerImage", null)}
-        >
-          <X className="w-4 h-4" />
-        </Button>
-      </>
-    )}
-  </div>
-</div>
-
-
-{/* Main Card Image */}
-
-
-
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium text-gray-700">Banner Image</Label>
+                    <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors h-40 flex items-center justify-center">
+                      {!formData.bannerImage?.preview ? (
+                        <div>
+                          <div className="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-full flex items-center justify-center">
+                            <ImageIcon className="w-6 h-6 text-green-600" />
+                          </div>
+                          <p className="text-sm font-medium text-gray-700 mb-2">Upload Banner</p>
+                          <p className="text-xs text-gray-500 mb-3">Wide banner image</p>
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleFileUpload("bannerImage", e.target.files?.[0] || null)}
+                            className="text-xs"
+                          />
+                        </div>
+                      ) : (
+                        <>
+                          <img
+                            src={formData.bannerImage.preview}
+                            alt="Banner Image Preview"
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            className="absolute top-2 right-2 h-6 w-6 rounded-full p-0"
+                            onClick={() => handleFileUpload("bannerImage", null)}
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <div className="space-y-3">
                   <Label className="text-sm font-medium text-gray-700">Gallery Images</Label>
@@ -3687,7 +3821,6 @@ function getEventTypeName(id: string) {
             )}
 
             {currentStep === 6 && (
-              
               <div className="space-y-8 animate-in fade-in-50 duration-500">
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border border-blue-100">
                   <h3 className="text-2xl font-bold text-gray-900 mb-6">Review Your Event</h3>
@@ -3806,28 +3939,25 @@ function getEventTypeName(id: string) {
                             </h5>
                             <div className="space-y-1">
                               {(formData.timeSlots[date] || []).map((slot, index) => (
-                                <div
-      key={index}
-      className="border rounded-lg p-3 bg-gray-50 shadow-sm"
-    >
-      <p className="text-sm font-medium text-gray-800">
-        {slot.startTime} – {slot.endTime}
-      </p>
-      <div className="mt-2 text-sm text-gray-600">
-        <span className="font-semibold">Seat Categories:</span>{" "}
-        {slot.seatCategories?.length > 0 ? (
-          <ul className="list-disc list-inside mt-1 space-y-1">
-            {slot.seatCategories.map((cat) => (
-              <li key={cat.id}>
-                {cat.name} (${cat.price} × {cat.quantity})
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <span>No categories</span>
-        )}
-      </div>
-    </div>
+                                <div key={index} className="border rounded-lg p-3 bg-gray-50 shadow-sm">
+                                  <p className="text-sm font-medium text-gray-800">
+                                    {slot.startTime} – {slot.endTime}
+                                  </p>
+                                  <div className="mt-2 text-sm text-gray-600">
+                                    <span className="font-semibold">Seat Categories:</span>{" "}
+                                    {slot.seatCategories?.length > 0 ? (
+                                      <ul className="list-disc list-inside mt-1 space-y-1">
+                                        {slot.seatCategories.map((cat) => (
+                                          <li key={cat.id}>
+                                            {cat.name} (${cat.price} × {cat.quantity})
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    ) : (
+                                      <span>No categories</span>
+                                    )}
+                                  </div>
+                                </div>
                               ))}
                             </div>
                           </div>
