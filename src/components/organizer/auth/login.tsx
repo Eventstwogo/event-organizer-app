@@ -5,7 +5,7 @@ import { TrendingUp, Users, Calendar, Ticket, Star } from "lucide-react";
 export default function VendorLoginComponent() {
   return (
     <div className="hidden lg:flex bg-gradient-to-br from-purple-500 via-indigo-600 to-violet-700 relative overflow-hidden">
-      {/* Animated background elements */}
+      {/* Animated background elementsss */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/10 rounded-full animate-pulse"></div>
         <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-white/10 rounded-full animate-pulse delay-500"></div>
