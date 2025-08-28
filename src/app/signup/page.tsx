@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useState,useEffect } from "react";
-import { Calendar, Rocket } from "lucide-react";
+import { Calendar, Rocket,Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +16,7 @@ export default function EventOrganizerSignup() {
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>(""); // New state
+    const [showPassword, setShowPassword] = useState(false)
   const [emailValid, setEmailValid] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
     const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
@@ -258,22 +259,36 @@ const generateUsernameSuggestions = (baseUsername: string): string[] => {
                     )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="password"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Password
-                    </Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Create a strong password"
-                      required
-                    />
-                  </div>
+               <div className="space-y-2">
+      <Label
+        htmlFor="password"
+        className="text-sm font-medium text-gray-700"
+      >
+        Password
+      </Label>
+      <div className="relative">
+        <Input
+          id="password"
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Create a strong password"
+          required
+          className="pr-10" // padding to avoid overlap with icon
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700"
+        >
+          {showPassword ? (
+            <EyeOff className="h-5 w-5" />
+          ) : (
+            <Eye className="h-5 w-5" />
+          )}
+        </button>
+      </div>
+    </div>
 
                   <Button
                     type="submit"

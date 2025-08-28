@@ -118,7 +118,7 @@ useEffect(() => {
         `/organizers/store-name-availability?name=${name}`
       );
       console.log(response);
-      if (response.status === 200) {
+      if (response.data.available === true) {
         setStoreNameStatus("available");
         const slug = slugify(name);
         setStoreDetails((prev) => ({
