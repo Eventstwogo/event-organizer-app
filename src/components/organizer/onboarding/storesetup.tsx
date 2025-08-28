@@ -179,7 +179,36 @@ useEffect(() => {
               Let's set up your event organizer profile.
             </p>
           </div>
+<div className="space-y-2">
+  <Label>Organizer Type</Label>
 
+  <div className="border-2 border-gray-200 rounded-lg p-4">
+    {loadingTypes ? (
+      <p className="text-sm text-gray-500">Loading organizer types...</p>
+    ) : organizerTypes.length > 0 ? (
+      <RadioGroup
+        value={storeDetails.type_ref_id}
+        onValueChange={(value) =>
+          setStoreDetails({ ...storeDetails, type_ref_id: value })
+        }
+        className="grid grid-cols-2 gap-3 max-h-48 "
+      >
+        {organizerTypes.map((type) => (
+          <div key={type.type_id} className="flex items-center space-x-2">
+            <RadioGroupItem value={type.type_id} id={type.type_id} />
+            <Label htmlFor={type.type_id}>{type.organizer_type}</Label>
+          </div>
+        ))}
+      </RadioGroup>
+    ) : (
+      <p className="text-sm text-gray-500">No organizer types available</p>
+    )}
+  </div>
+
+  <p className="text-sm text-muted-foreground mt-1">
+    Choose what best describes your organization.
+  </p>
+</div>
           <div className="space-y-2">
             <Label htmlFor="storeName">Organization Name</Label>
             <Input
@@ -212,6 +241,24 @@ useEffect(() => {
             {storeNameStatus === "unavailable" && (
               <XCircle className="absolute right-3 top-3 w-5 h-5 text-red-500" />
             )}
+            <p>
+              <span
+                className={`text-sm ${
+                  storeNameStatus === "available"
+                    ? "text-green-600"
+                    : storeNameStatus === "unavailable"
+                    ? "text-red-600"
+                    : "text-gray-500"
+                }`}
+              >
+                {storeNameStatus === "available" &&
+                  "Great! This organization name is available."}
+                {storeNameStatus === "unavailable" &&
+                  "Sorry, this organization name is already taken."}
+                {storeNameStatus === "checking" &&
+                  "Checking availability..."}
+              </span>
+            </p>
           </div>
 
           <div className="space-y-2 w-full">
@@ -235,37 +282,8 @@ useEffect(() => {
               />
             </div>
           </div>
-{/* Organizer Type Selection */}
-{/* Organizer Type Selection */}
-<div className="space-y-2">
-  <Label>Organizer Type</Label>
 
-  <div className="border-2 border-gray-200 rounded-lg p-4">
-    {loadingTypes ? (
-      <p className="text-sm text-gray-500">Loading organizer types...</p>
-    ) : organizerTypes.length > 0 ? (
-      <RadioGroup
-        value={storeDetails.type_ref_id}
-        onValueChange={(value) =>
-          setStoreDetails({ ...storeDetails, type_ref_id: value })
-        }
-      >
-        {organizerTypes.map((type) => (
-          <div key={type.type_id} className="flex items-center space-x-2">
-            <RadioGroupItem value={type.type_id} id={type.type_id} />
-            <Label htmlFor={type.type_id}>{type.organizer_type}</Label>
-          </div>
-        ))}
-      </RadioGroup>
-    ) : (
-      <p className="text-sm text-gray-500">No organizer types available</p>
-    )}
-  </div>
 
-  <p className="text-sm text-muted-foreground mt-1">
-    Choose what best describes your organization.
-  </p>
-</div>
 
 
           {/* Location Selection */}

@@ -224,12 +224,12 @@ export default function EventOrganizerLogin() {
 
                 <div className="text-center pt-4">
                   <p className="text-gray-600">
-                    New event organizer?{" "}
+                   Don't have an Account?{" "}
                     <Link
                       href="/signup"
                       className="text-purple-600 hover:text-purple-800 font-semibold transition-colors"
                     >
-                      Start Creating Events
+                    Create Account
                     </Link>
                   </p>
                 </div>

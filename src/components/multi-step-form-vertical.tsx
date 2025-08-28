@@ -874,7 +874,7 @@ function getEventTypeName(id: string) {
                       </SelectTrigger>
                       <SelectContent>
                         {eventTypes.map((type) => (
-                          <SelectItem key={type.id} value={type.id}>
+                          <SelectItem key={type.id} value={type.type_id}>
                             {type.event_type}
                           </SelectItem>
                         ))}
