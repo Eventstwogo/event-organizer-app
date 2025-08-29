@@ -4,18 +4,18 @@ import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { ArrowRight, ArrowLeft, CheckCircle } from "lucide-react"
+import { ArrowRight, ArrowLeft, CheckCircle, Calendar, Clock, ImageIcon, Info, MapPin } from "lucide-react"
 import useStore from "@/lib/Zustand"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import slugify from "slugify"
 import axiosInstance from "@/lib/axiosinstance"
-import BasicInformation from "./BasicInformation"
+import BasicInformation from "../components/Event/BasicInfo"
 import EventDetails from "./Event/EventDetails"
-import ImagesMedia from "./ImagesMedia"
-import DateSelection from "./DateSelection"
-import TimeSlots from "./TimeSlots"
-import ReviewSubmit from "./ReviewSubmit"
+import ImagesMedia from "../components/Event/Media"
+import DateSelection from "../components/Event/Dates"
+import TimeSlots from "../components/Event/Slots"
+import ReviewSubmit from "../components/Event/review"
 import { TimeSlotPopup } from "./eventcreationpopups/TimeSlotPopup"
 import { CategoryPricingPopup } from "./eventcreationpopups/CategoryPricingPopup"
 
@@ -87,13 +87,14 @@ interface EventType {
   event_type: string
 }
 
+
 const steps = [
-  { id: 1, title: "Basic Information", icon: "Info", description: "Event title, category and organizer" },
-  { id: 2, title: "Event Details", icon: "MapPin", description: "Description, location and specifications" },
-  { id: 3, title: "Images & Media", icon: "ImageIcon", description: "Upload event images and gallery" },
-  { id: 4, title: "Date Selection", icon: "Calendar", description: "Select dates for time slots" },
-  { id: 5, title: "Time Slots", icon: "Clock", description: "Create time slots for selected dates" },
-  { id: 6, title: "Review & Submit", icon: "CheckCircle", description: "Review all details before submitting" },
+  { id: 1, title: "Basic Information", icon: Info, description: "Event title, category and organizer" },
+  { id: 2, title: "Event Details", icon: MapPin, description: "Description, location and specifications" },
+  { id: 3, title: "Images & Media", icon: ImageIcon, description: "Upload event images and gallery" },
+  { id: 4, title: "Date Selection", icon: Calendar, description: "Select dates for time slots" },
+  { id: 5, title: "Time Slots", icon: Clock, description: "Create time slots for selected dates" },
+  { id: 6, title: "Review & Submit", icon: CheckCircle, description: "Review all details before submitting" },
 ]
 
 export default function MultiStepForm() {
@@ -773,53 +774,55 @@ export default function MultiStepForm() {
           </div>
         </div>
 
-        <div className="mb-8">
-          <div className="flex items-center justify-between max-w-full mx-auto overflow-x-auto">
-            {steps.map((step, index) => {
-              const isActive = step.id === currentStep
-              const isCompleted = step.id < currentStep
-              const isAccessible = step.id <= currentStep
-
-              return (
-                <div key={step.id} className="flex items-center flex-1 min-w-0">
-                  <div
-                    className={`flex flex-col items-center cursor-pointer transition-all duration-200 ${
-                      isAccessible ? "hover:scale-105" : ""
-                    }`}
-                    onClick={() => isAccessible && setCurrentStep(step.id)}
-                  >
-                    <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-colors ${
-                        isActive
-                          ? "bg-blue-500 text-white shadow-lg"
-                          : isCompleted
-                            ? "bg-green-500 text-white"
-                            : "bg-gray-300 text-gray-600"
-                      }`}
-                    >
-                      {isCompleted ? <CheckCircle className="w-6 h-6" /> : <span>{step.icon}</span>}
-                    </div>
-                    <div className="text-center max-w-32">
-                      <h3
-                        className={`font-semibold text-sm mb-1 ${
-                          isActive ? "text-blue-700" : isCompleted ? "text-green-700" : "text-gray-700"
-                        }`}
-                      >
-                        {step.title}
-                      </h3>
-                      <p className="text-xs text-gray-500 leading-tight">{step.description}</p>
-                    </div>
-                  </div>
-                  {index < steps.length - 1 && (
-                    <div
-                      className={`flex-1 h-0.5 mx-4 ${step.id < currentStep ? "bg-green-300" : "bg-gray-200"}`}
-                    ></div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </div>
+       
+               <div className="mb-8">
+                 <div className="flex items-center justify-between max-w-full mx-auto overflow-x-auto">
+                   {steps.map((step, index) => {
+                     const Icon = step.icon
+                     const isActive = step.id === currentStep
+                     const isCompleted = step.id < currentStep
+                     const isAccessible = step.id <= currentStep
+       
+                     return (
+                       <div key={step.id} className="flex items-center flex-1 min-w-0">
+                         <div
+                           className={`flex flex-col items-center cursor-pointer transition-all duration-200 ${
+                             isAccessible ? "hover:scale-105" : ""
+                           }`}
+                           onClick={() => isAccessible && setCurrentStep(step.id)}
+                         >
+                           <div
+                             className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-colors ${
+                               isActive
+                                 ? "bg-blue-500 text-white shadow-lg"
+                                 : isCompleted
+                                   ? "bg-green-500 text-white"
+                                   : "bg-gray-300 text-gray-600"
+                             }`}
+                           >
+                             {isCompleted ? <CheckCircle className="w-6 h-6" /> : <Icon className="w-6 h-6" />}
+                           </div>
+                           <div className="text-center max-w-32">
+                             <h3
+                               className={`font-semibold text-sm mb-1 ${
+                                 isActive ? "text-blue-700" : isCompleted ? "text-green-700" : "text-gray-700"
+                               }`}
+                             >
+                               {step.title}
+                             </h3>
+                             <p className="text-xs text-gray-500 leading-tight">{step.description}</p>
+                           </div>
+                         </div>
+                         {index < steps.length - 1 && (
+                           <div
+                             className={`flex-1 h-0.5 mx-4 ${step.id < currentStep ? "bg-green-300" : "bg-gray-200"}`}
+                           ></div>
+                         )}
+                       </div>
+                     )
+                   })}
+                 </div>
+               </div>
 
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader className="pb-6 border-b border-gray-100">
