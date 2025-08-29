@@ -1378,7 +1378,7 @@
 // export default BasicInfoPage;
 
 
-import MultiStepForm from '@/components/multi-step-form-vertical'
+import MultiStepForm from '@/components/multi-step-form-test'
 import React from 'react'
 
 const page = () => {
