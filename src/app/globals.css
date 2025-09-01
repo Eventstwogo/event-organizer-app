@@ -131,3 +131,19 @@ button:disabled,
 a[aria-disabled="true"] {
   cursor: not-allowed;
 }
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #invoice-section, #invoice-section * {
+    visibility: visible;
+  }
+
+  #invoice-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}

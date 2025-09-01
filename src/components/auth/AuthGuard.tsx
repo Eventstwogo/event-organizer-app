@@ -29,7 +29,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
     verification: ["/verification"],
     hold: ["/hold"],
     rejected: ["/rejected"],
-    approved: ["/dashboard", "/Events", "/profile", "/queries", "/onboarding", "/bookings","/Coupons"]
+    approved: ["/dashboard", "/Events", "/profile","/invoice", "/queries", "/onboarding", "/bookings","/Coupons"]
     // approved: ["/dashboard", "/Events", "/profile", "/queries", "/onboarding", "/analytics", "/bookings", "/revenue"]
   };
 
@@ -70,6 +70,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
         if (pathname.startsWith("/queries/") && route === "/queries") return true;
         if (pathname.startsWith("/bookings/") && route === "/bookings") return true;
         if (pathname.startsWith("/Coupons/") && route === "/Coupons") return true;
+         if (pathname.startsWith("/invoice/") && route === "/invoice") return true;
         return false;
       });
 

@@ -15,6 +15,8 @@ import {
   MessageSquare,
   BookOpen,
   ExternalLink,
+  Folder,
+  Paperclip,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -26,6 +28,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { file } from "zod";
 
 type NavItem = {
   label: string;
@@ -39,6 +42,7 @@ const navItems: NavItem[] = [
   // { label: 'Analytics', icon: BarChart3, href: '/analytics' },
   { label: 'Events', icon: CalendarDays, href: '/Events' },
   { label: 'Bookings', icon: BookOpen, href: '/bookings' },
+    { label: 'Invoice', icon: Folder, href: '/invoice' },
   // { label: 'Revenue', icon: DollarSign, href: '/revenue' },
   { label: 'Queries', icon: MessageSquare, href: '/queries' },
   // { label: 'Users', icon: Users, href: '/Users' },
