@@ -28,7 +28,7 @@ export default function StepTerms({ onNext, onBack, className }: StepTermsProps)
     const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 8
     if (atBottom && !scrolledToEnd) {
       setScrolledToEnd(true)
-      setAnnounce("You’ve reached the end of the Terms & Conditions. You may now confirm your agreement to proceed.")
+      setAnnounce("You’ve reached the end of the organizer's agreement. You may now confirm your agreement to proceed.")
     }
   }
 
@@ -45,10 +45,10 @@ export default function StepTerms({ onNext, onBack, className }: StepTermsProps)
             <ShieldCheck className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            Terms & Conditions
+            Organizer's Agreement
           </h1>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-            Please review our Terms & Conditions carefully to proceed.
+            Please review the Events2go organizer agreement carefully to proceed.
           </p>
         </header>
 
@@ -78,257 +78,77 @@ export default function StepTerms({ onNext, onBack, className }: StepTermsProps)
             tabIndex={0}
           >
             <div className="p-6 space-y-6 text-base leading-relaxed text-gray-700">
+               <section>
+                <h3 className="text-lg font-semibold text-gray-900">Disclaimer</h3>
+                <p className="text-red-600 font-medium">
+                  Please note that these agreement are subject to change. The newest version will be updated soon. 
+                </p>
+              </section>
               <section>
-                <h3 className="text-lg font-semibold text-gray-900">1. Introduction</h3>
+                <h3 className="text-lg font-semibold text-gray-900">1. Acceptance of Terms</h3>
                 <p>
-                  These Terms & Conditions govern your use of our platform. By accessing or using our services, 
-                  you agree to be bound by these terms.
+                  By accessing or using Events2go, an event management and ticketing platform, you agree to be bound by these Organizer's agreement. These terms govern your use of our services, including event creation, ticket purchasing, and attendee management. If you do not agree, you may not use the platform.
                 </p>
               </section>
 
               <section>
-                <h3 className="text-lg font-semibold text-gray-900">2. Liability</h3>
+                <h3 className="text-lg font-semibold text-gray-900">2. User Accounts and Responsibilities</h3>
                 <p>
-                  To the maximum extent permitted by law, we are not liable for indirect or consequential damages. 
-                  Your use of the platform is at your own risk.
+                  To use certain features, such as creating events or purchasing tickets, you must create an account with Events2go. You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account. You agree to provide accurate and complete information during registration and to notify us immediately of any unauthorized use of your account at <a href="mailto:info@events2go.com.au" className="text-indigo-600 hover:underline">info@events2go.com.au</a>.
                 </p>
               </section>
 
               <section>
-                <h3 className="text-lg font-semibold text-gray-900">3. Changes</h3>
+                <h3 className="text-lg font-semibold text-gray-900">3. Event Creation and Management</h3>
                 <p>
-                  We may update these terms periodically. Continued use after changes constitutes acceptance of the 
-                  updated terms.
+                  Event organizers using Events2go agree to provide accurate event details, including dates, locations, and ticket pricing. You are solely responsible for ensuring your events comply with applicable local, state, and federal laws, regulations, and venue policies. Events2go is not responsible for disputes between organizers, attendees, or third parties arising from event management or execution.
                 </p>
               </section>
 
               <section>
-                <h3 className="text-lg font-semibold text-gray-900">4. Contact</h3>
+                <h3 className="text-lg font-semibold text-gray-900">4. Ticketing and Payments</h3>
                 <p>
-                  If you have questions regarding these terms, please contact our support team at 
-                  <a href="mailto:support@example.com" className="text-indigo-600 hover:underline">support@example.com</a>.
-                </p>
-              </section>
-                <section>
-                <h3 className="text-lg font-semibold text-gray-900">1. Introduction</h3>
-                <p>
-                  These Terms & Conditions govern your use of our platform. By accessing or using our services, 
-                  you agree to be bound by these terms.
+                  All ticket purchases through Events2go are subject to availability and our refund policy. Events2go processes payments through third-party payment providers, and you agree to comply with their terms. Organizers are responsible for setting ticket prices and handling refunds in accordance with our refund policy. Events2go may charge service fees, which will be clearly disclosed at checkout.
                 </p>
               </section>
 
               <section>
-                <h3 className="text-lg font-semibold text-gray-900">2. Liability</h3>
+                <h3 className="text-lg font-semibold text-gray-900">5. Cancellations and Refunds</h3>
                 <p>
-                  To the maximum extent permitted by law, we are not liable for indirect or consequential damages. 
-                  Your use of the platform is at your own risk.
+                  If an event is canceled or rescheduled, Events2go will notify ticket holders promptly via email and/or the platform. Refunds for canceled events are subject to the organizer’s refund policy and applicable laws. Events2go is not liable for any costs incurred by attendees, such as travel or accommodation, due to event cancellations or changes.
                 </p>
               </section>
 
               <section>
-                <h3 className="text-lg font-semibold text-gray-900">3. Changes</h3>
+                <h3 className="text-lg font-semibold text-gray-900">6. User Conduct</h3>
                 <p>
-                  We may update these terms periodically. Continued use after changes constitutes acceptance of the 
-                  updated terms.
+                  You agree not to use Events2go for any unlawful or prohibited activities, including but not limited to posting false or misleading event information, engaging in fraudulent ticketing practices, or violating intellectual property rights. Events2go reserves the right to suspend or terminate accounts for violations of these terms.
                 </p>
               </section>
 
               <section>
-                <h3 className="text-lg font-semibold text-gray-900">4. Contact</h3>
+                <h3 className="text-lg font-semibold text-gray-900">7. Liability</h3>
                 <p>
-                  If you have questions regarding these terms, please contact our support team at 
-                  <a href="mailto:support@example.com" className="text-indigo-600 hover:underline">support@example.com</a>.
-                </p>
-              </section>
-                <section>
-                <h3 className="text-lg font-semibold text-gray-900">1. Introduction</h3>
-                <p>
-                  These Terms & Conditions govern your use of our platform. By accessing or using our services, 
-                  you agree to be bound by these terms.
+                  To the maximum extent permitted by law, Events2go is not liable for indirect, incidental, or consequential damages arising from your use of the platform, including but not limited to losses from event cancellations, disputes, or technical issues. Your use of Events2go is at your own risk.
                 </p>
               </section>
 
               <section>
-                <h3 className="text-lg font-semibold text-gray-900">2. Liability</h3>
+                <h3 className="text-lg font-semibold text-gray-900">8. Changes to Terms</h3>
                 <p>
-                  To the maximum extent permitted by law, we are not liable for indirect or consequential damages. 
-                  Your use of the platform is at your own risk.
+                  Events2go may update these Organizer's agreement periodically. We will notify you of significant changes via email or through the platform. Continued use of Events2go after changes constitutes acceptance of the updated terms.
                 </p>
               </section>
 
               <section>
-                <h3 className="text-lg font-semibold text-gray-900">3. Changes</h3>
+                <h3 className="text-lg font-semibold text-gray-900">9. Contact</h3>
                 <p>
-                  We may update these terms periodically. Continued use after changes constitutes acceptance of the 
-                  updated terms.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">4. Contact</h3>
-                <p>
-                  If you have questions regarding these terms, please contact our support team at 
-                  <a href="mailto:support@example.com" className="text-indigo-600 hover:underline">support@example.com</a>.
-                </p>
-              </section>
-                <section>
-                <h3 className="text-lg font-semibold text-gray-900">1. Introduction</h3>
-                <p>
-                  These Terms & Conditions govern your use of our platform. By accessing or using our services, 
-                  you agree to be bound by these terms.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">2. Liability</h3>
-                <p>
-                  To the maximum extent permitted by law, we are not liable for indirect or consequential damages. 
-                  Your use of the platform is at your own risk.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">3. Changes</h3>
-                <p>
-                  We may update these terms periodically. Continued use after changes constitutes acceptance of the 
-                  updated terms.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">4. Contact</h3>
-                <p>
-                  If you have questions regarding these terms, please contact our support team at 
-                  <a href="mailto:support@example.com" className="text-indigo-600 hover:underline">support@example.com</a>.
-                </p>
-              </section>
-                <section>
-                <h3 className="text-lg font-semibold text-gray-900">1. Introduction</h3>
-                <p>
-                  These Terms & Conditions govern your use of our platform. By accessing or using our services, 
-                  you agree to be bound by these terms.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">2. Liability</h3>
-                <p>
-                  To the maximum extent permitted by law, we are not liable for indirect or consequential damages. 
-                  Your use of the platform is at your own risk.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">3. Changes</h3>
-                <p>
-                  We may update these terms periodically. Continued use after changes constitutes acceptance of the 
-                  updated terms.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">4. Contact</h3>
-                <p>
-                  If you have questions regarding these terms, please contact our support team at 
-                  <a href="mailto:support@example.com" className="text-indigo-600 hover:underline">support@example.com</a>.
-                </p>
-              </section>
-                <section>
-                <h3 className="text-lg font-semibold text-gray-900">1. Introduction</h3>
-                <p>
-                  These Terms & Conditions govern your use of our platform. By accessing or using our services, 
-                  you agree to be bound by these terms.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">2. Liability</h3>
-                <p>
-                  To the maximum extent permitted by law, we are not liable for indirect or consequential damages. 
-                  Your use of the platform is at your own risk.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">3. Changes</h3>
-                <p>
-                  We may update these terms periodically. Continued use after changes constitutes acceptance of the 
-                  updated terms.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">4. Contact</h3>
-                <p>
-                  If you have questions regarding these terms, please contact our support team at 
-                  <a href="mailto:support@example.com" className="text-indigo-600 hover:underline">support@example.com</a>.
-                </p>
-              </section>
-                <section>
-                <h3 className="text-lg font-semibold text-gray-900">1. Introduction</h3>
-                <p>
-                  These Terms & Conditions govern your use of our platform. By accessing or using our services, 
-                  you agree to be bound by these terms.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">2. Liability</h3>
-                <p>
-                  To the maximum extent permitted by law, we are not liable for indirect or consequential damages. 
-                  Your use of the platform is at your own risk.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">3. Changes</h3>
-                <p>
-                  We may update these terms periodically. Continued use after changes constitutes acceptance of the 
-                  updated terms.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">4. Contact</h3>
-                <p>
-                  If you have questions regarding these terms, please contact our support team at 
-                  <a href="mailto:support@example.com" className="text-indigo-600 hover:underline">support@example.com</a>.
-                </p>
-              </section>
-                <section>
-                <h3 className="text-lg font-semibold text-gray-900">1. Introduction</h3>
-                <p>
-                  These Terms & Conditions govern your use of our platform. By accessing or using our services, 
-                  you agree to be bound by these terms.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">2. Liability</h3>
-                <p>
-                  To the maximum extent permitted by law, we are not liable for indirect or consequential damages. 
-                  Your use of the platform is at your own risk.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">3. Changes</h3>
-                <p>
-                  We may update these terms periodically. Continued use after changes constitutes acceptance of the 
-                  updated terms.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-lg font-semibold text-gray-900">4. Contact</h3>
-                <p>
-                  If you have questions regarding these terms, please contact our support team at 
-                  <a href="mailto:support@example.com" className="text-indigo-600 hover:underline">support@example.com</a>.
+                  If you have questions regarding these terms, please contact our support team at <a href="mailto:info@events2go.com.au" className="text-indigo-600 hover:underline">info@events2go.com.au</a>.
                 </p>
               </section>
 
               <p className="text-gray-500 italic">
-                End of Terms & Conditions. Please confirm your agreement below to continue.
+                End of Organizer's agreement. Please confirm your agreement below to continue.
               </p>
             </div>
           </div>
@@ -361,7 +181,7 @@ export default function StepTerms({ onNext, onBack, className }: StepTermsProps)
               tabIndex={scrolledToEnd ? 0 : -1}
             />
             <span className="text-base text-gray-700">
-              I have read and agree to the <span className="font-medium text-indigo-600">Terms & Conditions</span>.
+              I have read and agree to the <span className="font-medium text-indigo-600">Events2go Organizer's agreement</span>.
             </span>
           </label>
         </div>
