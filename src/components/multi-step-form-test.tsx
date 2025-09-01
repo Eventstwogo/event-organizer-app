@@ -3310,6 +3310,7 @@ export default function MultiStepForm() {
               <EventDetails
                 formData={formData}
                 updateFormData={updateFormData}
+                editmode={isEditMode}
               />
             )}
             {currentStep === 3 && (
@@ -3320,7 +3321,7 @@ export default function MultiStepForm() {
                 removeGalleryImage={removeGalleryImage}
               />
             )}
-            {currentStep === 4 && (
+            {currentStep === 4 && !isEditMode &&(
               <DateSelection
                 formData={formData}
                 activeDate={activeDate}
@@ -3352,6 +3353,8 @@ export default function MultiStepForm() {
                 categories={categories}
                 subcategories={subcategories}
                 eventTypes={eventTypes}
+                editmode={isEditMode}
+                editslotmode={isEditSlotsMode}
               />
             )}
           </CardContent>

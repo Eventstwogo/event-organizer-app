@@ -20,9 +20,10 @@ interface MyFormData {
 interface EventDetailsProps {
   formData: MyFormData
   updateFormData: (field: keyof MyFormData, value: any) => void
+  editmode:boolean
 }
 
-export default function EventDetails({ formData, updateFormData }: EventDetailsProps) {
+export default function EventDetails({ formData, updateFormData,editmode }: EventDetailsProps) {
   return (
     <div className="space-y-4 animate-in fade-in-50 duration-500 h-full overflow-auto">
       <div className="space-y-2">
@@ -111,6 +112,7 @@ export default function EventDetails({ formData, updateFormData }: EventDetailsP
             value={formData.startDate}
             onChange={(e) => updateFormData("startDate", e.target.value)}
             className="h-10"
+            disabled={editmode}
           />
         </div>
         <div className="space-y-2">
@@ -124,6 +126,7 @@ export default function EventDetails({ formData, updateFormData }: EventDetailsP
             onChange={(e) => updateFormData("endDate", e.target.value)}
             min={formData.startDate}
             className="h-10"
+            disabled={editmode}
           />
         </div>
       </div>
