@@ -7,6 +7,7 @@ import Step4VerificationConfirmation from "../../components/organizer/onboarding
 import axiosInstance from "../../lib/axiosinstance";
 import useStore from "../../lib/Zustand";
 import { toast } from "sonner";
+import StepTerms from "../../components/organizer/onboarding/terms&conditions";
 
 export default function VendorOnboarding() {
   const { userId } = useStore();
@@ -124,7 +125,17 @@ export default function VendorOnboarding() {
             onBack={() => setCurrentStep(2)}
           />
         );
-      case 4:
+
+     case 4:
+  return (
+    <StepTerms
+      onNext={() => setCurrentStep(5)}
+      onBack={() => setCurrentStep(3)}
+    />
+  );
+
+
+      case 5:
         return (
           <Step4VerificationConfirmation
             referenceNumber={referenceNumber}

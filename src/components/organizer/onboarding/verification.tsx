@@ -2,7 +2,14 @@
 import Image from "next/image";
 import type React from "react";
 
-import { Building, Loader2, CheckCircle, XCircle, LogOut } from "lucide-react";
+import {
+  Building,
+  Loader2,
+  CheckCircle,
+  XCircle,
+  LogOut,
+  Info,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +17,12 @@ import { cn } from "@/lib/utils";
 import axiosInstance from "@/lib/axiosinstance";
 import useStore from "@/lib/Zustand";
 import { useRouter } from "next/navigation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Step3Props {
   abnDetails: {
@@ -51,8 +64,8 @@ export default function Step3AbnVerification({
   };
 
   const handleVerification = async () => {
-    const trimmedAbn = abnDetails.abn.trim().replace(/\s+/g, '');
-    
+    const trimmedAbn = abnDetails.abn.trim().replace(/\s+/g, "");
+
     if (!trimmedAbn) {
       setAbnDetails((prev) => ({
         ...prev,
@@ -122,7 +135,7 @@ export default function Step3AbnVerification({
         <LogOut className="w-4 h-4" />
         Logout
       </Button>
-      
+
       {/* Image Side */}
       <div className="hidden lg:flex items-center justify-center p-8 bg-gradient-to-br from-purple-50 to-indigo-50 h-full">
         <div className="text-center space-y-6 max-w-md">
@@ -159,7 +172,20 @@ export default function Step3AbnVerification({
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="abn">Australian Business Number (ABN)</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="abn">Australian Business Number (ABN)</Label>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-4 h-4 text-purple-500 cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="right"
+                    className="bg-gradient-to-r from-purple-400 to-indigo-400 text-gray-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium animate-in fade-in zoom-in-95"
+                  >
+                    You can find your ABN on official ATO or ASIC documents.
+                  </TooltipContent>
+                </Tooltip>
+              </div>
               <Input
                 id="abn"
                 placeholder="e.g., 12 345 678 901"
@@ -179,6 +205,7 @@ export default function Step3AbnVerification({
                 className="h-12 border-2 border-gray-200 focus:border-purple-500 transition-colors duration-200"
                 required
               />
+
               <Button
                 onClick={handleVerification}
                 disabled={
