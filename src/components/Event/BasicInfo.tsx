@@ -60,8 +60,7 @@ export default function BasicInformation({
             value={formData.eventType}
             onValueChange={(value) => {
               updateFormData("eventType", value)
-              updateFormData("subcategory", "")
-              updateFormData("otherSubcategory", "")
+             
             }}
             disabled={isLoadingCategories}
           >
@@ -119,7 +118,7 @@ export default function BasicInformation({
           <Select
             value={formData.subcategory}
             onValueChange={(value) => updateFormData("subcategory", value)}
-            disabled={!formData.eventType || isLoadingCategories}
+            disabled={!formData.category || isLoadingCategories}
           >
             <SelectTrigger className="h-10 w-full">
               <SelectValue placeholder="Select subcategory" />

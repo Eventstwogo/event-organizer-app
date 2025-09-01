@@ -485,7 +485,7 @@ const EditOptions = ({ event }: { event: Event }) => {
           >
             📅 Edit Existing Slots
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             onClick={() => {
               router.push(`/Events/CreateSlots?event_id=${event.event_id}`);
@@ -493,7 +493,7 @@ const EditOptions = ({ event }: { event: Event }) => {
             }}
           >
             ➕ Create New Dates + Slots
-          </Button>
+          </Button> */}
         </div>
       </DialogContent>
     </Dialog>
