@@ -1,15 +1,21 @@
 "use client";
 import Image from "next/image";
 import type React from "react";
-import { useState, useEffect} from 'react';
-import { Calendar, MapPin, LogOut } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Calendar, MapPin, LogOut, Info } from "lucide-react";
 import axiosInstance from "@/lib/axiosinstance";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useStore from "@/lib/Zustand";
 import { useRouter } from "next/navigation";
- import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { CheckCircle, XCircle, Loader2, Store } from "lucide-react";
 import {
@@ -29,9 +35,9 @@ interface OrganizerType {
   created_at: string;
 }
 
-{/* Organizer Type Selection */}
-
-
+{
+  /* Organizer Type Selection */
+}
 
 interface Step1Props {
   storeDetails: {
@@ -58,8 +64,8 @@ export default function Step1StoreSetup({
 }: Step1Props) {
   const { logout } = useStore();
   const router = useRouter();
-const [organizerTypes, setOrganizerTypes] = useState<OrganizerType[]>([]);
-const [loadingTypes, setLoadingTypes] = useState(false);
+  const [organizerTypes, setOrganizerTypes] = useState<OrganizerType[]>([]);
+  const [loadingTypes, setLoadingTypes] = useState(false);
   const handleLogout = () => {
     logout();
     router.push("/");
@@ -81,24 +87,24 @@ const [loadingTypes, setLoadingTypes] = useState(false);
   const [storeNameStatus, setStoreNameStatus] = useState<
     "available" | "unavailable" | "checking" | null
   >(null);
-useEffect(() => {
-  const fetchOrganizerTypes = async () => {
-    try {
-      setLoadingTypes(true);
-      const response = await axiosInstance.get("/organizers/types/active");
-      if (response.status === 200) {
-        setOrganizerTypes(response.data.data || []);
+  useEffect(() => {
+    const fetchOrganizerTypes = async () => {
+      try {
+        setLoadingTypes(true);
+        const response = await axiosInstance.get("/organizers/types/active");
+        if (response.status === 200) {
+          setOrganizerTypes(response.data.data || []);
+        }
+      } catch (error) {
+        console.error("Error fetching organizer types:", error);
+        toast.error("Failed to fetch organizer types");
+      } finally {
+        setLoadingTypes(false);
       }
-    } catch (error) {
-      console.error("Error fetching organizer types:", error);
-      toast.error("Failed to fetch organizer types");
-    } finally {
-      setLoadingTypes(false);
-    }
-  };
+    };
 
-  fetchOrganizerTypes();
-}, []);
+    fetchOrganizerTypes();
+  }, []);
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (storeDetails.storeName.trim()) {
@@ -145,7 +151,7 @@ useEffect(() => {
         <LogOut className="w-4 h-4" />
         Logout
       </Button>
-      
+
       {/* Image Side */}
       <div className="hidden lg:flex items-center justify-center p-8 bg-gradient-to-br from-purple-50 to-indigo-50 h-full">
         <div className="text-center space-y-6 max-w-md">
@@ -179,68 +185,111 @@ useEffect(() => {
               Let's set up your event organizer profile.
             </p>
           </div>
-<div className="space-y-2">
-  <Label>Organizer Type</Label>
-
-  <div className="border-2 border-gray-200 rounded-lg p-4">
-    {loadingTypes ? (
-      <p className="text-sm text-gray-500">Loading organizer types...</p>
-    ) : organizerTypes.length > 0 ? (
-      <RadioGroup
-        value={storeDetails.type_ref_id}
-        onValueChange={(value) =>
-          setStoreDetails({ ...storeDetails, type_ref_id: value })
-        }
-        className="grid grid-cols-2 gap-3 max-h-48 "
-      >
-        {organizerTypes.map((type) => (
-          <div key={type.type_id} className="flex items-center space-x-2">
-            <RadioGroupItem value={type.type_id} id={type.type_id} />
-            <Label htmlFor={type.type_id}>{type.organizer_type}</Label>
-          </div>
-        ))}
-      </RadioGroup>
-    ) : (
-      <p className="text-sm text-gray-500">No organizer types available</p>
-    )}
-  </div>
-
-  <p className="text-sm text-muted-foreground mt-1">
-    Choose what best describes your organization.
-  </p>
-</div>
           <div className="space-y-2">
-            <Label htmlFor="storeName">Organization Name</Label>
-            <Input
-              id="storeName"
-              placeholder="Amazing Events Co."
-              value={storeDetails.storeName}
-              onChange={(e) =>
-                setStoreDetails({
-                  ...storeDetails,
-                  storeName: e.target.value,
-                })
-              }
-              className={`h-12 border-2 pr-10 ${
-                storeNameStatus === "available"
-                  ? "border-green-500 focus:border-green-500"
-                  : storeNameStatus === "unavailable"
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-gray-200 focus:border-blue-500"
-              } transition-colors duration-200`}
-              required
-            />
-            {storeNameStatus === "checking" && (
-              <Loader2 className="absolute right-3 top-3 w-5 h-5 text-blue-500 animate-spin" />
-            )}
+            <div className="flex items-center gap-2">
+              <Label>Organizer Type</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-4 h-4 text-purple-500 cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="right"
+                    className="bg-gradient-to-r from-purple-400 to-indigo-400 text-gray-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium animate-in fade-in zoom-in-95"
+                  >
+                    Select the type of organization you represent (e.g.,
+                    company, club, non-profit).
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
 
-            {storeNameStatus === "available" && (
-              <CheckCircle className="absolute right-3 top-3 w-5 h-5 text-green-500" />
-            )}
+            <div className="border-2 border-gray-200 rounded-lg p-4">
+              {loadingTypes ? (
+                <p className="text-sm text-gray-500">
+                  Loading organizer types...
+                </p>
+              ) : organizerTypes.length > 0 ? (
+                <RadioGroup
+                  value={storeDetails.type_ref_id}
+                  onValueChange={(value) =>
+                    setStoreDetails({ ...storeDetails, type_ref_id: value })
+                  }
+                  className="grid grid-cols-2 gap-3 max-h-48 "
+                >
+                  {organizerTypes.map((type) => (
+                    <div
+                      key={type.type_id}
+                      className="flex items-center space-x-2"
+                    >
+                      <RadioGroupItem value={type.type_id} id={type.type_id} />
+                      <Label htmlFor={type.type_id}>
+                        {type.organizer_type}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              ) : (
+                <p className="text-sm text-gray-500">
+                  No organizer types available
+                </p>
+              )}
+            </div>
 
-            {storeNameStatus === "unavailable" && (
-              <XCircle className="absolute right-3 top-3 w-5 h-5 text-red-500" />
-            )}
+            <p className="text-sm text-muted-foreground mt-1">
+              Choose what best describes your organization.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="storeName">Organization Name</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-4 h-4 text-purple-500 cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="right"
+                    className="bg-gradient-to-r from-purple-400 to-indigo-400 text-gray-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium animate-in fade-in zoom-in-95"
+                  >
+                    Enter the official name of your organization. This will be
+                    visible to event attendees.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <div className="relative">
+              <Input
+                id="storeName"
+                placeholder="Amazing Events Co."
+                value={storeDetails.storeName}
+                onChange={(e) =>
+                  setStoreDetails({
+                    ...storeDetails,
+                    storeName: e.target.value,
+                  })
+                }
+                className={`h-12 border-2 pr-10 ${
+                  storeNameStatus === "available"
+                    ? "border-green-500 focus:border-green-500"
+                    : storeNameStatus === "unavailable"
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-gray-200 focus:border-blue-500"
+                } transition-colors duration-200`}
+                required
+              />
+
+              {storeNameStatus === "checking" && (
+                <Loader2 className="absolute right-3 top-3 w-5 h-5 text-blue-500 animate-spin" />
+              )}
+              {storeNameStatus === "available" && (
+                <CheckCircle className="absolute right-3 top-3 w-5 h-5 text-green-500" />
+              )}
+              {storeNameStatus === "unavailable" && (
+                <XCircle className="absolute right-3 top-3 w-5 h-5 text-red-500" />
+              )}
+            </div>
+
             <p>
               <span
                 className={`text-sm ${
@@ -255,14 +304,28 @@ useEffect(() => {
                   "Great! This organization name is available."}
                 {storeNameStatus === "unavailable" &&
                   "Sorry, this organization name is already taken."}
-                {storeNameStatus === "checking" &&
-                  "Checking availability..."}
+                {storeNameStatus === "checking" && "Checking availability..."}
               </span>
             </p>
           </div>
 
           <div className="space-y-2 w-full">
-            <Label htmlFor="storeUrl">Event Organizer Profile URL</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="storeUrl">Event Organizer Profile URL</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-4 h-4 text-purple-500 cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="right"
+                    className="bg-gradient-to-r from-purple-400 to-indigo-400 text-gray-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium animate-in fade-in zoom-in-95"
+                  >
+                    This will be your unique event organizer link.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <div className="flex w-full">
               <span className="inline-flex items-center px-3 h-12 rounded-l-md border border-r-0 border-gray-200 bg-gray-50 text-gray-500 text-sm">
                 https://e2go.events/
@@ -283,12 +346,24 @@ useEffect(() => {
             </div>
           </div>
 
-
-
-
           {/* Location Selection */}
           <div className="space-y-2">
-            <Label htmlFor="location">Primary Operating Location</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="location">Primary Operating Location</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-4 h-4 text-purple-500 cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="right"
+                    className="bg-gradient-to-r from-purple-400 to-indigo-400 text-gray-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium animate-in fade-in zoom-in-95"
+                  >
+                    Choose the main city where you usually host your events.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Select
               value={storeDetails.location}
               onValueChange={(value) =>
