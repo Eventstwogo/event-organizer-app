@@ -3035,9 +3035,8 @@ export default function MultiStepForm() {
               label: cat.name,
               price: cat.price,
               totalTickets: cat.quantity,
-              booked: 0,
-              held: 0,
-              available: cat.quantity,
+        
+           
             }
           }),
         }
