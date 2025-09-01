@@ -479,7 +479,7 @@ const EditOptions = ({ event }: { event: Event }) => {
           <Button
             variant="outline"
             onClick={() => {
-              router.push(`/Events/EditSlots?event_id=${event.event_id}`);
+              router.push(`/Events/BasicInfo?event_id=${event.event_id}&edit_slots=true`);
               setOpen(false);
             }}
           >
