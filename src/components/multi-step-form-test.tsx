@@ -3109,7 +3109,7 @@ export default function MultiStepForm() {
       console.error(err)
       toast.error("Submission failed! Please try again.")
     } finally {
-      router.push("/Events")
+      
       setFormData({
         title: "",
         category: "",
@@ -3141,6 +3141,7 @@ export default function MultiStepForm() {
         timeSlots: {},
         customCategories: [],
       })
+      router.push("/Events")
     }
   }
 

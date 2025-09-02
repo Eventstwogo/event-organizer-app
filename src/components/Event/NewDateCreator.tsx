@@ -67,6 +67,15 @@ export default function NewDateCreator({
     ? getDatesBetween(formData.startDate, formData.endDate)
     : [];
 
+  // Helpers to avoid timezone issues and block past dates
+  const parseISODateLocal = (iso: string) => {
+    if (!iso) return new Date();
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(y, (m || 1) - 1, d || 1);
+  };
+  const now = new Date();
+  const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
   return (
     <div className="space-y-6 animate-in fade-in-50 duration-500 h-full">
       {/* Header */}
@@ -134,9 +143,12 @@ export default function NewDateCreator({
 
               dates.forEach((d) => {
                 const isSelected = formData.selectedDates.includes(d);
-                const allowed = isDateAllowed(d, allowedDates);
+                const allowedByProp = isDateAllowed(d, allowedDates);
                 const isExisting = (existingDates || []).includes(d);
-                const dayNum = new Date(d).getDate();
+                const localDate = parseISODateLocal(d);
+                const isInPast = localDate < todayLocal;
+                const allowed = allowedByProp && !isInPast; // block past dates
+                const dayNum = localDate.getDate();
 
                 items.push(
                   <button
@@ -148,7 +160,7 @@ export default function NewDateCreator({
                       ${isExisting ? "bg-gray-200 text-gray-500 border-gray-300" : isSelected ? "bg-blue-500 text-white border-blue-500" : "hover:bg-blue-50 text-gray-700 border-transparent"}
                     `}
                     aria-disabled={!allowed || isExisting}
-                    title={isExisting ? "Already created" : undefined}
+                    title={isExisting ? "Already created" : isInPast ? "Past date not allowed" : undefined}
                   >
                     {dayNum}
                   </button>

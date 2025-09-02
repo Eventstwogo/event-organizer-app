@@ -43,6 +43,10 @@ interface NewCategoriesPricingProps {
   openApplyAllCategoriesPopup?: () => void;
   // Fallback: directly apply categories template via function
   createApplyAllTemplate?: () => void;
+  // Optional calendar navigation and label
+  monthLabel?: string;
+  onPrevMonth?: () => void;
+  onNextMonth?: () => void;
 }
 
 export default function NewCategoriesPricing({
@@ -56,10 +60,20 @@ export default function NewCategoriesPricing({
   removeTicketCategoryFromSlot,
   openApplyAllCategoriesPopup,
   createApplyAllTemplate,
+  monthLabel,
+  onPrevMonth,
+  onNextMonth,
 }: NewCategoriesPricingProps) {
-  const dates = formData.startDate && formData.endDate
-    ? getDatesBetween(formData.startDate, formData.endDate)
-    : [];
+  // Build a full month grid based on the active date (or startDate), independent of range
+  const baseDateStr = activeDate || formData.startDate || new Date().toISOString().slice(0, 10);
+  const displayedMonthStart = new Date(baseDateStr);
+  displayedMonthStart.setDate(1);
+  const year = displayedMonthStart.getFullYear();
+  const month = displayedMonthStart.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  const toYMD = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const dates = Array.from({ length: daysInMonth }, (_, i) => toYMD(new Date(year, month, i + 1)));
 
   const handleApplyAll = () => {
     if (openApplyAllCategoriesPopup) return openApplyAllCategoriesPopup();
@@ -89,7 +103,27 @@ export default function NewCategoriesPricing({
       <div className="flex flex-col lg:flex-row gap-6 h-[640px]">
         {/* Date selector (calendar-like grid for the current range) */}
         <div className="w-full lg:w-80 bg-white rounded-xl border border-gray-200 p-4">
-          <h4 className="text-lg font-semibold text-gray-900 mb-4">Select Dates</h4>
+          <div className="flex items-center justify-between mb-3">
+            <button
+              type="button"
+              onClick={onPrevMonth}
+              className="px-2 py-1 text-sm border rounded hover:bg-gray-50 disabled:opacity-50"
+              aria-label="Previous month"
+              disabled={!onPrevMonth}
+            >
+              ◀
+            </button>
+            <h4 className="text-lg font-semibold text-gray-900">{monthLabel || new Date(year, month, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h4>
+            <button
+              type="button"
+              onClick={onNextMonth}
+              className="px-2 py-1 text-sm border rounded hover:bg-gray-50 disabled:opacity-50"
+              aria-label="Next month"
+              disabled={!onNextMonth}
+            >
+              ▶
+            </button>
+          </div>
 
           <div className="grid grid-cols-7 gap-1 mb-2">
             {["S", "M", "T", "W", "T", "F", "S"].map((day, idx) => (
@@ -102,7 +136,7 @@ export default function NewCategoriesPricing({
           <div className="grid grid-cols-7 gap-1">
             {(() => {
               if (!dates.length) return null;
-              const startDate = new Date(dates[0]);
+              const startDate = new Date(year, month, 1);
               const startDay = startDate.getDay();
               const items: JSX.Element[] = [];
 
@@ -115,17 +149,14 @@ export default function NewCategoriesPricing({
                 const dayNum = new Date(d).getDate();
 
                 items.push(
-                  <button
+                  <div
                     key={d}
-                    type="button"
-                    onClick={() => toggleDateSelection(d)}
-                    className={`h-8 flex items-center justify-center rounded text-xs transition-all duration-200 border
-                      cursor-pointer
-                      ${isSelected ? "bg-blue-500 text-white border-blue-500" : "hover:bg-blue-50 text-gray-700 border-transparent"}
+                    className={`h-8 flex items-center justify-center rounded text-xs transition-all duration-200 border select-none cursor-default
+                      ${isSelected ? "bg-blue-500 text-white border-blue-500" : "text-gray-700 border-transparent"}
                     `}
                   >
                     {dayNum}
-                  </button>
+                  </div>
                 );
               });
 
@@ -203,27 +234,25 @@ export default function NewCategoriesPricing({
                           <div className="space-y-1">
                             <Label className="text-xs font-medium text-gray-700">Price ($)</Label>
                             <Input
-                              type="number"
+                              type="text"
                               value={category.price}
                               onChange={(e) => updateTicketCategoryInSlot(activeDate, index, category.id, "price", Number(e.target.value) || 0)}
                               className="h-9"
-                              min={0}
+                  
                             />
                           </div>
                           <div className="space-y-1">
                             <Label className="text-xs font-medium text-gray-700">Quantity</Label>
                             <Input
-                              type="number"
+                              type="text"
                               value={category.quantity}
                               onChange={(e) => updateTicketCategoryInSlot(activeDate, index, category.id, "quantity", Number(e.target.value) || 0)}
                               className="h-9"
-                              min={0}
+                     
                             />
                           </div>
                           <div className="flex items-end justify-between gap-3">
-                            <div className="text-xs text-gray-600">
-                              Revenue: ${(category.price * category.quantity).toLocaleString()}
-                            </div>
+                        
                             <Button
                               type="button"
                               onClick={() => removeTicketCategoryFromSlot(activeDate, index, category.id)}

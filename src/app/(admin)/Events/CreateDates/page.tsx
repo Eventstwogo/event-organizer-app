@@ -154,7 +154,7 @@ export default function CreateDatesPage() {
         setAllowedDates(null);
       }
     };
-    fetchAllowed();
+    // fetchAllowed();
   }, [eventId]);
 
   // Prefill previously saved slot configuration for this event
