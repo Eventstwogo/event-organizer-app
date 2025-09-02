@@ -378,6 +378,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -452,7 +454,13 @@ export interface Event {
 
 const EditOptions = ({ event }: { event: Event }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  // Close dialog on route change
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -469,28 +477,21 @@ const EditOptions = ({ event }: { event: Event }) => {
         <div className="flex flex-col space-y-3 mt-4">
           <Button
             variant="outline"
-            onClick={() => {
-              router.push(`/Events/BasicInfo?event_id=${event.event_id}`);
-              setOpen(false); // close after navigation
-            }}
+            onClick={() => router.push(`/Events/BasicInfo?event_id=${event.event_id}`)}
           >
             ✏️ Edit Event Details
           </Button>
           <Button
             variant="outline"
-            onClick={() => {
-              router.push(`/Events/BasicInfo?event_id=${event.event_id}&edit_slots=true`);
-              setOpen(false);
-            }}
+            onClick={() =>
+              router.push(`/Events/BasicInfo?event_id=${event.event_id}&edit_slots=true`)
+            }
           >
             📅 Edit Existing Slots
           </Button>
           <Button
             variant="outline"
-            onClick={() => {
-              router.push(`/Events/CreateDates?event_id=${event.event_id}`);
-              setOpen(false);
-            }}
+            onClick={() => router.push(`/Events/CreateDates?event_id=${event.event_id}`)}
           >
             ➕ Create New Dates + Slots
           </Button>
