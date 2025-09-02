@@ -457,7 +457,7 @@ const EditOptions = ({ event }: { event: Event }) => {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  // Close dialog on route change
+  // Close on route change
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -470,33 +470,45 @@ const EditOptions = ({ event }: { event: Event }) => {
           Edit Event
         </DropdownMenuItem>
       </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Choose Edit Option</DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col space-y-3 mt-4">
-          <Button
-            variant="outline"
-            onClick={() => router.push(`/Events/BasicInfo?event_id=${event.event_id}`)}
-          >
-            ✏️ Edit Event Details
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() =>
-              router.push(`/Events/BasicInfo?event_id=${event.event_id}&edit_slots=true`)
-            }
-          >
-            📅 Edit Existing Slots
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => router.push(`/Events/CreateDates?event_id=${event.event_id}`)}
-          >
-            ➕ Create New Dates + Slots
-          </Button>
-        </div>
-      </DialogContent>
+
+      {open && ( // ✅ only render when open
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Choose Edit Option</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col space-y-3 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setOpen(false); // close first
+                router.push(`/Events/BasicInfo?event_id=${event.event_id}`);
+              }}
+            >
+              ✏️ Edit Event Details
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setOpen(false);
+                router.push(
+                  `/Events/BasicInfo?event_id=${event.event_id}&edit_slots=true`
+                );
+              }}
+            >
+              📅 Edit Existing Slots
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setOpen(false);
+                router.push(`/Events/CreateDates?event_id=${event.event_id}`);
+              }}
+            >
+              ➕ Create New Dates + Slots
+            </Button>
+          </div>
+        </DialogContent>
+      )}
     </Dialog>
   );
 };
