@@ -276,21 +276,21 @@ export function CategoryPricingPopup({
                     <div className="space-y-1">
                       <Label className="text-xs font-medium text-gray-700">Price ($)</Label>
                       <Input
-                        type="number"
+                        type="text"
                         value={category.price}
-                        onChange={(e) => updateCategory(category.id, "price", Number(e.target.value) || 0)}
+                        onChange={(e) => updateCategory(category.id, "price", e.target.value)}
                         className="h-8"
-                        min="0"
+                      
                       />
                     </div>
                     <div className="space-y-1">
                       <Label className="text-xs font-medium text-gray-700">Quantity</Label>
                       <Input
-                        type="number"
+                        type="text"
                         value={category.quantity}
-                        onChange={(e) => updateCategory(category.id, "quantity", Number(e.target.value) || 0)}
+                        onChange={(e) => updateCategory(category.id, "quantity", e.target.value )}
                         className="h-8"
-                        min="0"
+                
                       />
                     </div>
                     <div className="flex items-end justify-between">

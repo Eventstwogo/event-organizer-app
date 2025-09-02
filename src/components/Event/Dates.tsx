@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
+import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useEffect, useMemo, useState } from "react"
 
 interface TimeSlot {
   startTime: string
@@ -48,6 +49,41 @@ export default function DateSelection({
   removeTimeSlot,
   createApplyAllTemplate,
 }: DateSelectionProps) {
+  // Calendar helpers and state for month navigation
+  const monthStartOf = (d: Date) => new Date(d.getFullYear(), d.getMonth(), 1)
+  const toISODate = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+  const parseISODateLocal = (iso: string) => {
+    if (!iso) return new Date()
+    const [y, m, d] = iso.split("-").map(Number)
+    return new Date(y, (m || 1) - 1, d || 1) // Local time, avoids UTC shift
+  }
+
+  const minDateLocal = useMemo(() => parseISODateLocal(formData.startDate), [formData.startDate])
+  const maxDateLocal = useMemo(() => parseISODateLocal(formData.endDate), [formData.endDate])
+
+  const [currentMonth, setCurrentMonth] = useState<Date>(monthStartOf(parseISODateLocal(formData.startDate)))
+
+  // Keep currentMonth in sync if startDate changes
+  useEffect(() => {
+    if (formData.startDate) {
+      setCurrentMonth(monthStartOf(parseISODateLocal(formData.startDate)))
+    }
+  }, [formData.startDate])
+
+  const isPrevDisabled = monthStartOf(currentMonth) <= monthStartOf(minDateLocal)
+  const isNextDisabled = monthStartOf(currentMonth) >= monthStartOf(maxDateLocal)
+
+  const handlePrevMonth = () => {
+    if (!isPrevDisabled) {
+      setCurrentMonth((prev) => monthStartOf(new Date(prev.getFullYear(), prev.getMonth() - 1, 1)))
+    }
+  }
+  const handleNextMonth = () => {
+    if (!isNextDisabled) {
+      setCurrentMonth((prev) => monthStartOf(new Date(prev.getFullYear(), prev.getMonth() + 1, 1)))
+    }
+  }
+
   return (
     <div className="space-y-6 animate-in fade-in-50 duration-500 h-full">
       <div className="text-center mb-6">
@@ -58,6 +94,31 @@ export default function DateSelection({
         <div className="flex gap-6 h-[600px]">
           <div className="w-80 bg-white rounded-xl border border-gray-200 p-4">
             <h4 className="text-lg font-semibold text-gray-900 mb-4">Select Dates</h4>
+            <div className="flex items-center justify-between mb-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={handlePrevMonth}
+                disabled={isPrevDisabled}
+                className="h-8 w-8"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <div className="text-sm font-medium text-gray-900">
+                {currentMonth.toLocaleString("en-US", { month: "long", year: "numeric" })}
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={handleNextMonth}
+                disabled={isNextDisabled}
+                className="h-8 w-8"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
             <div className="grid grid-cols-7 gap-1 mb-3">
               {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
                 <div key={index} className="text-center text-xs font-medium text-gray-500 py-1">
@@ -67,32 +128,40 @@ export default function DateSelection({
             </div>
             <div className="grid grid-cols-7 gap-1">
               {(() => {
-                const dates = getDatesBetween(formData.startDate, formData.endDate)
-                const startDate = new Date(dates[0])
-                const startDay = startDate.getDay()
-                const calendarDates = []
+                const calendarDates: JSX.Element[] = []
+                const firstOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
+                const lastOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0)
+                const startDay = firstOfMonth.getDay()
+                const daysInMonth = lastOfMonth.getDate()
 
+                // Padding before the 1st of the month
                 for (let i = 0; i < startDay; i++) {
-                  calendarDates.push(<div key={`empty-${i}`} className="h-8"></div>)
+                  calendarDates.push(<div key={`empty-${i}`} className="h-8" />)
                 }
 
-                dates.forEach((date) => {
-                  const isSelected = formData.selectedDates.includes(date)
-                  const dateObj = new Date(date)
-                  const dayNumber = dateObj.getDate()
+                for (let d = 1; d <= daysInMonth; d++) {
+                  const dateObj = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d)
+                  const iso = toISODate(dateObj)
+                  // Use local-parsed min/max to avoid off-by-one due to timezone
+                  const isWithinRange = dateObj >= minDateLocal && dateObj <= maxDateLocal
+                  const isSelected = formData.selectedDates.includes(iso)
 
                   calendarDates.push(
                     <div
-                      key={date}
-                      onClick={() => toggleDateSelection(date)}
-                      className={`h-8 flex items-center justify-center rounded cursor-pointer transition-all duration-200 text-xs ${
-                        isSelected ? "bg-blue-500 text-white" : "hover:bg-blue-50 text-gray-700"
+                      key={iso}
+                      onClick={() => isWithinRange && toggleDateSelection(iso)}
+                      className={`h-8 flex items-center justify-center rounded text-xs transition-all duration-200 ${
+                        isWithinRange
+                          ? isSelected
+                            ? "bg-blue-500 text-white cursor-pointer"
+                            : "text-gray-700 hover:bg-blue-50 cursor-pointer"
+                          : "text-gray-300 cursor-default"
                       }`}
                     >
-                      {dayNumber}
+                      {d}
                     </div>,
                   )
-                })
+                }
 
                 return calendarDates
               })()}

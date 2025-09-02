@@ -125,10 +125,9 @@ const CreateEventPage = () => {
 
       if (response.data.statusCode === 200) {
         const eventsData = response.data.data.events || [];
-        console.log("✅ Events loaded successfully:", eventsData.length);
-        console.log("📋 First event:", eventsData[0]);
+       
         setEvents(eventsData);
-        toast.success(`Loaded ${eventsData.length} events successfully!`);
+        
       } else {
         console.log("❌ API Error:", response.data.message);
         toast.error(response.data.message || "Failed to fetch events");

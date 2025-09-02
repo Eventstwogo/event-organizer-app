@@ -560,7 +560,7 @@ const CreateEventPage = () => {
             [tab]: eventsArr,
           }));
           setTotal(response.data.data.total || 0); // Update total from API response
-          toast.success(`Loaded ${eventsArr.length} ${tab} events successfully!`);
+         
         } else {
           toast.error(response.data.message || "Failed to fetch events");
           setEventsData((prev) => ({

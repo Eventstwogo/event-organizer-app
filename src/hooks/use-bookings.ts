@@ -186,9 +186,7 @@ export const useBookings = () => {
         setBookings(transformedBookings);
         setRawApiData(response.data);
        
-        if (showToast) {
-          toast.success(`Loaded ${transformedBookings.length} bookings successfully!`);
-        }
+       
       } else {
         console.warn("Unexpected API response format:", response.data);
         setBookings([]);
