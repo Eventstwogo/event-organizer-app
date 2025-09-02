@@ -176,7 +176,7 @@ const CouponsPage = () => {
   // Copy coupon code to clipboard
   const handleCopy = (code: string) => {
     navigator.clipboard.writeText(code);
-    toast.success("Coupon code copied!");
+  
   };
 
 
