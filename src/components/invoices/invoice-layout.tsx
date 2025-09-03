@@ -3,12 +3,12 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-// Currency formatter (defaults to INR)
+// Currency formatter (defaults to AUD)
 const currency = (value: number, code: string = "AUD") =>
-  new Intl.NumberFormat(code === "AUD" ? "en-AUD" : "en-US", {
+  new Intl.NumberFormat("en-AU", {
     style: "currency",
     currency: code,
-  }).format(value)
+  }).format(value);
 
 type InvoiceLayoutProps = {
   invoice: any // using API shape directly
@@ -191,6 +191,10 @@ export function InvoiceLayout({ invoice }: InvoiceLayoutProps) {
             <div className="flex justify-between">
               <span>Gross Revenue</span>
               <span>{currency(summary.gross_ticket_revenue, curr)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Featured Amount</span>
+              <span>{currency(summary.featured_amount, curr)}</span>
             </div>
             <div className="flex justify-between text-red-600">
               <span>Discounts</span>
